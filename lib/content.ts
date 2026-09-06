@@ -28,6 +28,9 @@ export const site = {
   name: "Kariyer Expo",
   edition: "27",
   tagline: "İnsan Odaklı Gelecek",
+  /* Authored uppercase on purpose. Turkish casing is locale
+     dependent, so nothing is transformed at render time. */
+  taglineCaps: "İNSAN ODAKLI GELECEK",
   url: "https://kariyerexpo.com",
   email: "iletisim@kariyerexpo.com",
   description:

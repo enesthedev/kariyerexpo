@@ -93,9 +93,9 @@ export const about = {
 export const stats = {
   headline: "2026'da böyleydi.",
   items: [
-    { value: 11400, label: "katılımcı" },
-    { value: 168, label: "katılımcı firma" },
-    { value: 42, label: "panel ve atölye" },
+    { value: 11400, prefix: "", label: "katılımcı" },
+    { value: 168, prefix: "", label: "katılımcı firma" },
+    { value: 42, prefix: "", label: "panel ve atölye" },
     {
       value: 89,
       prefix: "%",

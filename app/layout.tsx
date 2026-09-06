@@ -1,4 +1,4 @@
-import { Geist_Mono, Inter } from "next/font/google"
+import { Bricolage_Grotesque, Inter } from "next/font/google"
 
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
@@ -8,11 +8,16 @@ import { cn } from "@/lib/utils"
 // `latin` subset. Without it those glyphs silently fall back mid-word.
 const inter = Inter({
   subsets: ["latin", "latin-ext"],
+  display: "swap",
   variable: "--font-sans",
 })
 
-const geistMono = Geist_Mono({
+// Display face. `opsz` is what makes it work at hero sizes; `wdth` (75-100,
+// it only condenses) is how the re-set wordmark matches the original lockup.
+const bricolage = Bricolage_Grotesque({
   subsets: ["latin", "latin-ext"],
+  axes: ["opsz", "wdth"],
+  display: "swap",
   variable: "--font-heading",
 })
 
@@ -28,7 +33,7 @@ export default function RootLayout({
       className={cn(
         "font-sans antialiased",
         inter.variable,
-        geistMono.variable
+        bricolage.variable
       )}
     >
       <body>

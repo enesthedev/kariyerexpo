@@ -1,16 +1,19 @@
-import { Geist, Geist_Mono, Inter } from "next/font/google"
+import { Geist_Mono, Inter } from "next/font/google"
 
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils"
 
-const geistMonoHeading = Geist_Mono({subsets:['latin'],variable:'--font-heading'});
+// Turkish needs latin-ext: İ ı Ğ ğ Ş ş live in Latin Extended-A, outside the
+// `latin` subset. Without it those glyphs silently fall back mid-word.
+const inter = Inter({
+  subsets: ["latin", "latin-ext"],
+  variable: "--font-sans",
+})
 
-const inter = Inter({subsets:['latin'],variable:'--font-sans'})
-
-const fontMono = Geist_Mono({
-  subsets: ["latin"],
-  variable: "--font-mono",
+const geistMono = Geist_Mono({
+  subsets: ["latin", "latin-ext"],
+  variable: "--font-heading",
 })
 
 export default function RootLayout({
@@ -20,9 +23,13 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="tr"
       suppressHydrationWarning
-      className={cn("antialiased", fontMono.variable, "font-sans", inter.variable, geistMonoHeading.variable)}
+      className={cn(
+        "font-sans antialiased",
+        inter.variable,
+        geistMono.variable
+      )}
     >
       <body>
         <ThemeProvider>{children}</ThemeProvider>

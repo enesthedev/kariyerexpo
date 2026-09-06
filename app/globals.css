@@ -65,6 +65,14 @@
   --slate: oklch(0.654 0.0201 258.37);
 
   --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* The logo mark's own fills. Traced from the PNG, so they are the literal
+     brand colours rather than semantic tokens. */
+  --blob-cream: oklch(0.8927 0.0172 56.17);
+  --blob-shadow: oklch(0.7837 0.0186 59.41);
+  --blob-slate: oklch(0.654 0.0201 258.37);
+  --blob-navy: oklch(0.2682 0.0439 245.17);
+  --blob-orange: oklch(0.6995 0.1767 43.13);
 }
 
 .dark {
@@ -105,6 +113,11 @@
   --surface-hover: oklch(0.308 0.034 245);
   --swash: oklch(0.725 0.172 44);
   --slate: oklch(0.654 0.0201 258.37);
+
+  /* The navy blob would disappear on a navy page, so it takes the dark
+     sand value. The silhouette is unchanged; only the values invert. */
+  --blob-navy: oklch(0.33 0.032 248);
+  --blob-shadow: oklch(0.3 0.03 250);
 }
 
 /* The CTA band, the mobile drawer and the footer stay navy in BOTH themes, so
@@ -203,5 +216,45 @@
   }
   html {
     scroll-behavior: auto;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   The swash: one continuous line traced from the logo's slate ribbon, which is
+   the only place in the mark where a line already exists.
+
+   Solid = confirmed. Dashed = yakında. The dashed variant appears in exactly
+   three places (the hero date pill, the Konuşmacılar heading, and the speaker
+   card borders) and nowhere else -- that restraint is what makes it read as a
+   system rather than a texture.
+--------------------------------------------------------------------------- */
+
+@keyframes swash-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.swash-draw {
+  stroke-dasharray: 320;
+  stroke-dashoffset: 320;
+  animation: swash-draw linear both;
+  animation-timeline: view();
+  animation-range: entry 25% cover 45%;
+}
+
+/* Where scroll-driven animations are unsupported the swash simply renders
+   fully drawn. Degraded, not broken. */
+@supports not (animation-timeline: view()) {
+  .swash-draw {
+    stroke-dashoffset: 0;
+    animation: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .swash-draw {
+    stroke-dashoffset: 0;
+    animation: none;
   }
 }

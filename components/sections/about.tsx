@@ -1,5 +1,5 @@
 import { about } from "@/lib/content"
-import { Swash } from "@/components/brand/swash"
+import { Arc } from "@/components/brand/arc"
 
 /**
  * The quietest section on the page and the only real reading passage: no
@@ -12,8 +12,9 @@ function About() {
       className="scroll-mt-20 bg-band py-[clamp(4rem,10vw,8rem)]"
     >
       <div className="mx-auto grid max-w-6xl gap-10 px-5 md:grid-cols-12 md:gap-12">
+        <p className="eyebrow text-line md:col-span-12">{about.eyebrow}</p>
         <h2 className="text-[clamp(2rem,1.2rem+3.4vw,3.5rem)] leading-[1.04] font-semibold tracking-[-0.022em] md:col-span-5">
-          {about.headline} <Swash>{about.headlineAccent}</Swash>
+          {about.headline} <Arc>{about.headlineAccent}</Arc>
         </h2>
         <div className="md:col-span-7">
           {about.body.map((p) => (

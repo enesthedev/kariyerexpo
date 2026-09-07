@@ -25,6 +25,7 @@ function Partners() {
   return (
     <section id="firmalar" className="scroll-mt-20 py-[clamp(4rem,10vw,8rem)]">
       <div className="mx-auto max-w-6xl px-5">
+        <p className="eyebrow mb-5 text-line">{partners.eyebrow}</p>
         <h2 className="text-[clamp(2rem,1.2rem+3.4vw,3.5rem)] leading-[1.04] font-semibold tracking-[-0.022em]">
           {partners.headline}
         </h2>

@@ -60,7 +60,7 @@ export const nav = [
 
 export const hero = {
   headline: "Yeteneğin ve fırsatın",
-  /** The swash sits under this phrase. Never under a single word. */
+  /** The arc sits under this phrase. Never under a single word. */
   headlineAccent: "buluştuğu yer.",
   lede:
     "İstanbul'un en büyük kariyer fuarı, 2027'de üçüncü kez kapılarını " +
@@ -72,6 +72,10 @@ export const hero = {
 } as const
 
 export const about = {
+  /* Authored uppercase on purpose. Turkish casing is locale dependent
+     (i -> İ), so nothing is transformed at render time -- note the
+     dotted İ below is U+0130, not an ASCII I. */
+  eyebrow: "FUAR",
   headline: "Bir fuardan fazlası,",
   headlineAccent: "bir başlangıç noktası.",
   body: [
@@ -91,6 +95,10 @@ export const about = {
 } as const
 
 export const stats = {
+  /* Authored uppercase on purpose. Turkish casing is locale dependent
+     (i -> İ), so nothing is transformed at render time -- note the
+     dotted İ below is U+0130, not an ASCII I. */
+  eyebrow: "RAKAMLAR",
   headline: "2026'da böyleydi.",
   items: [
     { value: 11400, prefix: "", label: "katılımcı" },
@@ -105,6 +113,10 @@ export const stats = {
 } as const
 
 export const audiences = {
+  /* Authored uppercase on purpose. Turkish casing is locale dependent
+     (i -> İ), so nothing is transformed at render time -- note the
+     dotted İ below is U+0130, not an ASCII I. */
+  eyebrow: "KİMLER KATILMALI",
   headline: "Üç farklı yol,",
   headlineAccent: "tek bir salon.",
   items: [
@@ -144,6 +156,10 @@ export const audiences = {
 } as const
 
 export const program = {
+  /* Authored uppercase on purpose. Turkish casing is locale dependent
+     (i -> İ), so nothing is transformed at render time -- note the
+     dotted İ below is U+0130, not an ASCII I. */
+  eyebrow: "PROGRAM",
   headline: "Konuşacaklarımız",
   headlineAccent: "şimdiden belli.",
   /** The quiet variant of "yakında": plain muted text, no dashed pill. */
@@ -172,8 +188,12 @@ export const program = {
 } as const
 
 export const speakersSection = {
+  /* Authored uppercase on purpose. Turkish casing is locale dependent
+     (i -> İ), so nothing is transformed at render time -- note the
+     dotted İ below is U+0130, not an ASCII I. */
+  eyebrow: "KONUŞMACILAR",
   headline: "Konuşmacılar",
-  /** Dashed swash goes under this word. */
+  /** Knocked out of the heading -- the pending state, said in form. */
   headlineAccent: "yakında.",
   note:
     "Sekiz konuşmacının ilk dördünü önümüzdeki aylarda duyuracağız. " +
@@ -187,6 +207,10 @@ export const speakersSection = {
 export const speakers: Speaker[] = []
 
 export const partners = {
+  /* Authored uppercase on purpose. Turkish casing is locale dependent
+     (i -> İ), so nothing is transformed at render time -- note the
+     dotted İ below is U+0130, not an ASCII I. */
+  eyebrow: "FİRMALAR",
   headline: "Geçen yıl bizimleydiler.",
   note: "2027 katılımcı firma listesi yakında yayımlanacak.",
   /** Name-only slots; real logos replace them without changing the layout. */
@@ -213,6 +237,10 @@ export const partners = {
 } as const
 
 export const faq = {
+  /* Authored uppercase on purpose. Turkish casing is locale dependent
+     (i -> İ), so nothing is transformed at render time -- note the
+     dotted İ below is U+0130, not an ASCII I. */
+  eyebrow: "SSS",
   headline: "Sık sorulanlar.",
   items: [
     {

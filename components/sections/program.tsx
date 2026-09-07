@@ -1,5 +1,5 @@
 import { program } from "@/lib/content"
-import { Swash } from "@/components/brand/swash"
+import { Arc } from "@/components/brand/arc"
 
 /**
  * A list, not a card grid and not tabs: six sibling themes with no hierarchy
@@ -17,8 +17,9 @@ function Program() {
       className="scroll-mt-20 bg-band py-[clamp(4rem,10vw,8rem)]"
     >
       <div className="mx-auto max-w-6xl px-5">
+        <p className="eyebrow mb-5 text-line">{program.eyebrow}</p>
         <h2 className="max-w-2xl text-[clamp(2rem,1.2rem+3.4vw,3.5rem)] leading-[1.04] font-semibold tracking-[-0.022em]">
-          {program.headline} <Swash>{program.headlineAccent}</Swash>
+          {program.headline} <Arc>{program.headlineAccent}</Arc>
         </h2>
         <p className="mt-6 max-w-[62ch] text-muted-foreground">
           {program.note}

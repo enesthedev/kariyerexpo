@@ -5,7 +5,7 @@ import { IconMail, IconMenu2 } from "@tabler/icons-react"
 import { cn } from "cn"
 
 import { nav } from "@/lib/content"
-import { LogoMark } from "@/components/brand/logo-mark"
+import { BadgeMark } from "@/components/brand/badge-mark"
 import { Wordmark } from "@/components/brand/wordmark"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { Button, buttonVariants } from "@/components/ui/button"
@@ -15,8 +15,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
-
-import { MobileDrawerBackdrop } from "./mobile-drawer"
 
 function SiteHeader() {
   const [scrolled, setScrolled] = React.useState(false)
@@ -76,8 +74,8 @@ function SiteHeader() {
             href="#anasayfa"
             className="flex items-center gap-3 rounded-md focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none"
           >
-            <LogoMark size="sm" />
-            <Wordmark className="text-lg" />
+            <BadgeMark size="sm" />
+            <Wordmark className="text-lg max-sm:sr-only" />
           </a>
 
           <nav className="ml-auto hidden items-center gap-7 lg:flex">
@@ -91,15 +89,26 @@ function SiteHeader() {
                   className="relative py-2 text-sm transition-opacity hover:opacity-70 focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none"
                 >
                   {item.label}
-                  {/* A dot, not a colour change: the swash carries state, the
-                      type never does. */}
-                  <span
+                  {/* The arc at its smallest scale, not a colour change:
+                      the line carries state, the type never does. */}
+                  <svg
+                    viewBox="0 0 240 18"
+                    preserveAspectRatio="none"
                     aria-hidden="true"
                     className={cn(
-                      "absolute -bottom-0.5 left-1/2 size-[3px] -translate-x-1/2 rounded-full bg-line transition-opacity",
+                      "absolute -bottom-1 left-1/2 h-1.5 w-4 -translate-x-1/2 overflow-visible transition-opacity",
                       isActive ? "opacity-100" : "opacity-0"
                     )}
-                  />
+                  >
+                    <path
+                      d="M3 4 A620 620 0 0 0 237 4"
+                      fill="none"
+                      stroke="var(--line)"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      vectorEffect="non-scaling-stroke"
+                    />
+                  </svg>
                 </a>
               )
             })}
@@ -140,7 +149,6 @@ function SiteHeader() {
                 data-surface="navy"
                 className="w-[86%] border-l-0 bg-sidebar text-sidebar-foreground sm:max-w-sm"
               >
-                <MobileDrawerBackdrop />
                 <SheetTitle className="px-6 pt-6 text-sidebar-foreground">
                   <Wordmark className="text-xl" />
                 </SheetTitle>

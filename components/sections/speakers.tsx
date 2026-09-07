@@ -1,90 +1,78 @@
-import { cn } from "cn"
-
 import { speakers, speakersSection } from "@/lib/content"
-import { Blob, type BlobName } from "@/components/brand/blobs"
-import { Swash } from "@/components/brand/swash"
-import { RevealGroup, RevealItem } from "@/components/reveal"
+import { Knockout } from "@/components/brand/knockout"
 
 /**
- * Where the "yakında" device does its heaviest lifting.
+ * Where the knockout rule does its heaviest lifting, which is why this is the
+ * one section that sits on navy: the reserved slots become actual holes in the
+ * darkest field on the page, and the heading says the same thing in words that
+ * the cards say in form.
  *
- * The placeholder is designed to look intentional rather than broken: a dashed
- * swash border and one blob from the mark, rotated differently per card, so
- * the cards read as siblings and the silhouette says "a person will be here"
- * rather than "an image failed to load". No skeleton shimmer, no question-mark
- * icon, no grey avatar circle -- all three read as failure.
+ * The placeholder is designed to look intentional rather than broken. It is
+ * not a skeleton shimmer, not a question-mark icon, and not a grey avatar
+ * circle -- all three read as failure. The aperture is the section's own
+ * ground colour exactly, so it reads as cut through the card rather than as a
+ * grey disc sitting on it, and the name bars are cut the same way, which no
+ * avatar placeholder does.
  *
- * Announced speakers render solid in the same grid at the same size, so a
- * mixed state (some announced, some not) is the normal case and costs no
- * layout work.
+ * Announced speakers render in the same grid at the same size, so a mixed
+ * state is the normal case and costs no layout work.
+ *
+ * Nothing here animates. Confirmed things may move; reserved things never do,
+ * so the state reads before you have read a word -- and the section drops a
+ * reveal animation rather than gaining one.
  */
-
-const PLACEHOLDER_BLOBS: { name: BlobName; rotate: string }[] = [
-  { name: "navy", rotate: "rotate-[8deg]" },
-  { name: "slate", rotate: "-rotate-[14deg]" },
-  { name: "cream", rotate: "rotate-[24deg]" },
-  { name: "orange", rotate: "-rotate-[6deg]" },
-]
-
 function Speakers() {
   const placeholders = Math.max(0, speakersSection.slots - speakers.length)
 
   return (
     <section
       id="konusmacilar"
-      className="scroll-mt-20 py-[clamp(4rem,10vw,8rem)]"
+      data-surface="navy"
+      className="scroll-mt-20 bg-sidebar py-[clamp(4rem,10vw,8rem)] text-sidebar-foreground"
     >
       <div className="mx-auto max-w-6xl px-5">
+        <p className="eyebrow mb-5 text-sidebar-primary">
+          {speakersSection.eyebrow}
+        </p>
         <h2 className="max-w-2xl text-[clamp(2rem,1.2rem+3.4vw,3.5rem)] leading-[1.04] font-semibold tracking-[-0.022em]">
           {speakersSection.headline}{" "}
-          <Swash variant="dashed">{speakersSection.headlineAccent}</Swash>
+          <Knockout className="rounded-xl box-decoration-clone px-[0.18em] pb-[0.06em]">
+            {speakersSection.headlineAccent}
+          </Knockout>
         </h2>
-        <p className="mt-6 max-w-[62ch] text-muted-foreground">
-          {speakersSection.note}
-        </p>
+        <p className="mt-6 max-w-[62ch] opacity-80">{speakersSection.note}</p>
         {placeholders > 0 ? (
           <p className="sr-only">{speakersSection.srAnnouncement}</p>
         ) : null}
 
-        <RevealGroup className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {speakers.map((s) => (
-            <RevealItem key={s.name}>
-              <article className="rounded-2xl border border-border bg-card p-5">
-                <div className="aspect-square overflow-hidden rounded-xl bg-muted" />
-                <h3 className="mt-4 font-heading text-lg font-semibold">
-                  {s.name}
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  {s.title}, {s.org}
-                </p>
-              </article>
-            </RevealItem>
+            <article
+              key={s.name}
+              className="rounded-2xl bg-card p-5 text-card-foreground"
+            >
+              <div className="aspect-square overflow-hidden rounded-full bg-muted" />
+              <h3 className="mt-4 font-heading text-lg font-semibold">
+                {s.name}
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                {s.title}, {s.org}
+              </p>
+            </article>
           ))}
 
-          {Array.from({ length: placeholders }).map((_, i) => {
-            const b = PLACEHOLDER_BLOBS[i % PLACEHOLDER_BLOBS.length]
-            return (
-              <RevealItem key={`slot-${i}`}>
-                <div
-                  aria-hidden="true"
-                  className="rounded-2xl border-2 border-dashed border-line p-5"
-                >
-                  <div className="flex aspect-square items-center justify-center">
-                    <Blob
-                      name={b.name}
-                      className={cn(
-                        "size-3/5 text-silver opacity-35",
-                        b.rotate
-                      )}
-                    />
-                  </div>
-                  <div className="mt-4 h-4 w-3/5 rounded-full bg-muted" />
-                  <div className="mt-2 h-3 w-2/5 rounded-full bg-muted" />
-                </div>
-              </RevealItem>
-            )
-          })}
-        </RevealGroup>
+          {Array.from({ length: placeholders }).map((_, i) => (
+            <div
+              key={`slot-${i}`}
+              aria-hidden="true"
+              className="rounded-2xl bg-card p-5"
+            >
+              <div className="aspect-square rounded-full bg-sidebar" />
+              <div className="mt-4 h-4 w-3/5 rounded-full bg-sidebar" />
+              <div className="mt-2 h-3 w-2/5 rounded-full bg-sidebar" />
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   )

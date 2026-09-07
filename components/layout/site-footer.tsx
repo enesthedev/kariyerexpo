@@ -7,7 +7,7 @@ import {
 } from "@tabler/icons-react"
 
 import { footer, nav, site } from "@/lib/content"
-import { LogoMark } from "@/components/brand/logo-mark"
+import { BadgeMark } from "@/components/brand/badge-mark"
 import { Wordmark } from "@/components/brand/wordmark"
 
 const SOCIAL_ICONS = {
@@ -16,22 +16,28 @@ const SOCIAL_ICONS = {
   x: IconBrandX,
 } as const
 
+/**
+ * Navy, and continuous with the CTA band above it -- the closing block is one
+ * field, split only by a 2px orange keyline, so it reads as rhythm rather than
+ * as a footer that started early. data-surface="navy" repoints --line and the
+ * mark tokens to the sidebar scale, which is what lets the badge and the
+ * contact icons invert without any per-element theme logic.
+ */
 function SiteFooter() {
   return (
-    <footer className="border-t border-border">
+    <footer
+      data-surface="navy"
+      className="border-t-2 border-accent bg-sidebar text-sidebar-foreground"
+    >
       <div className="mx-auto max-w-6xl px-5 py-16">
         <div className="grid gap-12 md:grid-cols-3">
           <div>
             <div className="flex items-center gap-3">
-              <LogoMark size="sm" />
+              <BadgeMark size="sm" />
               <Wordmark className="text-lg" />
             </div>
-            <p className="mt-3 text-xs tracking-[0.18em] text-muted-foreground">
-              {site.taglineCaps}
-            </p>
-            <p className="mt-5 max-w-xs text-sm text-muted-foreground">
-              {footer.blurb}
-            </p>
+            <p className="eyebrow mt-3 opacity-70">{site.taglineCaps}</p>
+            <p className="mt-5 max-w-xs text-sm opacity-70">{footer.blurb}</p>
           </div>
 
           <nav aria-label={footer.linksTitle}>
@@ -41,7 +47,7 @@ function SiteFooter() {
                 <li key={item.href}>
                   <a
                     href={item.href}
-                    className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                    className="text-sm opacity-70 transition-opacity hover:opacity-100"
                   >
                     {item.label}
                   </a>
@@ -57,14 +63,14 @@ function SiteFooter() {
                 <IconMail className="mt-0.5 size-4 shrink-0 text-line" />
                 <a
                   href={`mailto:${site.email}`}
-                  className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                  className="text-sm opacity-70 transition-opacity hover:opacity-100"
                 >
                   {site.email}
                 </a>
               </li>
               <li className="flex items-start gap-3">
                 <IconMapPin className="mt-0.5 size-4 shrink-0 text-line" />
-                <span className="text-sm text-muted-foreground">
+                <span className="text-sm opacity-70">
                   {site.venue.name}, {site.venue.district}, {site.venue.city}
                 </span>
               </li>
@@ -78,7 +84,7 @@ function SiteFooter() {
                     <a
                       href={s.href}
                       aria-label={s.label}
-                      className="flex size-11 items-center justify-center rounded-2xl bg-muted text-foreground transition-colors hover:bg-surface-hover focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none"
+                      className="flex size-11 items-center justify-center rounded-2xl bg-sidebar-accent text-sidebar-accent-foreground transition-colors hover:bg-sidebar-border focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none"
                     >
                       <Icon className="size-5" />
                     </a>
@@ -89,7 +95,7 @@ function SiteFooter() {
           </div>
         </div>
 
-        <div className="mt-14 flex flex-col gap-3 border-t border-border pt-6 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-14 flex flex-col gap-3 border-t border-sidebar-border pt-6 text-sm opacity-70 sm:flex-row sm:items-center sm:justify-between">
           <p>
             © 2027 {site.name}. {site.organizers.join(" & ")} iş birliğiyle.
           </p>
@@ -98,7 +104,7 @@ function SiteFooter() {
               <li key={l.label}>
                 <a
                   href={l.href}
-                  className="transition-colors hover:text-foreground"
+                  className="transition-opacity hover:opacity-100"
                 >
                   {l.label}
                 </a>

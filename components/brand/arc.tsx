@@ -35,6 +35,7 @@ function Arc({ children, className, ...props }: React.ComponentProps<"span">) {
       >
         <path
           d="M3 4 A620 620 0 0 0 237 4"
+          pathLength={1}
           fill="none"
           stroke="var(--line)"
           strokeWidth="5"

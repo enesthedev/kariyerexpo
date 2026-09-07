@@ -99,14 +99,6 @@
      know the surface. See components/brand/knockout.tsx. */
   --knockout-ink: var(--foreground);
   --knockout-ground: var(--background);
-
-  /* Temporary. The old traced mark still renders until the new brand
-     primitives land; these die with it. */
-  --blob-cream: oklch(0.8927 0.0172 56.17);
-  --blob-shadow: oklch(0.7837 0.0186 59.41);
-  --blob-slate: oklch(0.654 0.0201 258.37);
-  --blob-navy: oklch(0.2682 0.0439 245.17);
-  --blob-orange: oklch(0.6995 0.1767 43.13);
 }
 
 .dark {
@@ -155,9 +147,6 @@
      wordmark reads as a solid disc. The keyline drops well below the body so
      it stays a keyline instead of competing with it. */
   --mark-keyline: oklch(0.45 0.05 260);
-
-  --blob-navy: oklch(0.33 0.032 248);
-  --blob-shadow: oklch(0.3 0.03 250);
 }
 
 /* The CTA band, the mobile drawer and the footer stay navy in BOTH themes, so
@@ -358,15 +347,17 @@
   }
 }
 
+/* Normalised on pathLength="1", so the same rule drives a heading rule a few
+   hundred units long and the stats line at 1200 without retuning the dash. */
 .arc-draw {
-  stroke-dasharray: 320;
-  stroke-dashoffset: 320;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
   animation: arc-draw linear both;
   animation-timeline: view();
   animation-range: entry 25% cover 45%;
 }
 
-/* Where scroll-driven animations are unsupported the swash simply renders
+/* Where scroll-driven animations are unsupported the arc simply renders
    fully drawn. Degraded, not broken. */
 @supports not (animation-timeline: view()) {
   .arc-draw {

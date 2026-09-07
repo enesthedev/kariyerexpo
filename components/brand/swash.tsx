@@ -34,7 +34,7 @@ function Swash({
           strokeWidth={dashed ? 3 : 5}
           strokeLinecap="round"
           strokeDasharray={dashed ? "10 9" : undefined}
-          className={dashed ? undefined : "swash-draw"}
+          className={dashed ? undefined : "arc-draw"}
           vectorEffect="non-scaling-stroke"
         />
       </svg>

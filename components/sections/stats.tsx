@@ -29,7 +29,7 @@ function Stats() {
               stroke="var(--line)"
               strokeWidth="3"
               strokeLinecap="round"
-              className="swash-draw"
+              className="arc-draw"
             />
           </svg>
 

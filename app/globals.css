@@ -95,6 +95,11 @@
   --mark-keyline: var(--silver);
   --mark-accent: var(--accent);
 
+  /* A knockout is inversion against the surface it sits on, so it needs to
+     know the surface. See components/brand/knockout.tsx. */
+  --knockout-ink: var(--foreground);
+  --knockout-ground: var(--background);
+
   /* Temporary. The old traced mark still renders until the new brand
      primitives land; these die with it. */
   --blob-cream: oklch(0.8927 0.0172 56.17);
@@ -166,6 +171,8 @@
   --line: var(--sidebar-primary);
   --mark-body: var(--sidebar-foreground);
   --mark-keyline: var(--sidebar-border);
+  --knockout-ink: var(--sidebar-foreground);
+  --knockout-ground: var(--sidebar);
 }
 
 @theme inline {
@@ -266,6 +273,60 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* ---------------------------------------------------------------------------
+   The full mark. Three greyscale alpha masks painted with CSS colour, so one
+   asset set serves both themes and each layer stays independently animatable.
+   See components/brand/full-mark.tsx.
+
+   Aspect ratio is the measured ink box: EXPO overhangs the badge circle on
+   both sides, so the mark is wider than it is tall.
+
+   Both the prefixed and unprefixed mask properties are set. Every engine of
+   the last decade honours one of them, which is wider support than the
+   scroll-driven arc animation this page already degrades gracefully for, so
+   there is no raster fallback to download.
+--------------------------------------------------------------------------- */
+
+.mark {
+  position: relative;
+  aspect-ratio: 1981 / 1801;
+}
+
+.mark-layer {
+  position: absolute;
+  inset: 0;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+.mark-layer[data-layer="body"] {
+  background-color: var(--mark-body);
+  -webkit-mask-image: url("/mark-body.png");
+  mask-image: url("/mark-body.png");
+}
+
+.mark-layer[data-layer="keyline"] {
+  background-color: var(--mark-keyline);
+  -webkit-mask-image: url("/mark-keyline.png");
+  mask-image: url("/mark-keyline.png");
+}
+
+.mark-layer[data-layer="accent"] {
+  background-color: var(--mark-accent);
+  -webkit-mask-image: url("/mark-accent.png");
+  mask-image: url("/mark-accent.png");
+}
+
+/* Ink is confirmed, knockout is pending. See components/brand/knockout.tsx. */
+.knockout {
+  background-color: var(--knockout-ink);
+  color: var(--knockout-ground);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -281,25 +342,26 @@
 }
 
 /* ---------------------------------------------------------------------------
-   The swash: one continuous line traced from the logo's slate ribbon, which is
-   the only place in the mark where a line already exists.
+   The arc: a shallow circular rule under one phrase per section heading.
 
-   Solid = confirmed. Dashed = yakında. The dashed variant appears in exactly
-   three places (the hero date pill, the Konuşmacılar heading, and the speaker
-   card borders) and nowhere else -- that restraint is what makes it read as a
-   system rather than a texture.
+   It replaces the swash because a ring cannot do the swash's job -- see
+   components/brand/arc.tsx. Nothing in this mark is hand-drawn, so the line
+   this mark would draw is a circular one.
+
+   The draw-on is scroll-driven and pure CSS. Where `animation-timeline` is
+   unsupported, or motion is reduced, the arc simply arrives fully drawn.
 --------------------------------------------------------------------------- */
 
-@keyframes swash-draw {
+@keyframes arc-draw {
   to {
     stroke-dashoffset: 0;
   }
 }
 
-.swash-draw {
+.arc-draw {
   stroke-dasharray: 320;
   stroke-dashoffset: 320;
-  animation: swash-draw linear both;
+  animation: arc-draw linear both;
   animation-timeline: view();
   animation-range: entry 25% cover 45%;
 }
@@ -307,14 +369,14 @@
 /* Where scroll-driven animations are unsupported the swash simply renders
    fully drawn. Degraded, not broken. */
 @supports not (animation-timeline: view()) {
-  .swash-draw {
+  .arc-draw {
     stroke-dashoffset: 0;
     animation: none;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .swash-draw {
+  .arc-draw {
     stroke-dashoffset: 0;
     animation: none;
   }

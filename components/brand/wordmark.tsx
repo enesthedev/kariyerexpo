@@ -3,13 +3,18 @@ import { cn } from "cn"
 import { site } from "@/lib/content"
 
 /**
- * "Kariyer Expo 27" as live text rather than a raster crop, so it inherits the
- * theme's foreground and stays crisp at every size. The face is Bricolage
- * Grotesque; its wdth axis (75-100, it only condenses) is what matches the
- * original lockup's proportions without faux-stretching.
+ * "Kariyer Expo" set live, with the edition in a filled chip.
  *
- * Cased as authored -- never text-transform. Turkish i -> İ is locale
- * dependent and silently produces "KARIYER" wherever `lang` is not inherited.
+ * The chip is not decoration, it is the accessibility fix. The brand orange
+ * measures 2.80:1 on the light ground, so the edition cannot be orange text
+ * there. As an orange fill carrying navy type it measures 5.38:1 -- and that
+ * is the mark's own construction, where "27" sits in an orange banner rather
+ * than being painted orange.
+ *
+ * No attempt is made to match the logo's lettering. EXPO's P has a stadium
+ * counter slot and its O is a true circle; those are custom drawn and no web
+ * font reaches them, so the mark ships as artwork (full-mark.tsx) and the page
+ * speaks in its own voice instead of a bad impression of one.
  */
 function Wordmark({
   className,
@@ -17,17 +22,19 @@ function Wordmark({
 }: Omit<React.ComponentProps<"span">, "children">) {
   return (
     <span
-      data-slot="wordmark"
       aria-label={`${site.name} ${site.edition}`}
       className={cn(
-        "font-heading leading-none font-bold tracking-tight",
+        "inline-flex items-center gap-[0.4em] font-heading leading-none font-bold tracking-tight",
         className
       )}
-      style={{ fontVariationSettings: '"wdth" 96, "opsz" 40' }}
       {...props}
     >
-      <span aria-hidden="true">
-        {site.name} <span className="text-accent">{site.edition}</span>
+      <span aria-hidden="true">{site.name}</span>
+      <span
+        aria-hidden="true"
+        className="numeral rounded-full bg-accent px-[0.45em] py-[0.2em] text-[0.7em] text-accent-foreground"
+      >
+        {site.edition}
       </span>
     </span>
   )

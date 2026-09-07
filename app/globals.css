@@ -83,6 +83,10 @@
   --surface-hover: oklch(0.948 0.018 260);
   --line: oklch(0.59 0.19 36);
 
+  /* One family, two voices. The mark's condensed KARİYER and its wide EXPO
+     are the same design at different widths, so the page does the same:
+     family never changes, only wdth and wght. */
+  --font-heading: var(--font-sans);
   --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
 
   /* The three mask layers of the full mark. Colour comes from CSS, so one
@@ -238,7 +242,28 @@
   h2,
   h3 {
     @apply font-heading;
+    /* The display voice, quoting EXPO's proportions. */
+    font-variation-settings: "wdth" 108;
   }
+}
+
+/* The label voice, quoting the condensed arc-set KARİYER. The only place on
+   the page that is set in capitals -- and those capitals are typed as literal
+   characters in lib/content.ts, never transformed, because Turkish casing is
+   locale-dependent and `text-transform` silently produces "BILGI" for "bilgi".
+   Confining caps to one slot mirrors the mark, whose only caps are its name. */
+.eyebrow {
+  font-variation-settings: "wdth" 70;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  font-size: 0.75rem;
+  line-height: 1;
+}
+
+/* Numerals match the mechanical condensed 27 in the mark's banner. */
+.numeral {
+  font-variation-settings: "wdth" 85;
+  font-variant-numeric: tabular-nums;
 }
 
 @media (prefers-reduced-motion: reduce) {

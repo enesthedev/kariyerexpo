@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next"
-import { Bricolage_Grotesque, Inter } from "next/font/google"
+import { Archivo } from "next/font/google"
 
 import "./globals.css"
 import { site } from "@/lib/content"
@@ -7,21 +7,22 @@ import { MotionProvider } from "@/components/motion-provider"
 import { ThemeProvider } from "@/components/theme-provider"
 import { cn } from "@/lib/utils"
 
+// One family for the whole site. The mark speaks in two voices -- condensed
+// heavy grotesque in the arc-set KARİYER, wide heavy geometric in EXPO -- and
+// Archivo's wdth axis spans 62-125, so both come out of a single design.
+// wdth 70 is the label voice, wdth ~110 the display voice; see globals.css.
+// Pairing two neo-grotesques (Inter + Archivo) would have been the worst of
+// both: too alike to contrast, too unalike to unify.
+//
 // Turkish needs latin-ext: İ ı Ğ ğ Ş ş live in Latin Extended-A, outside the
 // `latin` subset. Without it those glyphs silently fall back mid-word.
-const inter = Inter({
+//
+// A variable font takes no `weight`; only the non-wght axes are listed.
+const archivo = Archivo({
   subsets: ["latin", "latin-ext"],
+  axes: ["wdth"],
   display: "swap",
   variable: "--font-sans",
-})
-
-// Display face. `opsz` is what makes it work at hero sizes; `wdth` (75-100,
-// it only condenses) is how the re-set wordmark matches the original lockup.
-const bricolage = Bricolage_Grotesque({
-  subsets: ["latin", "latin-ext"],
-  axes: ["opsz", "wdth"],
-  display: "swap",
-  variable: "--font-heading",
 })
 
 const title = `${site.name} ${site.edition} — ${site.tagline}`
@@ -65,11 +66,7 @@ export default function RootLayout({
     <html
       lang="tr"
       suppressHydrationWarning
-      className={cn(
-        "font-sans antialiased",
-        inter.variable,
-        bricolage.variable
-      )}
+      className={cn("font-sans antialiased", archivo.variable)}
     >
       <body>
         <ThemeProvider>

@@ -248,18 +248,22 @@
    characters in lib/content.ts, never transformed, because Turkish casing is
    locale-dependent and `text-transform` silently produces "BILGI" for "bilgi".
    Confining caps to one slot mirrors the mark, whose only caps are its name. */
-.eyebrow {
-  font-variation-settings: "wdth" 70;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  font-size: 0.75rem;
-  line-height: 1;
+@layer components {
+  .eyebrow {
+    font-variation-settings: "wdth" 70;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    font-size: 0.75rem;
+    line-height: 1;
+  }
 }
 
 /* Numerals match the mechanical condensed 27 in the mark's banner. */
-.numeral {
-  font-variation-settings: "wdth" 85;
-  font-variant-numeric: tabular-nums;
+@layer components {
+  .numeral {
+    font-variation-settings: "wdth" 85;
+    font-variant-numeric: tabular-nums;
+  }
 }
 
 /* ---------------------------------------------------------------------------
@@ -310,10 +314,14 @@
   mask-image: url("/mark-accent.png");
 }
 
-/* Ink is confirmed, knockout is pending. See components/brand/knockout.tsx. */
-.knockout {
-  background-color: var(--knockout-ink);
-  color: var(--knockout-ground);
+/* Ink is confirmed, knockout is pending. See components/brand/knockout.tsx.
+   Layered so a caller can still override the colours with a utility; unlayered
+   rules beat Tailwind's utilities, which would be a trap here. */
+@layer components {
+  .knockout {
+    background-color: var(--knockout-ink);
+    color: var(--knockout-ground);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -67,12 +67,15 @@ function Speakers() {
               <RevealItem key={`slot-${i}`}>
                 <div
                   aria-hidden="true"
-                  className="rounded-2xl border-2 border-dashed border-swash p-5"
+                  className="rounded-2xl border-2 border-dashed border-line p-5"
                 >
                   <div className="flex aspect-square items-center justify-center">
                     <Blob
                       name={b.name}
-                      className={cn("size-3/5 text-slate opacity-35", b.rotate)}
+                      className={cn(
+                        "size-3/5 text-silver opacity-35",
+                        b.rotate
+                      )}
                     />
                   </div>
                   <div className="mt-4 h-4 w-3/5 rounded-full bg-muted" />

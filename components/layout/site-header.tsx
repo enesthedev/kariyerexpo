@@ -67,7 +67,7 @@ function SiteHeader() {
         className={cn(
           "sticky top-0 z-50 transition-colors duration-300",
           scrolled
-            ? "border-b border-swash/60 bg-background/85 backdrop-blur-md"
+            ? "border-b border-line/60 bg-background/85 backdrop-blur-md"
             : "border-b border-transparent bg-transparent"
         )}
       >
@@ -96,7 +96,7 @@ function SiteHeader() {
                   <span
                     aria-hidden="true"
                     className={cn(
-                      "absolute -bottom-0.5 left-1/2 size-[3px] -translate-x-1/2 rounded-full bg-swash transition-opacity",
+                      "absolute -bottom-0.5 left-1/2 size-[3px] -translate-x-1/2 rounded-full bg-line transition-opacity",
                       isActive ? "opacity-100" : "opacity-0"
                     )}
                   />

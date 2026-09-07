@@ -25,11 +25,11 @@ function DatePill({ className }: { className?: string }) {
         className={cn(
           "inline-flex w-fit items-center gap-2.5 rounded-full px-5 py-2.5 text-sm font-medium",
           announced
-            ? "border-2 border-solid border-swash"
-            : "border-2 border-dashed border-swash"
+            ? "border-2 border-solid border-line"
+            : "border-2 border-dashed border-line"
         )}
       >
-        <IconCalendarPlus className="size-4 shrink-0 text-swash" />
+        <IconCalendarPlus className="size-4 shrink-0 text-line" />
         {label}
       </span>
       <span className="pl-1 text-sm text-muted-foreground">

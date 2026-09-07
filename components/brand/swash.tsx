@@ -30,7 +30,7 @@ function Swash({
         <path
           d="M4 15C46 5 92 20 134 11.5S212 3 236 9.5"
           fill="none"
-          stroke="var(--swash)"
+          stroke="var(--line)"
           strokeWidth={dashed ? 3 : 5}
           strokeLinecap="round"
           strokeDasharray={dashed ? "10 9" : undefined}

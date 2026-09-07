@@ -17,7 +17,7 @@ function Faq() {
   return (
     <section
       id="sss"
-      className="scroll-mt-20 bg-sand py-[clamp(4rem,10vw,8rem)]"
+      className="scroll-mt-20 bg-band py-[clamp(4rem,10vw,8rem)]"
     >
       <div className="mx-auto max-w-3xl px-5">
         <h2 className="text-[clamp(2rem,1.2rem+3.4vw,3.5rem)] leading-[1.04] font-semibold tracking-[-0.022em]">

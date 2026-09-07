@@ -51,8 +51,8 @@ export const metadata: Metadata = {
 // Next 14 and must live here instead.
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#FBF1EA" },
-    { media: "(prefers-color-scheme: dark)", color: "#0A1926" },
+    { media: "(prefers-color-scheme: light)", color: "#F4F7FA" },
+    { media: "(prefers-color-scheme: dark)", color: "#061734" },
   ],
 }
 

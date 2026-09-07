@@ -14,7 +14,7 @@ function Program() {
   return (
     <section
       id="program"
-      className="scroll-mt-20 bg-sand py-[clamp(4rem,10vw,8rem)]"
+      className="scroll-mt-20 bg-band py-[clamp(4rem,10vw,8rem)]"
     >
       <div className="mx-auto max-w-6xl px-5">
         <h2 className="max-w-2xl text-[clamp(2rem,1.2rem+3.4vw,3.5rem)] leading-[1.04] font-semibold tracking-[-0.022em]">
@@ -38,7 +38,7 @@ function Program() {
                   >
                     <span
                       aria-hidden="true"
-                      className="mt-[0.7rem] size-2 shrink-0 rounded-full bg-swash"
+                      className="mt-[0.7rem] size-2 shrink-0 rounded-full bg-line"
                     />
                     <span className="font-heading text-[clamp(1.125rem,1rem+0.6vw,1.375rem)] leading-snug font-semibold">
                       {item}

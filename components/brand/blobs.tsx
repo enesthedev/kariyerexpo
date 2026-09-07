@@ -75,7 +75,7 @@ function BlobField({
         <Blob
           key={i}
           name={b.name}
-          className={cn("absolute text-slate", b.className)}
+          className={cn("absolute text-silver", b.className)}
         />
       ))}
     </div>

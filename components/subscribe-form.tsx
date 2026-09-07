@@ -101,9 +101,9 @@ function SubscribeForm({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.28 }}
-            className="flex h-14 items-center gap-3 rounded-full border border-swash px-5"
+            className="flex h-14 items-center gap-3 rounded-full border border-line px-5"
           >
-            <IconCircleCheck className="size-5 shrink-0 text-swash" />
+            <IconCircleCheck className="size-5 shrink-0 text-line" />
             <span className="text-sm">{form.success}</span>
           </m.div>
         ) : (

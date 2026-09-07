@@ -54,7 +54,7 @@ function SiteFooter() {
             <h2 className="text-sm font-semibold">{footer.contactTitle}</h2>
             <ul className="mt-4 space-y-3.5">
               <li className="flex items-start gap-3">
-                <IconMail className="mt-0.5 size-4 shrink-0 text-swash" />
+                <IconMail className="mt-0.5 size-4 shrink-0 text-line" />
                 <a
                   href={`mailto:${site.email}`}
                   className="text-sm text-muted-foreground transition-colors hover:text-foreground"
@@ -63,7 +63,7 @@ function SiteFooter() {
                 </a>
               </li>
               <li className="flex items-start gap-3">
-                <IconMapPin className="mt-0.5 size-4 shrink-0 text-swash" />
+                <IconMapPin className="mt-0.5 size-4 shrink-0 text-line" />
                 <span className="text-sm text-muted-foreground">
                   {site.venue.name}, {site.venue.district}, {site.venue.city}
                 </span>

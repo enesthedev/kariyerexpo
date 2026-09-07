@@ -31,7 +31,7 @@ function Audiences() {
                   name={a.highlighted ? "orange" : "slate"}
                   className={cn(
                     "size-12",
-                    a.highlighted ? "text-accent" : "text-slate"
+                    a.highlighted ? "text-accent" : "text-silver"
                   )}
                 />
                 <h3 className="mt-6 font-heading text-[clamp(1.25rem,1.05rem+0.9vw,1.625rem)] leading-[1.2] font-semibold tracking-[-0.015em]">
@@ -44,7 +44,7 @@ function Audiences() {
                     <li key={p} className="flex items-start gap-2.5 text-sm">
                       <span
                         aria-hidden="true"
-                        className="mt-[0.45rem] size-1.5 shrink-0 rounded-full bg-swash"
+                        className="mt-[0.45rem] size-1.5 shrink-0 rounded-full bg-line"
                       />
                       {p}
                     </li>

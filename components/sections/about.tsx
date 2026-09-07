@@ -9,7 +9,7 @@ function About() {
   return (
     <section
       id="fuar"
-      className="scroll-mt-20 bg-sand py-[clamp(4rem,10vw,8rem)]"
+      className="scroll-mt-20 bg-band py-[clamp(4rem,10vw,8rem)]"
     >
       <div className="mx-auto grid max-w-6xl gap-10 px-5 md:grid-cols-12 md:gap-12">
         <h2 className="text-[clamp(2rem,1.2rem+3.4vw,3.5rem)] leading-[1.04] font-semibold tracking-[-0.022em] md:col-span-5">
@@ -24,7 +24,7 @@ function About() {
               {p}
             </p>
           ))}
-          <dl className="mt-9 space-y-4 border-l-2 border-swash pl-5">
+          <dl className="mt-9 space-y-4 border-l-2 border-line pl-5">
             {about.facts.map((f) => (
               <div key={f.term}>
                 <dt className="font-heading font-semibold">{f.term}</dt>

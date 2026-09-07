@@ -26,7 +26,7 @@ function Stats() {
             <path
               d="M0 20C150 4 300 36 450 20S750 4 900 20s200 12 300 0"
               fill="none"
-              stroke="var(--swash)"
+              stroke="var(--line)"
               strokeWidth="3"
               strokeLinecap="round"
               className="swash-draw"

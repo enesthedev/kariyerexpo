@@ -8,10 +8,9 @@ import { nav } from "@/lib/content"
 import { LogoMark } from "@/components/brand/logo-mark"
 import { Wordmark } from "@/components/brand/wordmark"
 import { ThemeToggle } from "@/components/theme-toggle"
-import { Button } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import {
   Sheet,
-  SheetClose,
   SheetContent,
   SheetTitle,
   SheetTrigger,
@@ -22,6 +21,7 @@ import { MobileDrawerBackdrop } from "./mobile-drawer"
 function SiteHeader() {
   const [scrolled, setScrolled] = React.useState(false)
   const [active, setActive] = React.useState<string>("")
+  const [menuOpen, setMenuOpen] = React.useState(false)
   const sentinel = React.useRef<HTMLDivElement>(null)
 
   // A sentinel at the top of the document rather than a scroll listener: the
@@ -107,16 +107,26 @@ function SiteHeader() {
 
           <div className={cn("flex items-center gap-1", "ml-auto lg:ml-0")}>
             <ThemeToggle />
-            <Button
-              render={<a href="#iletisim" />}
-              size="sm"
-              className="hidden sm:inline-flex"
+            {/* Base UI's Button enforces button semantics (role="button",
+                Enter/Space handling) and its docs say not to render links
+                through it -- nativeButton={false} would silence the warning by
+                making a link announce itself as a button. Every CTA here
+                navigates, so the anchor carries buttonVariants directly. */}
+            <a
+              href="#iletisim"
+              className={cn(
+                buttonVariants({ size: "sm" }),
+                "hidden sm:inline-flex"
+              )}
             >
               <IconMail data-icon="inline-start" />
               Haberdar ol
-            </Button>
+            </a>
 
-            <Sheet>
+            {/* Controlled so the drawer's links can stay real anchors: they
+                close the sheet on click instead of being wrapped in
+                SheetClose, which is a Dialog.Close and has the same rule. */}
+            <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
               <SheetTrigger
                 render={
                   <Button variant="ghost" size="icon" className="lg:hidden" />
@@ -136,29 +146,28 @@ function SiteHeader() {
                 </SheetTitle>
                 <nav className="relative z-10 mt-10 flex flex-col gap-1 px-6">
                   {nav.map((item) => (
-                    <SheetClose
+                    <a
                       key={item.href}
-                      render={<a href={item.href} />}
+                      href={item.href}
+                      onClick={() => setMenuOpen(false)}
                       className="rounded-lg py-3 text-2xl transition-opacity hover:opacity-70 focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none"
                     >
                       {item.label}
-                    </SheetClose>
+                    </a>
                   ))}
                 </nav>
                 <div className="relative z-10 mt-auto p-6">
-                  <SheetClose
-                    render={
-                      <Button
-                        variant="accent"
-                        size="lg"
-                        className="w-full"
-                        render={<a href="#iletisim" />}
-                      />
-                    }
+                  <a
+                    href="#iletisim"
+                    onClick={() => setMenuOpen(false)}
+                    className={cn(
+                      buttonVariants({ variant: "accent", size: "lg" }),
+                      "w-full"
+                    )}
                   >
                     <IconMail data-icon="inline-start" />
                     Haberdar ol
-                  </SheetClose>
+                  </a>
                 </div>
               </SheetContent>
             </Sheet>

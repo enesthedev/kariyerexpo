@@ -33,7 +33,7 @@ function SiteFooter() {
         <div className="grid gap-12 md:grid-cols-3">
           <div>
             <div className="flex items-center gap-3">
-              <BadgeMark size="sm" />
+              <BadgeMark size="sm" decorative />
               <Wordmark className="text-lg" />
             </div>
             <p className="eyebrow mt-3 opacity-70">{site.taglineCaps}</p>

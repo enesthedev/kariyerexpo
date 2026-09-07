@@ -17,6 +17,9 @@ function StructuredData() {
     url: site.url,
     email: site.email,
     description: site.description,
+    // The icon route, not the source PNG: it is flattened onto the brand
+    // ground, so it survives the crawlers that composite onto white.
+    logo: `${site.url}/icon.png`,
   }
 
   const website = {
@@ -26,6 +29,7 @@ function StructuredData() {
     name: site.name,
     inLanguage: "tr-TR",
     publisher: { "@id": `${site.url}/#organization` },
+    image: `${site.url}/opengraph-image.png`,
   }
 
   const event = site.date

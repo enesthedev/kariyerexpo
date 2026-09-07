@@ -36,17 +36,29 @@ const TAB =
   "M39.32 78.61 L60.68 78.61 A8.65 8.65 0 0 1 69.33 87.47 L69.33 92.14 " +
   "A46.37 46.37 0 0 1 30.67 92.14 L30.67 87.47 A8.65 8.65 0 0 1 39.32 78.61 Z"
 
+/**
+ * `decorative` is the right setting wherever the badge sits beside the
+ * wordmark, which is everywhere it currently appears: two elements naming the
+ * same brand inside one link reads the name twice.
+ */
 function BadgeMark({
   size = "md",
+  decorative = false,
   className,
   ...props
-}: React.ComponentProps<"svg"> & { size?: keyof typeof SIZES }) {
+}: React.ComponentProps<"svg"> & {
+  size?: keyof typeof SIZES
+  decorative?: boolean
+}) {
+  const labelling = decorative
+    ? ({ "aria-hidden": true } as const)
+    : ({ role: "img", "aria-label": `${site.name} ${site.edition}` } as const)
+
   return (
     <svg
       data-slot="badge-mark"
       viewBox="0 0 100 100"
-      role="img"
-      aria-label={`${site.name} ${site.edition}`}
+      {...labelling}
       className={cn("shrink-0", SIZES[size], className)}
       {...props}
     >

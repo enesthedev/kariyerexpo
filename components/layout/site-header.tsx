@@ -74,7 +74,7 @@ function SiteHeader() {
             href="#anasayfa"
             className="flex items-center gap-3 rounded-md focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none"
           >
-            <BadgeMark size="sm" />
+            <BadgeMark size="sm" decorative />
             <Wordmark className="text-lg max-sm:sr-only" />
           </a>
 

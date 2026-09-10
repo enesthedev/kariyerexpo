@@ -14,6 +14,11 @@ import { cn } from "cn"
  * edge is either a circle or a straight run. A shallow arc is what this mark
  * would draw, and it stretches the way the swash did.
  *
+ * The rule itself is a background on this span rather than a child element,
+ * because a phrase wraps: an absolutely positioned child would be laid out
+ * against the union of the span's line boxes and trail off past the last word.
+ * See the .arc block in app/globals.css for the whole reason and the cost.
+ *
  * Same discipline as before -- one per section, under a phrase and never a
  * single word, and the text colour never changes. Same machinery too: the
  * draw-on is `animation-timeline: view()`, pure CSS, and it degrades to a
@@ -21,29 +26,8 @@ import { cn } from "cn"
  */
 function Arc({ children, className, ...props }: React.ComponentProps<"span">) {
   return (
-    <span
-      data-slot="arc"
-      className={cn("relative inline-block", className)}
-      {...props}
-    >
+    <span data-slot="arc" className={cn("arc", className)} {...props}>
       {children}
-      <svg
-        viewBox="0 0 240 18"
-        preserveAspectRatio="none"
-        aria-hidden="true"
-        className="absolute inset-x-0 -bottom-[0.2em] h-[0.34em] w-full overflow-visible"
-      >
-        <path
-          d="M3 4 A620 620 0 0 0 237 4"
-          pathLength={1}
-          fill="none"
-          stroke="var(--line)"
-          strokeWidth="5"
-          strokeLinecap="round"
-          vectorEffect="non-scaling-stroke"
-          className="arc-draw"
-        />
-      </svg>
     </span>
   )
 }

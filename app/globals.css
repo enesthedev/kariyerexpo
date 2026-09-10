@@ -345,9 +345,59 @@
    components/brand/arc.tsx. Nothing in this mark is hand-drawn, so the line
    this mark would draw is a circular one.
 
+   Under a heading the rule is a BACKGROUND, not a child element. It used to be
+   an absolutely positioned <svg> inside an inline-block, and that is only
+   correct while the phrase fits on one line: an inline-block lays its
+   abs-positioned child out against the union of its line boxes, so as soon as
+   a phrase wrapped, the rule spanned the whole column and trailed off into the
+   empty space to the right of the last word. Every heading on this page wraps
+   at some viewport width, so that was a bug waiting at every breakpoint rather
+   than a hero-only one. box-decoration-break gives each line fragment its own
+   rule, measured to that fragment.
+
+   The cost is that a background image cannot read a custom property, so the
+   stroke colour is baked in and --line's two values get one rule each. Keep
+   them in step with the tokens at the top of this file.
+
    The draw-on is scroll-driven and pure CSS. Where `animation-timeline` is
    unsupported, or motion is reduced, the arc simply arrives fully drawn.
 --------------------------------------------------------------------------- */
+
+@layer components {
+  .arc {
+    /* Same path as the standalone rules below. preserveAspectRatio="none" lets
+       it stretch to any phrase width; non-scaling-stroke keeps the 5px weight
+       from stretching with it. */
+    --arc-line: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 18' preserveAspectRatio='none'%3E%3Cpath d='M3 4 A620 620 0 0 0 237 4' fill='none' stroke='%23D64417' stroke-width='5' stroke-linecap='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+    padding-bottom: 0.26em;
+    background-image: var(--arc-line);
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: 100% 0.34em;
+    animation: arc-wipe linear both;
+    animation-timeline: view();
+    animation-range: entry 25% cover 45%;
+  }
+
+  /* --line is the readable orange on paper and the full accent everywhere
+     dark, so the baked stroke follows it. */
+  .dark .arc,
+  [data-surface="navy"] .arc {
+    --arc-line: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 18' preserveAspectRatio='none'%3E%3Cpath d='M3 4 A620 620 0 0 0 237 4' fill='none' stroke='%23FD6236' stroke-width='5' stroke-linecap='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");
+  }
+}
+
+/* Wipes left to right, which is what the stroke draw-on read as anyway. */
+@keyframes arc-wipe {
+  from {
+    background-size: 0% 0.34em;
+  }
+  to {
+    background-size: 100% 0.34em;
+  }
+}
 
 @keyframes arc-draw {
   to {
@@ -355,8 +405,9 @@
   }
 }
 
-/* Normalised on pathLength="1", so the same rule drives a heading rule a few
-   hundred units long and the stats line at 1200 without retuning the dash. */
+/* For the standalone rules that are their own <svg> rather than a heading's
+   background -- currently just the line behind the stats row. Normalised on
+   pathLength="1", so the dash needs no retuning per path length. */
 .arc-draw {
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
@@ -372,11 +423,17 @@
     stroke-dashoffset: 0;
     animation: none;
   }
+  .arc {
+    animation: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .arc-draw {
     stroke-dashoffset: 0;
+    animation: none;
+  }
+  .arc {
     animation: none;
   }
 }

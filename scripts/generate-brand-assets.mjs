@@ -57,8 +57,11 @@ async function masks() {
     .toBuffer({ resolveWithObject: true })
   const { width, height } = info
   const names = Object.keys(LAYERS)
+  // Two channels, both carrying the same coverage value: alpha because
+  // mask-mode defaults to match-source (which is alpha for an image), and
+  // grey so the masks still work if anything ever asks for luminance.
   const out = Object.fromEntries(
-    names.map((n) => [n, Buffer.alloc(width * height)])
+    names.map((n) => [n, Buffer.alloc(width * height * 2)])
   )
 
   for (let p = 0; p < width * height; p++) {
@@ -77,11 +80,12 @@ async function masks() {
       }
     }
     // Alpha carries through, so anti-aliased edges stay soft in the mask.
-    out[best][p] = alpha
+    out[best][p * 2] = alpha
+    out[best][p * 2 + 1] = alpha
   }
 
   for (const name of names) {
-    await sharp(out[name], { raw: { width, height, channels: 1 } })
+    await sharp(out[name], { raw: { width, height, channels: 2 } })
       .resize({ width: MASK_WIDTH })
       .png({ compressionLevel: 9, palette: true, colours: 32 })
       .toFile(`public/mark-${name}.png`)

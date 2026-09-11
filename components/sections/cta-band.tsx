@@ -38,7 +38,11 @@ function CtaBand() {
           {cta.headline} {cta.headlineAccent}
         </h2>
         <p className="mx-auto mt-5 max-w-[52ch] opacity-80">{cta.lede}</p>
-        <SubscribeForm showRoles className="mt-10 text-left" />
+        <SubscribeForm
+          showRoles
+          listenForRoleTargets
+          className="mt-10 text-left"
+        />
       </div>
     </section>
   )

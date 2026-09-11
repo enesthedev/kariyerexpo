@@ -1,12 +1,11 @@
 "use client"
 
 import * as React from "react"
-import { IconMail, IconMenu2 } from "@tabler/icons-react"
+import { IconArrowUpRight, IconMenu2 } from "@tabler/icons-react"
 import { cn } from "cn"
 
 import { header, nav, ui } from "@/lib/content"
-import { BadgeMark } from "@/components/brand/badge-mark"
-import { Wordmark } from "@/components/brand/wordmark"
+import { Mark } from "@/components/brand/mark"
 import { Button, buttonVariants } from "@/components/ui/button"
 import {
   Sheet,
@@ -15,6 +14,22 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 
+/**
+ * Vize Keyfi's header shape: a fixed logo left, a floating white pill nav
+ * dead-centre, a CTA right. `left-1/2 -translate-x-1/2` on the pill (rather
+ * than a 1fr grid track) is what actually centres it on the header -- the
+ * logo and the CTA/menu cluster are different widths, so a three-track grid
+ * would centre the pill inside its track, not on the bar.
+ *
+ * The active-link mark is a small filled crescent, not `.swoosh`: `.swoosh`
+ * drives its draw-on off `animation-timeline: view()`, which free-runs against
+ * page scroll and would never resolve to "fully drawn" inside a header that
+ * is sticky (and so barely moves through the viewport). A static filled
+ * shape -- the same tapered-crescent silhouette baked into `.swoosh`'s
+ * background image, at chip scale -- reads as the same mark without needing
+ * a scroll position. Orange as a fill stays inside the colour bans (fill is
+ * allowed on light grounds; a stroke or text colour would not be).
+ */
 function SiteHeader() {
   const [scrolled, setScrolled] = React.useState(false)
   const [active, setActive] = React.useState<string>("")
@@ -62,58 +77,57 @@ function SiteHeader() {
       />
       <header
         className={cn(
-          "sticky top-0 z-50 transition-colors duration-300",
+          "sticky top-0 z-50 transition-[background-color,box-shadow] duration-300",
           scrolled
-            ? "border-b border-line/60 bg-background/85 backdrop-blur-md"
-            : "border-b border-transparent bg-transparent"
+            ? "bg-background/85 shadow-md backdrop-blur-md"
+            : "bg-transparent shadow-none"
         )}
       >
-        <div className="mx-auto flex h-20 max-w-6xl items-center gap-6 px-5">
+        <div className="relative mx-auto flex h-20 max-w-6xl items-center px-5">
+          {/* The mark's own role="img" label ("Kariyer Expo 27") is the
+              link's accessible name -- no aria-label here, so there is
+              exactly one name, not zero and not two. */}
           <a
             href="#anasayfa"
-            className="flex items-center gap-3 rounded-md focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none"
+            className="flex items-center rounded-md focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none"
           >
-            <BadgeMark size="sm" decorative />
-            <Wordmark className="text-lg max-sm:sr-only" />
+            <Mark className="h-14 w-auto" />
           </a>
 
-          <nav className="ml-auto hidden items-center gap-7 lg:flex">
-            {nav.map((item) => {
-              const isActive = active === item.href.slice(1)
-              return (
-                <a
-                  key={item.href}
-                  href={item.href}
-                  aria-current={isActive ? "true" : undefined}
-                  className="relative py-2 text-sm transition-opacity hover:opacity-70 focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none"
-                >
-                  {item.label}
-                  {/* The arc at its smallest scale, not a colour change:
-                      the line carries state, the type never does. */}
-                  <svg
-                    viewBox="0 0 240 18"
-                    preserveAspectRatio="none"
-                    aria-hidden="true"
-                    className={cn(
-                      "absolute -bottom-1 left-1/2 h-1.5 w-4 -translate-x-1/2 overflow-visible transition-opacity",
-                      isActive ? "opacity-100" : "opacity-0"
-                    )}
-                  >
-                    <path
-                      d="M3 4 A620 620 0 0 0 237 4"
-                      fill="none"
-                      stroke="var(--line)"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      vectorEffect="non-scaling-stroke"
-                    />
-                  </svg>
-                </a>
-              )
-            })}
+          <nav className="absolute left-1/2 hidden -translate-x-1/2 lg:block">
+            <ul className="flex items-center gap-1 rounded-full border border-border bg-card px-2 py-1.5 shadow-sm">
+              {nav.map((item) => {
+                const isActive = active === item.href.slice(1)
+                return (
+                  <li key={item.href}>
+                    <a
+                      href={item.href}
+                      aria-current={isActive ? "true" : undefined}
+                      className="relative inline-flex items-center rounded-full px-4 py-2 text-sm transition-opacity hover:opacity-70 focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none"
+                    >
+                      {item.label}
+                      <svg
+                        viewBox="0 0 200 20"
+                        preserveAspectRatio="none"
+                        aria-hidden="true"
+                        className={cn(
+                          "absolute -bottom-0.5 left-1/2 h-1.5 w-6 -translate-x-1/2 transition-opacity",
+                          isActive ? "opacity-100" : "opacity-0"
+                        )}
+                      >
+                        <path
+                          d="M0 3C50 6 130 6 200 0C135 24 60 25 0 3Z"
+                          fill="var(--mark-orange)"
+                        />
+                      </svg>
+                    </a>
+                  </li>
+                )
+              })}
+            </ul>
           </nav>
 
-          <div className={cn("flex items-center gap-1", "ml-auto lg:ml-0")}>
+          <div className="ml-auto flex items-center gap-2">
             {/* Base UI's Button enforces button semantics (role="button",
                 Enter/Space handling) and its docs say not to render links
                 through it -- nativeButton={false} would silence the warning by
@@ -126,8 +140,8 @@ function SiteHeader() {
                 "hidden sm:inline-flex"
               )}
             >
-              <IconMail data-icon="inline-start" />
               {header.cta}
+              <IconArrowUpRight data-icon="inline-end" />
             </a>
 
             {/* Controlled so the drawer's links can stay real anchors: they
@@ -136,11 +150,11 @@ function SiteHeader() {
             <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
               <SheetTrigger
                 render={
-                  <Button variant="ghost" size="icon" className="lg:hidden" />
+                  <Button variant="outline" size="sm" className="lg:hidden" />
                 }
               >
-                <IconMenu2 />
-                <span className="sr-only">{header.menuOpen}</span>
+                <IconMenu2 data-icon="inline-start" />
+                {ui.menu}
               </SheetTrigger>
               <SheetContent
                 side="right"
@@ -149,7 +163,7 @@ function SiteHeader() {
                 className="w-[86%] border-l-0 bg-sidebar text-sidebar-foreground sm:max-w-sm"
               >
                 <SheetTitle className="px-6 pt-6 text-sidebar-foreground">
-                  <Wordmark className="text-xl" />
+                  <Mark className="h-10 w-auto" />
                 </SheetTitle>
                 <nav className="relative z-10 mt-10 flex flex-col gap-1 px-6">
                   {nav.map((item) => (
@@ -172,8 +186,8 @@ function SiteHeader() {
                       "w-full"
                     )}
                   >
-                    <IconMail data-icon="inline-start" />
                     {header.cta}
+                    <IconArrowUpRight data-icon="inline-end" />
                   </a>
                 </div>
               </SheetContent>

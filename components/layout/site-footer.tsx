@@ -7,8 +7,7 @@ import {
 } from "@tabler/icons-react"
 
 import { footer, nav, site } from "@/lib/content"
-import { BadgeMark } from "@/components/brand/badge-mark"
-import { Wordmark } from "@/components/brand/wordmark"
+import { Mark } from "@/components/brand/mark"
 
 const SOCIAL_ICONS = {
   linkedin: IconBrandLinkedin,
@@ -17,26 +16,30 @@ const SOCIAL_ICONS = {
 } as const
 
 /**
- * Navy, and continuous with the CTA band above it -- the closing block is one
- * field, split only by a 2px orange keyline, so it reads as rhythm rather than
- * as a footer that started early. data-surface="navy" repoints --line and the
- * mark tokens to the sidebar scale, which is what lets the badge and the
- * contact icons invert without any per-element theme logic.
+ * Navy, closed off with a large top radius rather than a keyline -- the
+ * footer reads as its own rounded block sitting under the page, the way
+ * Vize Keyfi's does, instead of a straight seam. `data-surface="navy"` is
+ * what lets `Mark` and the contact icons invert to the light remap without
+ * any per-element theme logic.
+ *
+ * The new `Mark` already carries the KARİYER / EXPO / 27 lettering inside
+ * the SVG, so it stands alone here -- no separate wordmark or tagline line
+ * next to it, unlike the old badge + wordmark pairing.
+ *
+ * Contact icons are `text-accent` (orange fill) rather than `text-line`:
+ * on this navy ground orange reads at 4.9:1, so the fill-only rule that
+ * bans `text-accent` on light grounds does not apply here.
  */
 function SiteFooter() {
   return (
     <footer
       data-surface="navy"
-      className="border-t-2 border-accent bg-sidebar text-sidebar-foreground"
+      className="rounded-t-[2.5rem] bg-sidebar text-sidebar-foreground"
     >
       <div className="mx-auto max-w-6xl px-5 py-16">
         <div className="grid gap-12 md:grid-cols-3">
           <div>
-            <div className="flex items-center gap-3">
-              <BadgeMark size="sm" decorative />
-              <Wordmark className="text-lg" />
-            </div>
-            <p className="eyebrow mt-3 opacity-70">{site.taglineCaps}</p>
+            <Mark className="h-16 w-auto" />
             <p className="mt-5 max-w-xs text-sm opacity-70">{footer.blurb}</p>
           </div>
 
@@ -60,7 +63,10 @@ function SiteFooter() {
             <h2 className="text-sm font-semibold">{footer.contactTitle}</h2>
             <ul className="mt-4 space-y-3.5">
               <li className="flex items-start gap-3">
-                <IconMail className="mt-0.5 size-4 shrink-0 text-line" />
+                <IconMail
+                  aria-hidden="true"
+                  className="mt-0.5 size-4 shrink-0 text-accent"
+                />
                 <a
                   href={`mailto:${site.email}`}
                   className="text-sm opacity-70 transition-opacity hover:opacity-100"
@@ -69,7 +75,10 @@ function SiteFooter() {
                 </a>
               </li>
               <li className="flex items-start gap-3">
-                <IconMapPin className="mt-0.5 size-4 shrink-0 text-line" />
+                <IconMapPin
+                  aria-hidden="true"
+                  className="mt-0.5 size-4 shrink-0 text-accent"
+                />
                 <span className="text-sm opacity-70">
                   {site.venue.name}, {site.venue.district}, {site.venue.city}
                 </span>
@@ -84,9 +93,9 @@ function SiteFooter() {
                     <a
                       href={s.href}
                       aria-label={s.label}
-                      className="flex size-11 items-center justify-center rounded-2xl bg-sidebar-accent text-sidebar-accent-foreground transition-colors hover:bg-sidebar-border focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none"
+                      className="flex size-11 items-center justify-center rounded-lg bg-sidebar-accent text-sidebar-accent-foreground transition-colors hover:bg-sidebar-border focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none"
                     >
-                      <Icon className="size-5" />
+                      <Icon aria-hidden="true" className="size-5" />
                     </a>
                   </li>
                 )

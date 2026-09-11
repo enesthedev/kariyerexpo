@@ -13,9 +13,11 @@ const FORMAT = new Intl.NumberFormat("tr-TR")
 function StatCounter({
   value,
   prefix = "",
+  suffix = "",
 }: {
   value: number
   prefix?: string
+  suffix?: string
 }) {
   const ref = React.useRef<HTMLSpanElement>(null)
   const inView = useInView(ref, { once: true, amount: 0.5 })
@@ -25,22 +27,22 @@ function StatCounter({
     const node = ref.current
     if (!node || reduced) return
     if (!inView) {
-      node.textContent = prefix + FORMAT.format(0)
+      node.textContent = prefix + FORMAT.format(0) + suffix
       return
     }
     const controls = animate(0, value, {
       duration: 1.6,
       ease: [0.16, 1, 0.3, 1],
       onUpdate: (v) => {
-        node.textContent = prefix + FORMAT.format(Math.round(v))
+        node.textContent = prefix + FORMAT.format(Math.round(v)) + suffix
       },
     })
     return () => controls.stop()
-  }, [inView, reduced, value, prefix])
+  }, [inView, reduced, value, prefix, suffix])
 
   return (
     <span ref={ref} className="tabular-nums">
-      {prefix + FORMAT.format(value)}
+      {prefix + FORMAT.format(value) + suffix}
     </span>
   )
 }

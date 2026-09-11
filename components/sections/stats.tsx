@@ -1,84 +1,69 @@
 import { cn } from "cn"
 
-import { stats } from "@/lib/content"
+import { stats, type Stat } from "@/lib/content"
 import { StatCounter } from "@/components/stat-counter"
 
 /**
- * Retrospective numbers with a year label. An event with no date has a
- * credibility problem; last year's attendance is evidence, where a promise
- * about an unscheduled event is not.
+ * The reference site's why-us block: the claim on the left, the evidence as
+ * a 2×2 of tiles on the right. The numbers are retrospective on purpose -- an
+ * event with no date has a credibility problem, and last year's attendance is
+ * evidence where a promise is not.
  *
- * The strongest number sits on an orange tile with navy type -- the first
- * place on the page where the accent becomes a surface rather than a trim,
- * which is how the palette gets its warmth back now that the cream ground is
- * gone. Its numeral breaks the tile's left edge: overhang, quoted from EXPO
- * reaching past the badge circle, and this section's one use of it.
+ * The first tile is the one place in the section where orange is a surface;
+ * its type is navy, never white (white on orange is 3.17:1).
+ *
+ * Each tile is a size container and the numeral is sized in cqi, so "11.400"
+ * at wdth 125 fits its tile at every width from a 360px phone up, instead of
+ * a viewport clamp that is right for one column count and wrong for the next.
+ * The label comes first in the DOM (dt before dd) and the tile flips it
+ * visually, so the list reads "label, value" without a hidden duplicate.
  */
 function Stats() {
   return (
-    <section id="rakamlar" className="scroll-mt-20 py-[clamp(4rem,10vw,8rem)]">
-      <div className="mx-auto max-w-6xl px-5">
-        <p className="eyebrow mb-5 text-line">{stats.eyebrow}</p>
-        <h2 className="text-[clamp(2rem,1.2rem+3.4vw,3.5rem)] leading-[1.04] font-semibold tracking-[-0.022em]">
-          {stats.headline}
-        </h2>
-
-        <div className="relative mt-14">
-          {/* One continuous line running behind the numerals, doing the job a
-              row of borders would otherwise do -- the arc at its widest
-              scale, the same curve as the heading rules. */}
-          <svg
-            aria-hidden="true"
-            viewBox="0 0 1200 40"
-            preserveAspectRatio="none"
-            className="pointer-events-none absolute inset-x-0 bottom-12 hidden h-10 w-full overflow-visible lg:block"
-          >
-            <path
-              d="M0 14 A12864 12864 0 0 0 1200 14"
-              pathLength={1}
-              fill="none"
-              stroke="var(--line)"
-              strokeWidth="3"
-              strokeLinecap="round"
-              className="arc-draw"
-            />
-          </svg>
-
-          <dl className="relative grid grid-cols-1 gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
-            {stats.items.map((s, i) => {
-              const lead = i === 0
-              return (
-                <div
-                  key={s.label}
-                  className={
-                    lead
-                      ? "rounded-2xl bg-accent px-6 py-7 text-accent-foreground"
-                      : undefined
-                  }
-                >
-                  <dt className="sr-only">{s.label}</dt>
-                  <dd
-                    className={cn(
-                      "numeral font-heading text-[clamp(3rem,2rem+5vw,5.5rem)] leading-[0.9] font-bold tracking-[-0.04em]",
-                      lead && "-ml-3"
-                    )}
-                  >
-                    <StatCounter value={s.value} prefix={s.prefix} />
-                  </dd>
-                  <p
-                    aria-hidden="true"
-                    className={cn(
-                      "mt-3 text-sm font-medium",
-                      lead ? "text-accent-foreground" : "text-muted-foreground"
-                    )}
-                  >
-                    {s.label}
-                  </p>
-                </div>
-              )
-            })}
-          </dl>
+    <section
+      id="rakamlar"
+      className="scroll-mt-20 bg-band py-[clamp(4rem,10vw,8rem)]"
+    >
+      <div className="mx-auto grid max-w-6xl gap-12 px-5 lg:grid-cols-12 lg:items-center lg:gap-8">
+        <div className="lg:col-span-5">
+          <p className="eyebrow mb-5 text-line">{stats.eyebrow}</p>
+          <h2 className="text-[clamp(2rem,1.2rem+3vw,3.5rem)] leading-[1.02] font-extrabold tracking-[-0.02em]">
+            {stats.headline}
+          </h2>
         </div>
+
+        <dl className="grid grid-cols-2 gap-3 sm:gap-4 lg:col-span-7">
+          {stats.items.map((s: Stat, i) => {
+            const lead = i === 0
+            return (
+              <div
+                key={s.label}
+                className={cn(
+                  "@container flex min-h-40 flex-col-reverse justify-between gap-4 rounded-[1.5rem] p-5 sm:min-h-48 sm:p-7",
+                  lead
+                    ? "bg-accent text-accent-foreground"
+                    : "border border-border bg-card"
+                )}
+              >
+                <dt
+                  className={cn(
+                    "text-sm leading-snug font-medium",
+                    lead ? "text-accent-foreground" : "text-muted-foreground"
+                  )}
+                >
+                  {s.label}
+                </dt>
+                <dd className="numeral text-[clamp(1.75rem,19cqi,4rem)] leading-[0.9] tracking-[-0.03em]">
+                  <StatCounter
+                    value={s.value}
+                    prefix={s.prefix}
+                    suffix={s.suffix}
+                  />
+                </dd>
+              </div>
+            )
+          })}
+        </dl>
       </div>
     </section>
   )

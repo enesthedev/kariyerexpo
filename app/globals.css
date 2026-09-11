@@ -249,6 +249,69 @@
 }
 
 /* ---------------------------------------------------------------------------
+   The swoosh: the logo's inner orange crescent, drawn BEHIND the lower part
+   of one accent phrase per heading. See components/brand/swoosh.tsx.
+
+   It is a background on the inline span, not a child element, because a
+   phrase wraps: an absolutely positioned child is laid out against the union
+   of the span's line boxes and trails off past the last word, whereas
+   box-decoration-break: clone gives every line fragment its own crescent,
+   measured to that fragment. Being a background also keeps it under the
+   glyphs, so the text colour never changes and the phrase stays legible.
+
+   The crescent is two cubic edges meeting in pointed tips, the upper edge
+   shallow and the lower deep, so it is thickest mid-phrase and tapers out
+   like the logo's crescents. preserveAspectRatio="none" stretches it to any
+   phrase width; the tips stay pointed at every stretch.
+
+   A background image cannot read a custom property, so the fill is --accent
+   baked as hex: oklch(0.6787 0.2142 37.8) is #FF5717, as printed by
+   `bun scripts/check-contrast.ts`. It must track the token: change --accent,
+   change this. Orange is a fill here, which the colour bans allow on every
+   ground, navy included, so one rule serves every surface.
+
+   The draw-on is scroll-driven and pure CSS, the arc-wipe idea with its own
+   keyframes. Where animation-timeline is unsupported, or motion is reduced,
+   the swoosh simply arrives fully drawn.
+--------------------------------------------------------------------------- */
+
+@layer components {
+  .swoosh {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 20' preserveAspectRatio='none'%3E%3Cpath d='M0 3C50 6 130 6 200 0C135 24 60 25 0 3Z' fill='%23FF5717'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: 100% 0.42em;
+    padding-bottom: 0.06em;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+    animation: swoosh-wipe linear both;
+    animation-timeline: view();
+    animation-range: entry 25% cover 45%;
+  }
+}
+
+@keyframes swoosh-wipe {
+  from {
+    background-size: 0% 0.42em;
+  }
+  to {
+    background-size: 100% 0.42em;
+  }
+}
+
+@supports not (animation-timeline: view()) {
+  .swoosh {
+    animation: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .swoosh {
+    animation: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
    legacy — removed with the badge-era components
 
    The full badge mark. Three greyscale alpha masks painted with CSS colour,

@@ -1,3 +1,4 @@
+import { ui } from "@/lib/content"
 import { StructuredData } from "@/components/structured-data"
 import { SiteFooter } from "@/components/layout/site-footer"
 import { SiteHeader } from "@/components/layout/site-header"
@@ -19,7 +20,7 @@ export default function Page() {
         href="#fuar"
         className="sr-only rounded-full bg-primary px-5 py-2 text-primary-foreground focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100]"
       >
-        İçeriğe geç
+        {ui.skipToContent}
       </a>
       <SiteHeader />
       <main>

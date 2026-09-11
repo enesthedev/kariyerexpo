@@ -4,7 +4,7 @@ import * as React from "react"
 import { IconMail, IconMenu2 } from "@tabler/icons-react"
 import { cn } from "cn"
 
-import { nav } from "@/lib/content"
+import { header, nav, ui } from "@/lib/content"
 import { BadgeMark } from "@/components/brand/badge-mark"
 import { Wordmark } from "@/components/brand/wordmark"
 import { Button, buttonVariants } from "@/components/ui/button"
@@ -127,7 +127,7 @@ function SiteHeader() {
               )}
             >
               <IconMail data-icon="inline-start" />
-              Haberdar ol
+              {header.cta}
             </a>
 
             {/* Controlled so the drawer's links can stay real anchors: they
@@ -140,11 +140,12 @@ function SiteHeader() {
                 }
               >
                 <IconMenu2 />
-                <span className="sr-only">Menüyü aç</span>
+                <span className="sr-only">{header.menuOpen}</span>
               </SheetTrigger>
               <SheetContent
                 side="right"
                 data-surface="navy"
+                closeLabel={ui.close}
                 className="w-[86%] border-l-0 bg-sidebar text-sidebar-foreground sm:max-w-sm"
               >
                 <SheetTitle className="px-6 pt-6 text-sidebar-foreground">
@@ -172,7 +173,7 @@ function SiteHeader() {
                     )}
                   >
                     <IconMail data-icon="inline-start" />
-                    Haberdar ol
+                    {header.cta}
                   </a>
                 </div>
               </SheetContent>

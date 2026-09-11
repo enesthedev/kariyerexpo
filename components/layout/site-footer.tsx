@@ -96,9 +96,7 @@ function SiteFooter() {
         </div>
 
         <div className="mt-14 flex flex-col gap-3 border-t border-sidebar-border pt-6 text-sm opacity-70 sm:flex-row sm:items-center sm:justify-between">
-          <p>
-            © 2027 {site.name}. {site.organizers.join(" & ")} iş birliğiyle.
-          </p>
+          <p>{footer.copyright}</p>
           <ul className="flex gap-5">
             {footer.legal.map((l) => (
               <li key={l.label}>

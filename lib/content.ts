@@ -3,8 +3,8 @@
  * else, so the client edits one file.
  *
  * The two "not announced yet" facts are modelled as null, not as prose:
- *   site.date === null      -> the hero pill renders dashed ("yakında")
- *   speakers.length === 0   -> speaker cards render dashed placeholders
+ *   site.date === null      -> the hero pill renders the pending dots ("yakında")
+ *   speakers.length === 0   -> speaker cards render pending-dot placeholders
  * Filling either one in flips the UI to its confirmed state with no layout
  * change. That is the whole design system in two fields.
  */
@@ -57,6 +57,20 @@ export const nav = [
   { href: "#konusmacilar", label: "Konuşmacılar" },
   { href: "#sss", label: "SSS" },
 ] as const
+
+/** Small, reusable UI chrome -- controls and labels no single section owns. */
+export const ui = {
+  skipToContent: "İçeriğe geç",
+  prev: "Önceki",
+  next: "Sonraki",
+  menu: "Menü",
+  close: "Kapat",
+} as const
+
+export const header = {
+  cta: "Haberdar ol",
+  menuOpen: "Menüyü aç",
+} as const
 
 export const hero = {
   headline: "Yeteneğin ve fırsatın",
@@ -119,6 +133,8 @@ export const audiences = {
   eyebrow: "KİMLER KATILMALI",
   headline: "Üç farklı yol,",
   headlineAccent: "tek bir salon.",
+  detailsOpen: "Ayrıntıları göster",
+  detailsClose: "Ayrıntıları gizle",
   items: [
     {
       id: "ogrenci",
@@ -164,6 +180,8 @@ export const program = {
   headlineAccent: "şimdiden belli.",
   /** The quiet variant of "yakında": plain muted text, no dashed pill. */
   note: "Saatler ve salonlar program takvimiyle birlikte açıklanacak.",
+  /** The carousel's accessible region name (WAI-ARIA scrollable-region). */
+  carouselLabel: "Oturumlar",
   groups: [
     {
       title: "Paneller",
@@ -193,8 +211,9 @@ export const speakersSection = {
      dotted İ below is U+0130, not an ASCII I. */
   eyebrow: "KONUŞMACILAR",
   headline: "Konuşmacılar",
-  /** Knocked out of the heading -- the pending state, said in form. */
-  headlineAccent: "yakında.",
+  /** The pending dots render after this -- the pending state, said in form.
+      No period: the three dots (navy, orange, silver) replace it. */
+  headlineAccent: "yakında",
   note:
     "Sekiz konuşmacının ilk dördünü önümüzdeki aylarda duyuracağız. " +
     "Listeyi ilk görenlerden olmak için e-posta bırakabilirsin.",
@@ -283,7 +302,9 @@ export const faq = {
 } as const
 
 export const cta = {
-  headline: "Tarihi ilk öğrenenlerden ol.",
+  headline: "Tarihi",
+  /** The swoosh sits under this phrase. Never under a single word. */
+  headlineAccent: "ilk öğrenenlerden ol.",
   lede:
     "Tek yapman gereken bir e-posta adresi bırakmak. " +
     "Spam yok, ayda birden fazla e-posta yok.",
@@ -325,12 +346,15 @@ export const footer = {
     { href: "#", label: "Instagram", icon: "instagram" },
     { href: "#", label: "X", icon: "x" },
   ],
+  /** Built from site fields so the org names never drift from the header. */
+  copyright: `© 2027 ${site.name}. ${site.organizers.join(" & ")} iş birliğiyle.`,
 } as const
 
 export const form = {
   label: "E-posta adresin",
   placeholder: "e-posta adresin",
   roleLegend: "Ben bir",
+  roleSelectPlaceholder: "Seçiniz",
   submit: "Haberdar et",
   submitting: "Gönderiliyor…",
   success: "Listeye eklendin. Tarih kesinleştiğinde ilk sen öğreneceksin.",

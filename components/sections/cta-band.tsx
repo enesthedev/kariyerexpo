@@ -35,7 +35,7 @@ function CtaBand() {
 
       <div className="relative mx-auto max-w-2xl px-5 text-center">
         <h2 className="text-[clamp(2rem,1.2rem+3.4vw,3.5rem)] leading-[1.04] font-semibold tracking-[-0.022em]">
-          {cta.headline}
+          {cta.headline} {cta.headlineAccent}
         </h2>
         <p className="mx-auto mt-5 max-w-[52ch] opacity-80">{cta.lede}</p>
         <SubscribeForm showRoles className="mt-10 text-left" />

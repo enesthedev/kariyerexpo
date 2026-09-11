@@ -3,15 +3,10 @@
 import { Tabs as TabsPrimitive } from "@base-ui/react/tabs"
 import { cn } from "cn"
 
-function Tabs({
-  className,
-  orientation = "horizontal",
-  ...props
-}: TabsPrimitive.Root.Props) {
+function Tabs({ className, ...props }: TabsPrimitive.Root.Props) {
   return (
     <TabsPrimitive.Root
       data-slot="tabs"
-      data-orientation={orientation}
       className={cn("flex flex-col gap-6", className)}
       {...props}
     />

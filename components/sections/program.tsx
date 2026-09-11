@@ -1,14 +1,21 @@
-import { program } from "@/lib/content"
-import { Arc } from "@/components/brand/arc"
+import { program, ui } from "@/lib/content"
+import { Swoosh } from "@/components/brand/swoosh"
+import { Stripes } from "@/components/brand/stripes"
+import { SectionHeading } from "@/components/section-heading"
+import { Carousel } from "@/components/carousel"
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 
 /**
- * A list, not a card grid and not tabs: six sibling themes with no hierarchy
- * between them genuinely are a list, and numbering them would imply a
- * sequence that does not exist.
+ * Follows the reference site's blog-tabs: one tab per theme group, each
+ * panel a carousel of session cards. Every panel is `keepMounted` so the
+ * Atölyeler items are in the server HTML even while the Paneller tab shows.
  *
- * "Yakında" appears here in its quiet variant -- plain muted text, no dashed
- * outline -- because the themes themselves are confirmed and only the
- * timetable is not. The device stays a system by staying proportional.
+ * base-ui hides the inactive panel with the `hidden` attribute rather than a
+ * class, so no panel here (and no element `TabsContent` renders as) carries
+ * its own `flex`/`grid` display utility -- a utility of equal specificity
+ * declared after Tailwind's `[hidden]` reset would out-cascade it and leave
+ * the panel visible. The Carousel's own display styling lives on its inner
+ * elements, safely below the panel root.
  */
 function Program() {
   return (
@@ -17,39 +24,56 @@ function Program() {
       className="scroll-mt-20 bg-band py-[clamp(4rem,10vw,8rem)]"
     >
       <div className="mx-auto max-w-6xl px-5">
-        <p className="eyebrow mb-5 text-line">{program.eyebrow}</p>
-        <h2 className="max-w-2xl text-[clamp(2rem,1.2rem+3.4vw,3.5rem)] leading-[1.04] font-semibold tracking-[-0.022em]">
-          {program.headline} <Arc>{program.headlineAccent}</Arc>
-        </h2>
-        <p className="mt-6 max-w-[62ch] text-muted-foreground">
-          {program.note}
-        </p>
+        <SectionHeading
+          eyebrow={program.eyebrow}
+          title={
+            <>
+              {program.headline} <Swoosh>{program.headlineAccent}</Swoosh>
+            </>
+          }
+        />
 
-        <div className="mt-14 grid gap-x-14 gap-y-12 md:grid-cols-2">
-          {program.groups.map((g) => (
-            <section key={g.title}>
-              <h3 className="font-sans text-sm font-medium text-muted-foreground">
-                {g.title}
-              </h3>
-              <ul className="mt-4">
-                {g.items.map((item) => (
-                  <li
+        <Tabs defaultValue={program.groups[0].title} className="mt-14">
+          <TabsList>
+            {program.groups.map((group) => (
+              <TabsTrigger key={group.title} value={group.title}>
+                {group.title}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+
+          {program.groups.map((group) => (
+            <TabsContent key={group.title} value={group.title} keepMounted>
+              <Carousel
+                label={program.carouselLabel}
+                prevLabel={ui.prev}
+                nextLabel={ui.next}
+              >
+                {group.items.map((item, index) => (
+                  <div
                     key={item}
-                    className="flex items-start gap-4 border-t border-border py-4"
+                    className="relative flex h-full min-h-[13rem] w-[78vw] max-w-[22rem] flex-col justify-between overflow-hidden rounded-[1.5rem] border border-border bg-card p-6 sm:w-[20rem]"
                   >
+                    <Stripes className="absolute top-5 right-5 h-7 opacity-70" />
                     <span
                       aria-hidden="true"
-                      className="mt-[0.7rem] size-2 shrink-0 rounded-full bg-line"
-                    />
-                    <span className="font-heading text-[clamp(1.125rem,1rem+0.6vw,1.375rem)] leading-snug font-semibold">
-                      {item}
+                      className="numeral text-2xl leading-none text-line"
+                    >
+                      {String(index + 1).padStart(2, "0")}
                     </span>
-                  </li>
+                    <p className="mt-6 text-[clamp(1.125rem,1rem+0.6vw,1.375rem)] leading-snug font-semibold tracking-[-0.015em]">
+                      {item}
+                    </p>
+                  </div>
                 ))}
-              </ul>
-            </section>
+              </Carousel>
+            </TabsContent>
           ))}
-        </div>
+        </Tabs>
+
+        <p className="mt-10 max-w-[62ch] text-muted-foreground">
+          {program.note}
+        </p>
       </div>
     </section>
   )

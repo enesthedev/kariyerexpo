@@ -1,39 +1,44 @@
 import { about } from "@/lib/content"
-import { Arc } from "@/components/brand/arc"
+import { Swoosh } from "@/components/brand/swoosh"
+import { SectionHeading } from "@/components/section-heading"
 
 /**
- * The quietest section on the page and the only real reading passage: no
- * cards, no icons, nothing competing with the prose.
+ * The reference site's customer-service block: heading on the left, the
+ * reading passage on the right, then a row of short facts. Still the quietest
+ * section on the page -- no cards, no icons, nothing competing with the prose.
+ *
+ * Each fact is its own heading, so each term carries its own swoosh; the
+ * one-phrase-per-heading rule holds because every term is a phrase.
  */
 function About() {
   return (
-    <section
-      id="fuar"
-      className="scroll-mt-20 bg-band py-[clamp(4rem,10vw,8rem)]"
-    >
-      <div className="mx-auto grid max-w-6xl gap-10 px-5 md:grid-cols-12 md:gap-12">
-        <p className="eyebrow text-line md:col-span-12">{about.eyebrow}</p>
-        <h2 className="text-[clamp(2rem,1.2rem+3.4vw,3.5rem)] leading-[1.04] font-semibold tracking-[-0.022em] md:col-span-5">
-          {about.headline} <Arc>{about.headlineAccent}</Arc>
-        </h2>
-        <div className="md:col-span-7">
-          {about.body.map((p) => (
-            <p
-              key={p.slice(0, 24)}
-              className="mt-0 max-w-[62ch] leading-[1.65] not-first:mt-5"
-            >
+    <section id="fuar" className="scroll-mt-20 py-[clamp(4rem,10vw,8rem)]">
+      <div className="mx-auto max-w-6xl px-5">
+        <SectionHeading
+          eyebrow={about.eyebrow}
+          title={
+            <>
+              {about.headline} <Swoosh>{about.headlineAccent}</Swoosh>
+            </>
+          }
+          description={about.body.map((p) => (
+            <p key={p.slice(0, 24)} className="max-w-[62ch] not-first:mt-5">
               {p}
             </p>
           ))}
-          <dl className="mt-9 space-y-4 border-l-2 border-line pl-5">
-            {about.facts.map((f) => (
-              <div key={f.term}>
-                <dt className="font-heading font-semibold">{f.term}</dt>
-                <dd className="text-sm text-muted-foreground">{f.detail}</dd>
-              </div>
-            ))}
-          </dl>
-        </div>
+          className="md:items-start"
+        />
+
+        <dl className="mt-14 grid gap-10 border-t border-border pt-10 sm:grid-cols-3 sm:gap-8">
+          {about.facts.map((f) => (
+            <div key={f.term}>
+              <dt className="font-heading text-xl leading-snug font-bold">
+                <Swoosh>{f.term}</Swoosh>
+              </dt>
+              <dd className="mt-3 text-muted-foreground">{f.detail}</dd>
+            </div>
+          ))}
+        </dl>
       </div>
     </section>
   )

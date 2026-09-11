@@ -1,25 +1,23 @@
+import Image from "next/image"
+
 import { speakers, speakersSection } from "@/lib/content"
-import { Knockout } from "@/components/brand/knockout"
+import { PendingDots } from "@/components/brand/pending-dots"
+import { SectionHeading } from "@/components/section-heading"
 
 /**
- * Where the knockout rule does its heaviest lifting, which is why this is the
- * one section that sits on navy: the reserved slots become actual holes in the
- * darkest field on the page, and the heading says the same thing in words that
- * the cards say in form.
+ * The reference site's blog cards, on the page's one navy section. The
+ * heading says "yakında" in words and the cards say it in form: the second
+ * and third of the three pending-dot sites (the heading, then the placeholder
+ * cards -- one instance per card is still one use).
  *
- * The placeholder is designed to look intentional rather than broken. It is
- * not a skeleton shimmer, not a question-mark icon, and not a grey avatar
- * circle -- all three read as failure. The aperture is the section's own
- * ground colour exactly, so it reads as cut through the card rather than as a
- * grey disc sitting on it, and the name bars are cut the same way, which no
- * avatar placeholder does.
+ * Every card is a lighter-navy shell around a photo well cut in the section's
+ * own navy. The well is the ground, not a tint, because the navy surface
+ * remaps the dots to light / orange / --sidebar-border and that trio is only
+ * tuned against --sidebar itself; on any lighter well the third dot fades.
  *
  * Announced speakers render in the same grid at the same size, so a mixed
- * state is the normal case and costs no layout work.
- *
- * Nothing here animates. Confirmed things may move; reserved things never do,
- * so the state reads before you have read a word -- and the section drops a
- * reveal animation rather than gaining one.
+ * state is the normal case and costs no layout work. Nothing on a
+ * placeholder moves: confirmed things may animate, pending things never do.
  */
 function Speakers() {
   const placeholders = Math.max(0, speakersSection.slots - speakers.length)
@@ -31,33 +29,47 @@ function Speakers() {
       className="scroll-mt-20 bg-sidebar py-[clamp(4rem,10vw,8rem)] text-sidebar-foreground"
     >
       <div className="mx-auto max-w-6xl px-5">
-        <p className="eyebrow mb-5 text-sidebar-primary">
-          {speakersSection.eyebrow}
-        </p>
-        <h2 className="max-w-2xl text-[clamp(2rem,1.2rem+3.4vw,3.5rem)] leading-[1.04] font-semibold tracking-[-0.022em]">
-          {speakersSection.headline}{" "}
-          <Knockout className="rounded-xl box-decoration-clone px-[0.18em] pb-[0.06em]">
-            {speakersSection.headlineAccent}
-          </Knockout>
-        </h2>
-        <p className="mt-6 max-w-[62ch] opacity-80">{speakersSection.note}</p>
+        <SectionHeading
+          eyebrow={speakersSection.eyebrow}
+          title={
+            <>
+              {speakersSection.headline} {speakersSection.headlineAccent}
+              <PendingDots size="lg" className="ml-[0.18em]" />
+            </>
+          }
+          description={
+            <p className="text-sidebar-foreground/80">{speakersSection.note}</p>
+          }
+        />
         {placeholders > 0 ? (
           <p className="sr-only">{speakersSection.srAnnouncement}</p>
         ) : null}
 
-        <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {speakers.map((s) => (
             <article
               key={s.name}
-              className="rounded-2xl bg-card p-5 text-card-foreground"
+              className="rounded-[1.5rem] border border-sidebar-border bg-sidebar-accent p-3"
             >
-              <div className="aspect-square overflow-hidden rounded-full bg-muted" />
-              <h3 className="mt-4 font-heading text-lg font-semibold">
-                {s.name}
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                {s.title}, {s.org}
-              </p>
+              <div className="relative aspect-[4/5] overflow-hidden rounded-[1.125rem] bg-sidebar">
+                {s.photo ? (
+                  <Image
+                    src={s.photo}
+                    alt=""
+                    fill
+                    sizes="(min-width: 1024px) 16rem, (min-width: 640px) 45vw, 90vw"
+                    className="object-cover"
+                  />
+                ) : null}
+              </div>
+              <div className="px-2 pt-4 pb-2">
+                <h3 className="font-heading text-lg leading-snug font-bold">
+                  {s.name}
+                </h3>
+                <p className="mt-1 text-sm text-sidebar-foreground/80">
+                  {s.title}, {s.org}
+                </p>
+              </div>
             </article>
           ))}
 
@@ -65,11 +77,15 @@ function Speakers() {
             <div
               key={`slot-${i}`}
               aria-hidden="true"
-              className="rounded-2xl bg-card p-5"
+              className="rounded-[1.5rem] border border-sidebar-border bg-sidebar-accent p-3"
             >
-              <div className="aspect-square rounded-full bg-sidebar" />
-              <div className="mt-4 h-4 w-3/5 rounded-full bg-sidebar" />
-              <div className="mt-2 h-3 w-2/5 rounded-full bg-sidebar" />
+              <div className="grid aspect-[4/5] place-items-center rounded-[1.125rem] bg-sidebar text-4xl">
+                <PendingDots size="lg" />
+              </div>
+              <div className="px-2 pt-5 pb-3">
+                <div className="h-3.5 w-3/5 rounded-full bg-sidebar" />
+                <div className="mt-2.5 h-2.5 w-2/5 rounded-full bg-sidebar" />
+              </div>
             </div>
           ))}
         </div>

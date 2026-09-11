@@ -4,7 +4,6 @@ import { Archivo } from "next/font/google"
 import "./globals.css"
 import { site } from "@/lib/content"
 import { MotionProvider } from "@/components/motion-provider"
-import { ThemeProvider } from "@/components/theme-provider"
 import { cn } from "@/lib/utils"
 
 // One family for the whole site. The mark speaks in two voices -- condensed
@@ -51,10 +50,8 @@ export const metadata: Metadata = {
 // themeColor, colorScheme and viewport were deprecated inside `metadata` in
 // Next 14 and must live here instead.
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#F4F7FA" },
-    { media: "(prefers-color-scheme: dark)", color: "#061734" },
-  ],
+  themeColor: "#FFFFFF",
+  colorScheme: "light",
 }
 
 export default function RootLayout({
@@ -63,15 +60,9 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html
-      lang="tr"
-      suppressHydrationWarning
-      className={cn("font-sans antialiased", archivo.variable)}
-    >
+    <html lang="tr" className={cn("font-sans antialiased", archivo.variable)}>
       <body>
-        <ThemeProvider>
-          <MotionProvider>{children}</MotionProvider>
-        </ThemeProvider>
+        <MotionProvider>{children}</MotionProvider>
       </body>
     </html>
   )

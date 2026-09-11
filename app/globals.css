@@ -2,6 +2,9 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
+/* Nothing ever carries `.dark` -- this site is light-only -- so any
+   dark-prefixed class a generator emits stays inert instead of following
+   the OS setting. */
 @custom-variant dark (&:is(.dark *));
 
 /* ---------------------------------------------------------------------------
@@ -43,6 +46,7 @@
 --------------------------------------------------------------------------- */
 
 :root {
+  color-scheme: light;
   --background: oklch(0.974 0.0055 260);
   --foreground: oklch(0.2506 0.0947 260);
   --card: oklch(0.995 0.002 260);
@@ -101,55 +105,7 @@
   --knockout-ground: var(--background);
 }
 
-.dark {
-  --background: oklch(0.21 0.062 260);
-  --foreground: oklch(0.935 0.009 260);
-  --card: oklch(0.256 0.062 260);
-  --card-foreground: oklch(0.935 0.009 260);
-  --popover: oklch(0.256 0.062 260);
-  --popover-foreground: oklch(0.935 0.009 260);
-  --primary: oklch(0.6902 0.198 36);
-  --primary-foreground: oklch(0.21 0.062 260);
-  --secondary: oklch(0.315 0.056 260);
-  --secondary-foreground: oklch(0.935 0.009 260);
-  --muted: oklch(0.29 0.058 260);
-  --muted-foreground: oklch(0.755 0.029 260);
-  --accent: oklch(0.6902 0.198 36);
-  --accent-foreground: oklch(0.21 0.062 260);
-  --destructive: oklch(0.645 0.175 27);
-  --destructive-foreground: oklch(0.21 0.062 260);
-  --border: oklch(0.345 0.042 260);
-  --input: oklch(0.58 0.038 260);
-  --ring: oklch(0.6902 0.198 36);
-  --chart-1: oklch(0.6902 0.198 36);
-  --chart-2: oklch(0.79 0.025 260);
-  --chart-3: oklch(0.8344 0.0124 260);
-  --chart-4: oklch(0.625 0.12 36);
-  --chart-5: oklch(0.545 0.033 260);
-  --sidebar: oklch(0.256 0.062 260);
-  --sidebar-foreground: oklch(0.92 0.011 260);
-  --sidebar-primary: oklch(0.6902 0.198 36);
-  --sidebar-primary-foreground: oklch(0.21 0.062 260);
-  --sidebar-accent: oklch(0.32 0.068 260);
-  --sidebar-accent-foreground: oklch(0.92 0.011 260);
-  --sidebar-border: oklch(0.41 0.062 260);
-  --sidebar-ring: oklch(0.6902 0.198 36);
-
-  --silver: oklch(0.8344 0.0124 260);
-  --band: oklch(0.298 0.056 260);
-  --surface-hover: oklch(0.305 0.062 260);
-  /* Orange clears 5.91:1 on the dark ground, so --line collapses into
-     --accent here. The light-mode split exists only because of the ban. */
-  --line: oklch(0.6902 0.198 36);
-
-  /* The mark's letters are absence, not paint, so a fill remap is not enough
-     -- on a dark ground the body has to become the light value or the whole
-     wordmark reads as a solid disc. The keyline drops well below the body so
-     it stays a keyline instead of competing with it. */
-  --mark-keyline: oklch(0.45 0.05 260);
-}
-
-/* The CTA band, the mobile drawer and the footer stay navy in BOTH themes, so
+/* The CTA band, the mobile drawer and the footer stay navy, so
    the focus ring inside them must come from the sidebar scale or it turns
    into dark orange on dark navy. The mark needs the same treatment for a
    different reason: its letters are knockouts, so a navy body on a navy
@@ -381,9 +337,8 @@
     animation-range: entry 25% cover 45%;
   }
 
-  /* --line is the readable orange on paper and the full accent everywhere
-     dark, so the baked stroke follows it. */
-  .dark .arc,
+  /* --line is the readable orange on paper and the full accent on navy
+     surfaces, so the baked stroke follows it. */
   [data-surface="navy"] .arc {
     --arc-line: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 18' preserveAspectRatio='none'%3E%3Cpath d='M3 4 A620 620 0 0 0 237 4' fill='none' stroke='%23FD6236' stroke-width='5' stroke-linecap='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");
   }

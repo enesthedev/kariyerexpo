@@ -7,7 +7,6 @@ import { cn } from "cn"
 import { nav } from "@/lib/content"
 import { BadgeMark } from "@/components/brand/badge-mark"
 import { Wordmark } from "@/components/brand/wordmark"
-import { ThemeToggle } from "@/components/theme-toggle"
 import { Button, buttonVariants } from "@/components/ui/button"
 import {
   Sheet,
@@ -115,7 +114,6 @@ function SiteHeader() {
           </nav>
 
           <div className={cn("flex items-center gap-1", "ml-auto lg:ml-0")}>
-            <ThemeToggle />
             {/* Base UI's Button enforces button semantics (role="button",
                 Enter/Space handling) and its docs say not to render links
                 through it -- nativeButton={false} would silence the warning by

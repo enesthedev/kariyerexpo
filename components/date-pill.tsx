@@ -1,44 +1,58 @@
-import { IconCalendarPlus } from "@tabler/icons-react"
+import { IconCalendarEvent } from "@tabler/icons-react"
 import { cn } from "cn"
 
 import { site } from "@/lib/content"
-import { Knockout } from "@/components/brand/knockout"
+import { PendingDots } from "@/components/brand/pending-dots"
 
 /**
- * The first of the three knockout slots, and the clearest statement of the
- * rule: the year is settled and says so in the wordmark's chip, the day is
- * not, so the date is cut out rather than dashed.
+ * The first of the three pending-dot slots, and the clearest statement of the
+ * rule: the logo's three dots are the page's one "not announced yet" signal.
  *
- * It occupies exactly the slot a real date would occupy, at the size a real
- * date would be. When site.date is filled in the pill fills with ink and
- * nothing about the layout moves -- which is what makes the missing date read
- * as anticipation rather than as a hole in the page.
+ * Both states share one pill shape at one size, so filling in site.date swaps
+ * ground and content without moving anything around it. Confirmed is navy
+ * with the date as a <time>; pending is a quiet card pill that says so in
+ * words and then in dots. The dots are static on purpose -- dots that move
+ * read as a typing indicator, not as a fact still to come.
  */
 function DatePill({ className }: { className?: string }) {
-  const announced = Boolean(site.date)
-  const label = site.date
-    ? new Intl.DateTimeFormat("tr-TR", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      }).format(new Date(site.date))
-    : site.dateFallback
-
   const shape =
-    "inline-flex w-fit items-center gap-2.5 rounded-full px-5 py-2.5 text-sm font-medium"
+    "inline-flex w-fit items-center gap-2.5 rounded-full px-5 py-2.5 text-sm"
 
   return (
-    <div className={cn("flex flex-col gap-1.5", className)}>
-      {announced ? (
-        <span className={cn(shape, "border-2 border-line")}>
-          <IconCalendarPlus className="size-4 shrink-0 text-line" />
-          {label}
+    <div className={cn("flex flex-col gap-2", className)}>
+      {site.date ? (
+        <span
+          className={cn(
+            shape,
+            "bg-primary font-semibold text-primary-foreground"
+          )}
+        >
+          <IconCalendarEvent
+            aria-hidden="true"
+            className="size-4 shrink-0 text-accent"
+          />
+          <time dateTime={site.date}>
+            {new Intl.DateTimeFormat("tr-TR", {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+            }).format(new Date(site.date))}
+          </time>
         </span>
       ) : (
-        <Knockout className={shape}>
-          <IconCalendarPlus className="size-4 shrink-0" />
-          {label}
-        </Knockout>
+        <span
+          className={cn(
+            shape,
+            "border border-border bg-card font-medium shadow-sm"
+          )}
+        >
+          <IconCalendarEvent
+            aria-hidden="true"
+            className="size-4 shrink-0 text-muted-foreground"
+          />
+          {site.dateFallback}
+          <PendingDots size="lg" className="ml-0.5" />
+        </span>
       )}
       <span className="pl-1 text-sm text-muted-foreground">
         {site.venue.name}, {site.venue.district}

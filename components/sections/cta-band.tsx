@@ -1,48 +1,46 @@
 import { cta } from "@/lib/content"
+import { Orbit } from "@/components/brand/orbit"
+import { Stripes } from "@/components/brand/stripes"
+import { Swoosh } from "@/components/brand/swoosh"
 import { SubscribeForm } from "@/components/subscribe-form"
 
 /**
- * Navy in both themes -- the one full surface the logo's navy gets, and the
- * one place the loud orange becomes a button. data-surface="navy" repoints
- * --ring and --border to the sidebar scale so focus stays visible here.
+ * The reference site's visa-banner: a rounded navy banner inside the page's
+ * container rather than a full-bleed band, carrying the page's last sign-up
+ * form. This form is the one that listens for the audience cards'
+ * [data-role-target] links, so their CTAs land here with the role preselected.
  *
- * No two-tone sentence: accenting a single word in a headline is the tell this
- * design is avoiding.
- *
- * The top edge is the arc at its largest scale -- a segment of the badge's
- * circle at enormous radius, which is the one place the mark's geometry turns
- * into architecture rather than ornament. The corner blobs are gone with
- * nothing in their place; repeating the mark's shapes is the failure mode this
- * design is built to avoid.
+ * data-surface="navy" repoints --ring, --border, --line and the mark colours,
+ * so focus rings, the stripes and the swoosh stay legible on this ground.
+ * The orbit is quieted to --sidebar-border: silver at full strength is 6.69:1
+ * on navy and would outshout the orange. Both decorations sit in the banner's
+ * own stacking context and are clipped by it.
  */
 function CtaBand() {
   return (
-    <section
-      id="iletisim"
-      data-surface="navy"
-      className="relative scroll-mt-20 overflow-hidden bg-sidebar py-[clamp(4rem,10vw,7rem)] text-sidebar-foreground"
-    >
-      {/* Drawn as a filled shape rather than a stroke so the band's ground
-          genuinely follows the curve instead of sitting under a line. */}
-      <svg
-        viewBox="0 0 1440 40"
-        preserveAspectRatio="none"
-        aria-hidden="true"
-        className="absolute inset-x-0 -top-px h-10 w-full fill-band"
-      >
-        <path d="M0 0 H1440 V40 A2000 2000 0 0 0 0 40 Z" />
-      </svg>
+    <section id="iletisim" className="scroll-mt-20 py-[clamp(3rem,8vw,6rem)]">
+      <div className="mx-auto max-w-[86rem] px-3 sm:px-4">
+        <div
+          data-surface="navy"
+          className="relative isolate overflow-hidden rounded-[2.5rem] bg-sidebar text-sidebar-foreground"
+        >
+          <Orbit className="absolute -bottom-[45%] -left-[40%] -z-10 w-[40rem] max-w-none stroke-sidebar-border sm:-left-[20%] lg:-bottom-[70%] lg:-left-[8%] lg:w-[52rem]" />
+          <Stripes className="absolute -top-8 right-[4%] -z-10 hidden h-28 lg:block" />
 
-      <div className="relative mx-auto max-w-2xl px-5 text-center">
-        <h2 className="text-[clamp(2rem,1.2rem+3.4vw,3.5rem)] leading-[1.04] font-semibold tracking-[-0.022em]">
-          {cta.headline} {cta.headlineAccent}
-        </h2>
-        <p className="mx-auto mt-5 max-w-[52ch] opacity-80">{cta.lede}</p>
-        <SubscribeForm
-          showRoles
-          listenForRoleTargets
-          className="mt-10 text-left"
-        />
+          <div className="mx-auto grid max-w-6xl gap-10 px-6 py-14 sm:px-10 md:py-20 lg:grid-cols-12 lg:items-center lg:gap-12">
+            <div className="lg:col-span-6">
+              <h2 className="text-[clamp(2rem,1.2rem+3vw,3.5rem)] leading-[1.02] font-extrabold tracking-[-0.02em]">
+                {cta.headline} <Swoosh>{cta.headlineAccent}</Swoosh>
+              </h2>
+              <p className="mt-5 max-w-[48ch] text-lg leading-relaxed text-sidebar-foreground/80">
+                {cta.lede}
+              </p>
+            </div>
+            <div className="lg:col-span-6">
+              <SubscribeForm showRoles listenForRoleTargets />
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   )

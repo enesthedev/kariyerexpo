@@ -8,114 +8,132 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ---------------------------------------------------------------------------
-   Kariyer Expo 27 brand theme.
+   Kariyer Expo 27 brand theme. Light only.
 
-   Every value below is measured from public/kariyer-expo-2027.png by pixel
-   analysis, then converted sRGB -> linear -> OKLab -> OKLCH.
+   Measured from public/kariyer-expo.png, sRGB -> OKLab -> OKLCH:
+     navy    oklch(0.2619 0.0887 255.8)
+     orange  oklch(0.6787 0.2142 37.8)
+     silver  sRGB(160,171,186) = oklch(0.7373 0.025 256), the darker of the
+             logo's two silvers, so a thin keyline still registers
+   Two hues carry everything: blue 256 (navy, silver and every neutral) and
+   orange 38. The ground is never warmed, so orange stays the only warm thing.
 
-   The mark is a stencil: KARİYER and the counters of EXPO are cut to full
-   transparency, so 58.9% of its canvas is a hole. That fact is the design.
+   Ratios are printed by `bun scripts/check-contrast.ts`, which keeps a copy
+   of these tokens. Change a colour here, change it there, rerun.
 
-   THE ONE RULE THAT GOVERNS THIS DESIGN:
-     ink     = confirmed
-     knockout = yakında (not announced yet)
+   FOUR LOGO MOTIFS, FOUR UI ROLES
+     swoosh   An orange crescent BEHIND the lower ~35% of one accent phrase
+              per heading, never a single word. Orange as a fill, so it is
+              allowed on light grounds. Wipes in on scroll; arrives fully
+              drawn where animation-timeline is unsupported or motion is
+              reduced.
+     dots     Navy, orange, silver: the ONE "yakında" signal. Exactly three
+              uses: the hero date pill, the Konuşmacılar heading accent, the
+              speaker placeholder cards. A fourth use kills the rule. Static,
+              because moving dots read as "loading".
+     stripes  Direction: the CTA arrow and the stripes graphic in hero and
+              banner corners.
+     orbit    Solid silver arcs: partners laid out on them; decoration.
+   No dashed strokes anywhere: no border-dashed, no dash arrays.
 
-   A dashed border is a weaker border -- it reads as "not finished loading".
-   A knockout cannot happen by accident, and it holds the same footprint,
-   weight and rhythm as the confirmed thing beside it. Nothing is missing;
-   something is reserved. Knockout appears in exactly THREE places: the hero
-   date pill, the Konuşmacılar h2 accent, and the speaker cards. A fourth use
-   kills the rule. There are no dashed strokes anywhere on this site.
+   COLOUR BANS
+     - --accent is a FILL ONLY on light grounds, never text or a stroke
+       (3.11:1 on --background). Readable orange is --line, #CC3E10: 4.84:1
+       on --background and 4.55:1 on --band, so it holds even at body size.
+     - No white text on orange (3.17:1). Text on an orange fill is navy
+       (4.91:1).
+     - --silver is never a surface: 2.29:1 on --background, 2.15:1 on
+       --band. Keyline and decoration only.
+     - --border is a decorative hairline (1.28:1). A boundary that is the
+       only sign of a control uses --input (3.30:1 on --background, 3.11:1
+       on --band) or --line.
+     - text-transform: uppercase is banned. Turkish casing is locale-bound
+       (i -> İ), so capitals are typed as literals in lib/content.ts.
 
-   The whole system sits on TWO hues: blue 260 and orange 36. The mark's
-   silver (259.82) and its navy (260.38) are the same hue, so the neutral
-   ramp and the ink are one family. That is what makes the orange the only
-   warm object in the system -- which is why the ground is never warmed.
-
-   TWO HARD COLOUR BANS, both measured:
-     - orange (--accent) on --background is 2.80:1, and on --band 2.44:1. In
-       light mode --accent is a FILL ONLY: never a text colour, never a
-       stroke. Anything orange that must be *read* on a light ground uses
-       --line (#D64417, 4.16:1) -- large text and UI strokes only, never body.
-     - --border is 1.36:1 and is decorative hairline only. Any boundary that
-       is the sole indicator of a control uses --input or --line.
-
-   AND ONE THAT IS NOT A TOKEN: --silver is never a surface. In this mark the
-   colour is partly an outline layer applied around the letterforms, so it is
-   the least trustworthy value in the palette. It lives as a keyline only.
+   Text: --foreground 15.28:1 on --background, 14.36:1 on --band, 15.55:1 on
+   --card; --muted-foreground 5.76:1 / 5.41:1 / 5.86:1. --band sits 1.06:1
+   off --background: enough to read as a band, no more.
 --------------------------------------------------------------------------- */
 
 :root {
   color-scheme: light;
-  --background: oklch(0.974 0.0055 260);
-  --foreground: oklch(0.2506 0.0947 260);
-  --card: oklch(0.995 0.002 260);
-  --card-foreground: oklch(0.2506 0.0947 260);
-  --popover: oklch(0.995 0.002 260);
-  --popover-foreground: oklch(0.2506 0.0947 260);
-  --primary: oklch(0.2506 0.0947 260);
-  --primary-foreground: oklch(0.995 0.002 260);
-  --secondary: oklch(0.913 0.018 260);
-  --secondary-foreground: oklch(0.29 0.09 260);
-  --muted: oklch(0.942 0.011 260);
-  --muted-foreground: oklch(0.515 0.052 260);
-  --accent: oklch(0.6902 0.198 36);
-  --accent-foreground: oklch(0.2506 0.0947 260);
+  --background: oklch(0.995 0.002 256);
+  --foreground: oklch(0.2619 0.0887 255.8);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.2619 0.0887 255.8);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.2619 0.0887 255.8);
+  --primary: oklch(0.2619 0.0887 255.8);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.94 0.012 256);
+  --secondary-foreground: oklch(0.2619 0.0887 255.8);
+  --muted: oklch(0.96 0.007 256);
+  --muted-foreground: oklch(0.505 0.045 256);
+  --accent: oklch(0.6787 0.2142 37.8);
+  --accent-foreground: oklch(0.2619 0.0887 255.8);
   --destructive: oklch(0.545 0.19 26);
-  --destructive-foreground: oklch(0.995 0.002 260);
-  --border: oklch(0.875 0.011 260);
-  --input: oklch(0.66 0.03 260);
-  --ring: oklch(0.61 0.2 36);
-  --chart-1: oklch(0.6902 0.198 36);
-  --chart-2: oklch(0.34 0.085 260);
-  --chart-3: oklch(0.59 0.04 260);
-  --chart-4: oklch(0.75 0.025 260);
-  --chart-5: oklch(0.53 0.14 36);
+  --destructive-foreground: oklch(1 0 0);
+  --border: oklch(0.91 0.01 256);
+  --input: oklch(0.64 0.03 256);
+  --ring: var(--line);
+  --chart-1: oklch(0.6787 0.2142 37.8);
+  --chart-2: oklch(0.2619 0.0887 255.8);
+  --chart-3: oklch(0.567 0.186 36);
+  --chart-4: oklch(0.6 0.04 256);
+  --chart-5: oklch(0.7373 0.025 256);
   --radius: 1rem;
-  --sidebar: oklch(0.2506 0.0947 260);
-  --sidebar-foreground: oklch(0.92 0.011 260);
-  --sidebar-primary: oklch(0.6902 0.198 36);
-  --sidebar-primary-foreground: oklch(0.21 0.062 260);
-  --sidebar-accent: oklch(0.32 0.068 260);
-  --sidebar-accent-foreground: oklch(0.92 0.011 260);
-  --sidebar-border: oklch(0.41 0.062 260);
-  --sidebar-ring: oklch(0.6902 0.198 36);
+  --sidebar: oklch(0.2619 0.0887 255.8);
+  --sidebar-foreground: oklch(0.975 0.005 256);
+  --sidebar-primary: oklch(0.6787 0.2142 37.8);
+  --sidebar-primary-foreground: oklch(0.2619 0.0887 255.8);
+  --sidebar-accent: oklch(0.34 0.08 256);
+  --sidebar-accent-foreground: oklch(0.975 0.005 256);
+  --sidebar-border: oklch(0.45 0.07 256);
+  --sidebar-ring: oklch(0.6787 0.2142 37.8);
 
   /* brand-only */
-  --silver: oklch(0.8344 0.0124 260);
-  --band: oklch(0.928 0.013 260);
-  --surface-hover: oklch(0.948 0.018 260);
-  --line: oklch(0.59 0.19 36);
+  --silver: oklch(0.7373 0.025 256);
+  --band: oklch(0.972 0.005 256);
+  --surface-hover: oklch(0.955 0.01 256);
+  --line: oklch(0.567 0.186 36);
 
-  /* One family, two voices. The mark's condensed KARİYER and its wide EXPO
-     are the same design at different widths, so the page does the same:
-     family never changes, only wdth and wght. */
+  /* One family. The logo sets KARİYER, EXPO and 27 extended, so headings,
+     numerals and eyebrows quote it on Archivo's wdth axis; body text stays
+     at the default width. */
   --font-heading: var(--font-sans);
   --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
 
-  /* The three mask layers of the full mark. Colour comes from CSS, so one
-     asset set serves both themes and the inverse lockup is free. */
-  --mark-body: var(--foreground);
-  --mark-keyline: var(--silver);
-  --mark-accent: var(--accent);
+  /* The mark's three colours, painted from CSS so each surface can remap
+     them. */
+  --mark-navy: var(--foreground);
+  --mark-orange: var(--accent);
+  --mark-silver: var(--silver);
 
-  /* A knockout is inversion against the surface it sits on, so it needs to
-     know the surface. See components/brand/knockout.tsx. */
+  /* legacy — removed with the badge-era components */
+  --mark-body: var(--mark-navy);
+  --mark-keyline: var(--mark-silver);
+  --mark-accent: var(--mark-orange);
   --knockout-ink: var(--foreground);
   --knockout-ground: var(--background);
 }
 
-/* The CTA band, the mobile drawer and the footer stay navy, so
-   the focus ring inside them must come from the sidebar scale or it turns
-   into dark orange on dark navy. The mark needs the same treatment for a
-   different reason: its letters are knockouts, so a navy body on a navy
-   ground is an unreadable disc no fill remap can rescue. */
+/* Grounds that stay navy: the mobile drawer, speakers, the CTA banner and the
+   footer. The ring and --line move to the full orange, which is 4.91:1 on
+   navy, so there --line is readable at body size. Borders move to the lighter
+   navy. The mark's interior is transparent, so its navy parts must turn light
+   or they vanish; its silver drops to --sidebar-border, which sits 2.10:1 off
+   navy the way silver sits 2.29:1 off white (silver itself would be 6.69:1
+   and outshout the orange). */
 [data-surface="navy"] {
   --ring: var(--sidebar-ring);
   --border: var(--sidebar-border);
   --line: var(--sidebar-primary);
-  --mark-body: var(--sidebar-foreground);
-  --mark-keyline: var(--sidebar-border);
+  --mark-navy: var(--sidebar-foreground);
+  --mark-silver: var(--sidebar-border);
+
+  /* legacy — removed with the badge-era components */
+  --mark-body: var(--mark-navy);
+  --mark-keyline: var(--mark-silver);
   --knockout-ink: var(--sidebar-foreground);
   --knockout-ground: var(--sidebar);
 }
@@ -175,6 +193,7 @@
   }
   body {
     @apply bg-background text-foreground;
+    letter-spacing: -0.01em;
   }
   button:not(:disabled),
   [role="button"]:not(:disabled) {
@@ -194,37 +213,46 @@
   h2,
   h3 {
     @apply font-heading;
-    /* The display voice, quoting EXPO's proportions. */
-    font-variation-settings: "wdth" 108;
+  }
+  /* The display voice, quoting the logo's extended EXPO. */
+  h1 {
+    font-variation-settings: "wdth" 125;
+  }
+  /* A step narrower: a 32px bold h2 at wdth 125 overflows a 360px phone. */
+  h2,
+  h3 {
+    font-variation-settings: "wdth" 112;
   }
 }
 
-/* The label voice, quoting the condensed arc-set KARİYER. The only place on
-   the page that is set in capitals -- and those capitals are typed as literal
-   characters in lib/content.ts, never transformed, because Turkish casing is
-   locale-dependent and `text-transform` silently produces "BILGI" for "bilgi".
-   Confining caps to one slot mirrors the mark, whose only caps are its name. */
+/* The label voice, quoting the logo's letterspaced KARİYER. Set in capitals,
+   and those capitals are typed as literal characters in lib/content.ts, never
+   transformed, because Turkish casing is locale-dependent and
+   `text-transform` silently produces "BILGI" for "bilgi". */
 @layer components {
   .eyebrow {
-    font-variation-settings: "wdth" 70;
+    font-variation-settings: "wdth" 125;
     font-weight: 700;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.2em;
     font-size: 0.75rem;
     line-height: 1;
   }
 }
 
-/* Numerals match the mechanical condensed 27 in the mark's banner. */
+/* Numerals match the logo's heavy extended 27. */
 @layer components {
   .numeral {
-    font-variation-settings: "wdth" 85;
+    font-variation-settings: "wdth" 125;
+    font-weight: 800;
     font-variant-numeric: tabular-nums;
   }
 }
 
 /* ---------------------------------------------------------------------------
-   The full mark. Three greyscale alpha masks painted with CSS colour, so one
-   asset set serves both themes and each layer stays independently animatable.
+   legacy — removed with the badge-era components
+
+   The full badge mark. Three greyscale alpha masks painted with CSS colour,
+   so each layer can be remapped per surface and animated on its own.
    See components/brand/full-mark.tsx.
 
    Aspect ratio is the measured ink box: EXPO overhangs the badge circle on
@@ -270,7 +298,9 @@
   mask-image: url("/mark-accent.png");
 }
 
-/* Ink is confirmed, knockout is pending. See components/brand/knockout.tsx.
+/* legacy — removed with the badge-era components. The badge-era pending
+   state; the contract's pending signal is now the three dots. See
+   components/brand/knockout.tsx.
    Layered so a caller can still override the colours with a utility; unlayered
    rules beat Tailwind's utilities, which would be a trap here. */
 @layer components {
@@ -295,6 +325,8 @@
 }
 
 /* ---------------------------------------------------------------------------
+   legacy — removed with the badge-era components (the swoosh replaces it)
+
    The arc: a shallow circular rule under one phrase per section heading.
 
    It replaces the swash because a ring cannot do the swash's job -- see
@@ -324,7 +356,7 @@
     /* Same path as the standalone rules below. preserveAspectRatio="none" lets
        it stretch to any phrase width; non-scaling-stroke keeps the 5px weight
        from stretching with it. */
-    --arc-line: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 18' preserveAspectRatio='none'%3E%3Cpath d='M3 4 A620 620 0 0 0 237 4' fill='none' stroke='%23D64417' stroke-width='5' stroke-linecap='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");
+    --arc-line: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 18' preserveAspectRatio='none'%3E%3Cpath d='M3 4 A620 620 0 0 0 237 4' fill='none' stroke='%23CC3E10' stroke-width='5' stroke-linecap='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");
     box-decoration-break: clone;
     -webkit-box-decoration-break: clone;
     padding-bottom: 0.26em;
@@ -340,7 +372,7 @@
   /* --line is the readable orange on paper and the full accent on navy
      surfaces, so the baked stroke follows it. */
   [data-surface="navy"] .arc {
-    --arc-line: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 18' preserveAspectRatio='none'%3E%3Cpath d='M3 4 A620 620 0 0 0 237 4' fill='none' stroke='%23FD6236' stroke-width='5' stroke-linecap='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");
+    --arc-line: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 18' preserveAspectRatio='none'%3E%3Cpath d='M3 4 A620 620 0 0 0 237 4' fill='none' stroke='%23FF5717' stroke-width='5' stroke-linecap='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");
   }
 }
 

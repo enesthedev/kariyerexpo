@@ -85,11 +85,13 @@ function SiteHeader() {
           {/* The mark's own role="img" label ("Kariyer Expo 27") is the
               link's accessible name -- no aria-label here, so there is
               exactly one name, not zero and not two.
-              On the logo's own white disc, so the mark keeps its real navy and silver: the --mark-*
+              On the logo's own white disc, hung from the top so on desktop
+              it breaks a few pixels into the cut while the menu stays up in
+              the bar. The mark keeps its real navy and silver: the --mark-*
               vars are set back from the navy remap. */}
           <a
             href="#anasayfa"
-            className="grid size-16 shrink-0 place-items-center rounded-full bg-card [--mark-navy:var(--foreground)] [--mark-silver:var(--silver)] focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none"
+            className="mt-1 grid size-16 shrink-0 place-items-center self-start rounded-full bg-card [--mark-navy:var(--foreground)] [--mark-silver:var(--silver)] focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none lg:mt-1.5 lg:size-21"
           >
             <Mark className="size-[82%]" />
           </a>
@@ -104,7 +106,7 @@ function SiteHeader() {
                       href={item.href}
                       aria-current={isActive ? "true" : undefined}
                       className={cn(
-                        "relative inline-flex items-center rounded-md px-4 py-2 text-sm font-semibold tracking-[0.06em] transition-colors hover:text-sidebar-foreground focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none",
+                        "relative inline-flex items-center rounded-md px-3.5 py-2 text-[0.8125rem] font-semibold tracking-[0.08em] transition-colors hover:text-sidebar-foreground focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none",
                         isActive
                           ? "text-sidebar-foreground"
                           : "text-muted-foreground"
@@ -114,7 +116,7 @@ function SiteHeader() {
                       <span
                         aria-hidden="true"
                         className={cn(
-                          "absolute bottom-0.5 left-1/2 h-1 w-5 -translate-x-1/2 -skew-x-[40deg] bg-(--mark-orange) transition-opacity",
+                          "absolute bottom-1 left-1/2 h-[3px] w-4 -translate-x-1/2 -skew-x-[40deg] bg-(--mark-orange) transition-opacity",
                           isActive ? "opacity-100" : "opacity-0"
                         )}
                       />
@@ -125,7 +127,7 @@ function SiteHeader() {
             </ul>
           </nav>
 
-          <div className="ml-auto flex items-center gap-6">
+          <div className="ml-auto flex items-center gap-8">
             {/* Base UI's Button enforces button semantics (role="button",
                 Enter/Space handling) and its docs say not to render links
                 through it -- nativeButton={false} would silence the warning by
@@ -136,7 +138,7 @@ function SiteHeader() {
                 (skew on shapes, never on text). */}
             <a
               href="#iletisim"
-              className="group/cta relative isolate hidden h-9 items-center gap-1 px-7 text-sm font-semibold whitespace-nowrap text-accent-foreground outline-none before:absolute before:inset-0 before:-z-10 before:-skew-x-[40deg] before:bg-accent before:transition-colors hover:before:bg-accent/90 focus-visible:before:ring-2 focus-visible:before:ring-ring sm:inline-flex [&_svg]:size-3.5 motion-safe:[&_svg]:transition-transform motion-safe:hover:[&_svg]:translate-x-0.5 motion-safe:hover:[&_svg]:-translate-y-0.5"
+              className="group/cta relative isolate hidden h-9 items-center gap-1 px-7 text-[0.8125rem] font-semibold tracking-[0.02em] whitespace-nowrap text-accent-foreground outline-none before:absolute before:inset-0 before:-z-10 before:-skew-x-[40deg] before:bg-accent before:transition-colors hover:before:bg-accent/90 focus-visible:before:ring-2 focus-visible:before:ring-ring sm:inline-flex lg:h-10 [&_svg]:size-3.5 motion-safe:[&_svg]:transition-transform motion-safe:hover:[&_svg]:translate-x-0.5 motion-safe:hover:[&_svg]:-translate-y-0.5"
             >
               {header.cta}
               <IconArrowUpRight data-icon="inline-end" />
@@ -149,7 +151,7 @@ function SiteHeader() {
               {/* Not the outline Button: that one is a white card, and cn
                   cannot override its ground. Styled like the footer's
                   social buttons, the navy surface's own control. */}
-              <SheetTrigger className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-sidebar-accent pr-4 pl-3 text-sm font-semibold text-sidebar-accent-foreground transition-colors hover:bg-sidebar-border focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none lg:hidden [&_svg]:size-4">
+              <SheetTrigger className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-sidebar-accent pr-4 pl-3 text-[0.8125rem] font-semibold text-sidebar-accent-foreground transition-colors hover:bg-sidebar-border focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none lg:hidden [&_svg]:size-4">
                 <IconMenu2 data-icon="inline-start" />
                 {ui.menu}
               </SheetTrigger>

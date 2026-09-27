@@ -133,8 +133,14 @@
   --corner: 1.75rem;
   /* The header: a 5rem bar plus a half-depth cut under it. The hero pulls
      itself up by --header-h so its band fills the uncovered triangle. */
-  --header-bar: 5rem;
+  --header-bar: 4.25rem;
   --header-h: calc(var(--header-bar) + var(--cut) / 2);
+}
+/* A 5rem bar is a slab on a phone; desktop keeps it for the bigger disc. */
+@media (width >= 64rem) {
+  :root {
+    --header-bar: 5rem;
+  }
 }
 
 /* Grounds that stay navy: the mobile drawer, stats, speakers, the CTA band

@@ -29,8 +29,11 @@ import {
  * per element. The CTA is the orange fill (navy on orange, 5.46:1); the
  * default navy button would vanish on this ground.
  *
- * The active link is marked by a stripe tick: a short orange parallelogram
- * leaning at the stripes' angle. The skew is on a shape, never on text.
+ * Every control in the bar stands on the same parallelogram, leaning at the
+ * stripes' angle and painted by ::before so labels stay upright (skew on
+ * shapes, never on text): the orange CTA, the navy-tint Menü, and the active
+ * link's lighter ground (a fainter one on hover). The CTA is the bar's one
+ * orange thing.
  *
  * It gets out of the way going down and comes back on any move up. It never
  * hides while the drawer is open, and focus landing inside it (a Tab from
@@ -106,20 +109,13 @@ function SiteHeader() {
                       href={item.href}
                       aria-current={isActive ? "true" : undefined}
                       className={cn(
-                        "relative inline-flex items-center rounded-md px-3.5 py-2 text-[0.8125rem] font-semibold tracking-[0.08em] transition-colors hover:text-sidebar-foreground focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none",
+                        "relative isolate inline-flex items-center px-4 py-2 text-[0.8125rem] font-semibold tracking-[0.08em] outline-none before:absolute before:inset-x-0 before:inset-y-1 before:-z-10 before:-skew-x-[40deg] focus-visible:before:ring-2 focus-visible:before:ring-ring/50 motion-safe:transition-colors motion-safe:before:transition-colors",
                         isActive
-                          ? "text-sidebar-foreground"
-                          : "text-muted-foreground"
+                          ? "text-sidebar-foreground before:bg-sidebar-border"
+                          : "text-muted-foreground before:bg-transparent hover:text-sidebar-foreground hover:before:bg-sidebar-accent"
                       )}
                     >
                       {item.caps}
-                      <span
-                        aria-hidden="true"
-                        className={cn(
-                          "absolute bottom-1 left-1/2 h-[3px] w-4 -translate-x-1/2 -skew-x-[40deg] bg-(--mark-orange) transition-opacity",
-                          isActive ? "opacity-100" : "opacity-0"
-                        )}
-                      />
                     </a>
                   </li>
                 )
@@ -127,7 +123,7 @@ function SiteHeader() {
             </ul>
           </nav>
 
-          <div className="ml-auto flex items-center gap-8">
+          <div className="ml-auto flex items-center gap-3">
             {/* Base UI's Button enforces button semantics (role="button",
                 Enter/Space handling) and its docs say not to render links
                 through it -- nativeButton={false} would silence the warning by
@@ -148,10 +144,10 @@ function SiteHeader() {
                 close the sheet on click instead of being wrapped in
                 SheetClose, which is a Dialog.Close and has the same rule. */}
             <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
-              {/* Not the outline Button: that one is a white card, and cn
-                  cannot override its ground. Styled like the footer's
-                  social buttons, the navy surface's own control. */}
-              <SheetTrigger className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-sidebar-accent pr-4 pl-3 text-[0.8125rem] font-semibold text-sidebar-accent-foreground transition-colors hover:bg-sidebar-border focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none lg:hidden [&_svg]:size-4">
+              {/* Not the outline Button: that one is a white card. The same
+                  parallelogram as the CTA, in the navy tint, and 12px from
+                  it so the two read as a pair of stripes. */}
+              <SheetTrigger className="relative isolate mr-1 inline-flex h-9 items-center gap-1.5 px-6 text-[0.8125rem] font-semibold text-sidebar-accent-foreground outline-none before:absolute before:inset-0 before:-z-10 before:-skew-x-[40deg] before:bg-sidebar-accent hover:before:bg-sidebar-border focus-visible:before:ring-2 focus-visible:before:ring-ring motion-safe:before:transition-colors lg:hidden [&_svg]:size-4">
                 <IconMenu2 data-icon="inline-start" />
                 {ui.menu}
               </SheetTrigger>

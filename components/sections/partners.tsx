@@ -1,4 +1,5 @@
 import { partners } from "@/lib/content"
+import { RevealGroup, RevealItem } from "@/components/reveal"
 import { SectionHeading } from "@/components/section-heading"
 
 /**
@@ -23,16 +24,22 @@ function Partners() {
           description={<p>{partners.note}</p>}
         />
 
-        <ul className="mt-14 grid grid-cols-2 gap-px overflow-hidden bg-border sm:grid-cols-3 lg:grid-cols-6">
+        <RevealGroup
+          as="ul"
+          stagger={0.03}
+          className="mt-14 grid grid-cols-2 gap-px overflow-hidden bg-border sm:grid-cols-3 lg:grid-cols-6"
+        >
           {partners.names.map((name) => (
+            // The cell stays put and only the name rises: a fading cell
+            // would show the --border ground through the grid.
             <li
               key={name}
               className="flex min-h-24 items-center bg-band px-4 py-5 text-[0.9375rem] leading-snug font-semibold"
             >
-              {name}
+              <RevealItem>{name}</RevealItem>
             </li>
           ))}
-        </ul>
+        </RevealGroup>
       </div>
     </section>
   )

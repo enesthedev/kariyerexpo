@@ -2,6 +2,12 @@ import { cn } from "cn"
 
 import { stats, type Stat } from "@/lib/content"
 import { Stripes } from "@/components/brand/stripes"
+import {
+  Parallax,
+  RevealGroup,
+  RevealItem,
+  RevealText,
+} from "@/components/reveal"
 import { StatCounter } from "@/components/stat-counter"
 
 /**
@@ -25,16 +31,23 @@ function Stats() {
       data-surface="navy"
       className="cut-y relative isolate scroll-mt-20 overflow-hidden bg-sidebar py-[calc(var(--cut)+clamp(3.5rem,8vw,6.5rem))] text-sidebar-foreground"
     >
-      <Stripes className="absolute top-[calc(var(--cut)*0.4)] right-[4%] -z-10 h-24 opacity-90 sm:h-32 lg:h-44" />
+      <Parallax className="absolute top-[calc(var(--cut)*0.4)] right-[4%] -z-10">
+        <Stripes className="h-24 opacity-90 sm:h-32 lg:h-44" />
+      </Parallax>
 
       <div className="mx-auto max-w-6xl px-5">
-        <h2 className="max-w-[16ch] text-[clamp(2rem,1.2rem+3vw,3.75rem)] leading-[1]">
-          {stats.headline}
-        </h2>
+        <RevealText
+          text={stats.headline}
+          className="max-w-[16ch] text-[clamp(2rem,1.2rem+3vw,3.75rem)] leading-[1]"
+        />
 
-        <dl className="mt-14 grid grid-cols-2 gap-y-10 lg:grid-cols-4">
+        <RevealGroup
+          as="dl"
+          stagger={0.1}
+          className="mt-14 grid grid-cols-2 gap-y-10 lg:grid-cols-4"
+        >
           {stats.items.map((s: Stat, i) => (
-            <div
+            <RevealItem
               key={s.label}
               className={cn(
                 "@container flex flex-col-reverse justify-end gap-3 border-sidebar-border pr-4",
@@ -59,9 +72,9 @@ function Stats() {
                   suffix={s.suffix}
                 />
               </dd>
-            </div>
+            </RevealItem>
           ))}
-        </dl>
+        </RevealGroup>
       </div>
     </section>
   )

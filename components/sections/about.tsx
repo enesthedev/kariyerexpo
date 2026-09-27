@@ -1,4 +1,5 @@
 import { about } from "@/lib/content"
+import { RevealGroup, RevealItem } from "@/components/reveal"
 import { SectionHeading } from "@/components/section-heading"
 
 /**
@@ -25,20 +26,26 @@ function About() {
           className="md:items-start"
         />
 
-        <dl className="mt-16 grid gap-10 sm:grid-cols-3 sm:gap-8">
+        <RevealGroup
+          as="dl"
+          stagger={0.12}
+          className="mt-16 grid gap-10 sm:grid-cols-3 sm:gap-8"
+        >
           {about.facts.map((f) => (
-            <div key={f.term}>
-              <div
-                aria-hidden="true"
-                className="h-1.5 w-full bg-foreground [clip-path:polygon(0_0,100%_0,calc(100%_-_0.4375rem)_100%,0_100%)]"
-              />
+            <RevealItem key={f.term}>
+              <RevealItem variant="rule">
+                <div
+                  aria-hidden="true"
+                  className="h-1.5 w-full bg-foreground [clip-path:polygon(0_0,100%_0,calc(100%_-_0.4375rem)_100%,0_100%)]"
+                />
+              </RevealItem>
               <dt className="mt-6 font-heading text-xl leading-snug font-bold">
                 {f.term}
               </dt>
               <dd className="mt-2 text-muted-foreground">{f.detail}</dd>
-            </div>
+            </RevealItem>
           ))}
-        </dl>
+        </RevealGroup>
       </div>
     </section>
   )

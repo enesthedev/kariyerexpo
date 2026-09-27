@@ -115,27 +115,22 @@ function RevealGroup({
   )
 }
 
-const itemTags = { div: m.div, li: m.li }
-
 function RevealItem({
   children,
   className,
-  as = "div",
   variant = "fade",
 }: {
   children: React.ReactNode
   className?: string
-  as?: keyof typeof itemTags
   variant?: "fade" | "rule"
 }) {
-  const Tag = itemTags[as]
   return (
-    <Tag
+    <m.div
       variants={variant === "rule" ? rule : fadeUp}
       className={cn(variant === "rule" && "origin-left", className)}
     >
       {children}
-    </Tag>
+    </m.div>
   )
 }
 

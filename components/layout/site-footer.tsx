@@ -8,6 +8,7 @@ import {
 
 import { footer, nav, site } from "@/lib/content"
 import { Mark } from "@/components/brand/mark"
+import { Reveal } from "@/components/reveal"
 
 const SOCIAL_ICONS = {
   linkedin: IconBrandLinkedin,
@@ -34,7 +35,7 @@ function SiteFooter() {
   return (
     <footer data-surface="navy" className="bg-sidebar text-sidebar-foreground">
       <div className="mx-auto max-w-6xl border-t border-sidebar-border px-5 py-16">
-        <div className="grid gap-12 md:grid-cols-3">
+        <Reveal className="grid gap-12 md:grid-cols-3">
           <div>
             <Mark className="h-16 w-auto" />
             <p className="mt-5 max-w-xs text-sm opacity-70">{footer.blurb}</p>
@@ -99,7 +100,7 @@ function SiteFooter() {
               })}
             </ul>
           </div>
-        </div>
+        </Reveal>
 
         <div className="mt-14 flex flex-col gap-3 border-t border-sidebar-border pt-6 text-sm opacity-70 sm:flex-row sm:items-center sm:justify-between">
           <p>{footer.copyright}</p>

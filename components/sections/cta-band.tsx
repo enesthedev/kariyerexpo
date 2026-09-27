@@ -1,5 +1,6 @@
 import { cta } from "@/lib/content"
 import { Stripes } from "@/components/brand/stripes"
+import { Parallax, Reveal, RevealText } from "@/components/reveal"
 import { SubscribeForm } from "@/components/subscribe-form"
 
 /**
@@ -21,21 +22,26 @@ function CtaBand() {
       data-surface="navy"
       className="cut-top isolate scroll-mt-20 overflow-hidden bg-sidebar text-sidebar-foreground"
     >
-      <Stripes className="absolute -bottom-8 -left-8 -z-10 hidden h-36 lg:block" />
+      <Parallax className="absolute -bottom-8 -left-8 -z-10 hidden lg:block">
+        <Stripes className="h-36" />
+      </Parallax>
 
       <div className="mx-auto grid max-w-6xl gap-10 px-5 pt-[calc(var(--cut)+clamp(3.5rem,8vw,6rem))] pb-[clamp(3.5rem,8vw,6rem)] lg:grid-cols-12 lg:items-center lg:gap-12">
         <div className="lg:col-span-6">
-          <h2 className="text-[clamp(2rem,1.2rem+3vw,3.75rem)] leading-[1]">
-            {cta.headline}{" "}
-            <span className="text-line">{cta.headlineAccent}</span>
-          </h2>
-          <p className="mt-5 max-w-[48ch] text-lg leading-relaxed text-muted-foreground">
-            {cta.lede}
-          </p>
+          <RevealText
+            text={cta.headline}
+            accent={cta.headlineAccent}
+            className="text-[clamp(2rem,1.2rem+3vw,3.75rem)] leading-[1]"
+          />
+          <Reveal delay={0.15}>
+            <p className="mt-5 max-w-[48ch] text-lg leading-relaxed text-muted-foreground">
+              {cta.lede}
+            </p>
+          </Reveal>
         </div>
-        <div className="lg:col-span-6">
+        <Reveal delay={0.25} className="lg:col-span-6">
           <SubscribeForm showRoles listenForRoleTargets />
-        </div>
+        </Reveal>
       </div>
     </section>
   )

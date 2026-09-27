@@ -1,6 +1,7 @@
 import { program, ui } from "@/lib/content"
 import { SectionHeading } from "@/components/section-heading"
 import { Carousel } from "@/components/carousel"
+import { Reveal } from "@/components/reveal"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 
 /**
@@ -27,42 +28,44 @@ function Program() {
           accent={program.headlineAccent}
         />
 
-        <Tabs defaultValue={program.groups[0].title} className="mt-14">
-          <TabsList>
-            {program.groups.map((group) => (
-              <TabsTrigger key={group.title} value={group.title}>
-                {group.title}
-              </TabsTrigger>
-            ))}
-          </TabsList>
+        <Reveal delay={0.1} className="mt-14">
+          <Tabs defaultValue={program.groups[0].title}>
+            <TabsList>
+              {program.groups.map((group) => (
+                <TabsTrigger key={group.title} value={group.title}>
+                  {group.title}
+                </TabsTrigger>
+              ))}
+            </TabsList>
 
-          {program.groups.map((group) => (
-            <TabsContent key={group.title} value={group.title} keepMounted>
-              <Carousel
-                label={program.carouselLabel}
-                prevLabel={ui.prev}
-                nextLabel={ui.next}
-              >
-                {group.items.map((item, index) => (
-                  <div
-                    key={item}
-                    className="corner-cut flex h-full min-h-[14rem] w-[78vw] max-w-[22rem] flex-col justify-between bg-card p-6 sm:w-[20rem]"
-                  >
-                    <span
-                      aria-hidden="true"
-                      className="numeral text-[2.5rem] leading-none text-line"
+            {program.groups.map((group) => (
+              <TabsContent key={group.title} value={group.title} keepMounted>
+                <Carousel
+                  label={program.carouselLabel}
+                  prevLabel={ui.prev}
+                  nextLabel={ui.next}
+                >
+                  {group.items.map((item, index) => (
+                    <div
+                      key={item}
+                      className="corner-cut flex h-full min-h-[14rem] w-[78vw] max-w-[22rem] flex-col justify-between bg-card p-6 sm:w-[20rem]"
                     >
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
-                    <p className="mt-6 text-[clamp(1.125rem,1rem+0.6vw,1.375rem)] leading-snug font-semibold tracking-[-0.015em]">
-                      {item}
-                    </p>
-                  </div>
-                ))}
-              </Carousel>
-            </TabsContent>
-          ))}
-        </Tabs>
+                      <span
+                        aria-hidden="true"
+                        className="numeral text-[2.5rem] leading-none text-line"
+                      >
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+                      <p className="mt-6 text-[clamp(1.125rem,1rem+0.6vw,1.375rem)] leading-snug font-semibold tracking-[-0.015em]">
+                        {item}
+                      </p>
+                    </div>
+                  ))}
+                </Carousel>
+              </TabsContent>
+            ))}
+          </Tabs>
+        </Reveal>
 
         <p className="mt-10 max-w-[62ch] text-muted-foreground">
           {program.note}

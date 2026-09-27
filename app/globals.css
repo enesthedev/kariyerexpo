@@ -130,6 +130,10 @@
      parallel. */
   --cut: clamp(1.75rem, 4.5vw, 4rem);
   --corner: 1.75rem;
+  /* The header: a 5rem bar plus a half-depth cut under it. The hero pulls
+     itself up by --header-h so its band fills the uncovered triangle. */
+  --header-bar: 5rem;
+  --header-h: calc(var(--header-bar) + var(--cut) / 2);
 }
 
 /* Grounds that stay navy: the mobile drawer, stats, speakers, the CTA band
@@ -285,6 +289,13 @@
       100% calc(100% - var(--cut)),
       0 100%
     );
+  }
+
+  /* The header's edge: the same rise, half the depth, because a full cut
+     would make a sticky bar 9rem tall at the left. No overlap margin: the
+     hero is what slides under it (-mt-(--header-h)). */
+  .cut-header {
+    clip-path: polygon(0 0, 100% 0, 100% var(--header-bar), 0 100%);
   }
 
   /* The top-right corner cut at 45°, the stripes' square end at card

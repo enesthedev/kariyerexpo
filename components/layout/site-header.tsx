@@ -8,7 +8,7 @@ import * as m from "motion/react-m"
 import { header, nav, ui } from "@/lib/content"
 import { Mark } from "@/components/brand/mark"
 import { ScrollProgress } from "@/components/reveal"
-import { Button, buttonVariants } from "@/components/ui/button"
+import { buttonVariants } from "@/components/ui/button"
 import {
   Sheet,
   SheetContent,
@@ -22,31 +22,18 @@ import {
  * the header -- the logo and the CTA/menu cluster are different widths, so a
  * three-track grid would centre the nav inside its track, not on the bar.
  *
- * The active link is marked by a stripe tick: a short orange parallelogram
- * leaning at the stripes' angle. The skew is on a shape, never on text, and
- * orange is a fill, which the colour bans allow on light grounds.
+ * A navy band from the first paint, its bottom edge cut on the page's
+ * diagonal at half depth (.cut-header). data-surface="navy" turns the mark,
+ * the muted links and the focus rings light, so nothing here picks colours
+ * per element. The CTA is the orange fill (navy on orange, 5.46:1); the
+ * default navy button would vanish on this ground.
  *
- * Transparent over the hero; once scrolled, the page ground with a hairline
- * under it rather than a shadow, so the header reads as ruled, not floating.
+ * The active link is marked by a stripe tick: a short orange parallelogram
+ * leaning at the stripes' angle. The skew is on a shape, never on text.
  */
 function SiteHeader() {
-  const [scrolled, setScrolled] = React.useState(false)
   const [active, setActive] = React.useState<string>("")
   const [menuOpen, setMenuOpen] = React.useState(false)
-  const sentinel = React.useRef<HTMLDivElement>(null)
-
-  // A sentinel at the top of the document rather than a scroll listener: the
-  // browser does the work off the main thread and we never read layout.
-  React.useEffect(() => {
-    const el = sentinel.current
-    if (!el) return
-    const io = new IntersectionObserver(
-      ([entry]) => setScrolled(!entry.isIntersecting),
-      { threshold: 0 }
-    )
-    io.observe(el)
-    return () => io.disconnect()
-  }, [])
 
   React.useEffect(() => {
     const ids = nav.map((n) => n.href.slice(1))
@@ -69,25 +56,15 @@ function SiteHeader() {
 
   return (
     <>
-      <div
-        ref={sentinel}
-        aria-hidden="true"
-        className="absolute top-0 left-0 h-20 w-px"
-      />
       <ScrollProgress />
       <m.header
         initial={{ opacity: 0, y: -12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        className={cn(
-          "sticky top-0 z-50 transition-[background-color,border-color] duration-300",
-          "border-b",
-          scrolled
-            ? "border-border bg-background/90 backdrop-blur-md"
-            : "border-transparent bg-transparent"
-        )}
+        data-surface="navy"
+        className="cut-header sticky top-0 z-50 h-(--header-h) bg-sidebar text-sidebar-foreground"
       >
-        <div className="relative mx-auto flex h-20 max-w-6xl items-center px-5">
+        <div className="relative mx-auto flex h-(--header-bar) max-w-6xl items-center px-5">
           {/* The mark's own role="img" label ("Kariyer Expo 27") is the
               link's accessible name -- no aria-label here, so there is
               exactly one name, not zero and not two. */}
@@ -108,8 +85,10 @@ function SiteHeader() {
                       href={item.href}
                       aria-current={isActive ? "true" : undefined}
                       className={cn(
-                        "relative inline-flex items-center rounded-md px-4 py-2 text-sm font-medium transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none",
-                        isActive ? "text-foreground" : "text-muted-foreground"
+                        "relative inline-flex items-center rounded-md px-4 py-2 text-sm font-medium transition-colors hover:text-sidebar-foreground focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none",
+                        isActive
+                          ? "text-sidebar-foreground"
+                          : "text-muted-foreground"
                       )}
                     >
                       {item.label}
@@ -136,7 +115,7 @@ function SiteHeader() {
             <a
               href="#iletisim"
               className={cn(
-                buttonVariants({ size: "sm" }),
+                buttonVariants({ variant: "accent", size: "sm" }),
                 "hidden sm:inline-flex"
               )}
             >
@@ -148,11 +127,10 @@ function SiteHeader() {
                 close the sheet on click instead of being wrapped in
                 SheetClose, which is a Dialog.Close and has the same rule. */}
             <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
-              <SheetTrigger
-                render={
-                  <Button variant="outline" size="sm" className="lg:hidden" />
-                }
-              >
+              {/* Not the outline Button: that one is a white card, and cn
+                  cannot override its ground. Styled like the footer's
+                  social buttons, the navy surface's own control. */}
+              <SheetTrigger className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-sidebar-accent pr-4 pl-3 text-sm font-semibold text-sidebar-accent-foreground transition-colors hover:bg-sidebar-border focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none lg:hidden [&_svg]:size-4">
                 <IconMenu2 data-icon="inline-start" />
                 {ui.menu}
               </SheetTrigger>

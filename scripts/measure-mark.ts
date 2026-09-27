@@ -5,10 +5,10 @@
  *   bun scripts/measure-mark.ts            print the measured geometry
  *   bun scripts/measure-mark.ts --verify   score the drawn mark against the PNG
  *
- * CLASSIFICATION. Every opaque pixel goes to the nearest of five references:
- * the three inks (navy, orange, silver) and two grounds (the white disc, and
- * the warm haze, about (245,244,238), that washes over the tops of the
- * stripes). Grounds are dropped. One correction is spatial, because colour
+ * CLASSIFICATION. Every opaque pixel goes to the nearest of four references:
+ * the three inks (navy, orange, silver) and the white disc, which is dropped.
+ * The X's bevel and the letters' thin dark drop edge land on their nearest
+ * ink, so they are simply part of the letter. One correction is spatial, because colour
  * alone cannot make it: silver sits almost exactly on the line from navy to
  * white, so a navy edge pixel at ~75% white reads as silver. A "silver" pixel
  * within two pixels of navy is therefore re-read as a navy/white blend, and
@@ -16,8 +16,8 @@
  *
  * SEGMENTATION. 8-connected components per ink, then each component gets a
  * role from where it sits (see PARTS). The lower navy arc is cut into three
- * blobs by the stripes and the silver arc into two by the orange dot's white
- * ring; each is fitted as one arc.
+ * blobs by the stripes; it is fitted as one arc. The X is two orange blobs
+ * (the bevel splits it), folded into one letter like the İ and its dot.
  *
  * CRESCENTS are the region between two circles with different centres. The
  * blob's edge pixels are split into inner and outer by which way the ground
@@ -29,8 +29,7 @@
  *
  * --verify renders the real <Mark> (components/brand/mark.tsx) one layer at a
  * time at the PNG's own size, flattens it on white, classifies it the same
- * way, and prints IoU per layer against the PNG's role masks. Pixels under
- * the haze are excluded: the logo has nothing to compare there.
+ * way, and prints IoU per layer against the PNG's role masks.
  */
 import { createElement } from "react"
 import { renderToStaticMarkup } from "react-dom/server"
@@ -44,21 +43,15 @@ type Layer = "arcs" | "dots" | "stripes" | "letters"
 
 // Measured: the mean of the pixels within 20 of each seed, iterated to rest.
 const REFS = {
-  navy: [0, 33, 78],
-  orange: [255, 87, 24],
-  silver: [188, 196, 208],
+  navy: [3, 33, 79],
+  orange: [255, 104, 55],
+  silver: [193, 201, 214],
   white: [255, 255, 255],
-  haze: [245, 244, 238],
 } as const satisfies Record<string, Rgb>
 
 const NONE = 0
 const CODE: Record<Ink, number> = { navy: 1, orange: 2, silver: 3 }
 const INK_OF: Ink[] = ["navy", "navy", "orange", "silver"]
-
-/** The haze box: the stripes' upper ends fade under it, so it scores nothing. */
-const HAZE = { x0: 415, x1: 578, y0: 560, y1: 700 }
-const inHaze = (x: number, y: number) =>
-  x >= HAZE.x0 && x <= HAZE.x1 && y >= HAZE.y0 && y <= HAZE.y1
 
 type Img = { w: number; h: number; cls: Uint8Array }
 
@@ -215,39 +208,49 @@ type Pt = readonly [number, number]
 /**
  * Where each part sits, as the centroid of each blob it is made of. A blob
  * is claimed by the nearest listed centroid of its ink within 20px. The
- * silver smudge under the orange dot (its drop shadow) and the pale silver
- * sheen beside the navy stripe are deliberately left unclaimed.
+ * pale silver sheen behind the navy stripe (its extruded side) is
+ * deliberately left unclaimed.
  */
 const PARTS = {
   arcs: {
-    navyUpper: { ink: "navy", at: [[392, 190]] },
-    orangeUpper: { ink: "orange", at: [[730, 215]] },
-    silver: { ink: "silver", at: [[715, 153], [904, 285]] },
-    navyLower: { ink: "navy", at: [[177, 710], [307, 860], [643, 906]] },
-    orangeLower: { ink: "orange", at: [[765, 818]] },
+    navyUpper: { ink: "navy", at: [[448, 217]] },
+    orangeUpper: { ink: "orange", at: [[814, 244]] },
+    silver: { ink: "silver", at: [[965, 270]] },
+    navyLower: {
+      ink: "navy",
+      at: [
+        [202, 811],
+        [348, 981],
+        [735, 1035],
+      ],
+    },
+    orangeLower: { ink: "orange", at: [[875, 935]] },
   },
   dots: {
-    navy: { ink: "navy", at: [[981, 633]] },
-    orange: { ink: "orange", at: [[964, 688]] },
-    silver: { ink: "silver", at: [[943, 742]] },
-    orangeTop: { ink: "orange", at: [[785, 145]] },
+    navy: { ink: "navy", at: [[1122, 724]] },
+    orange: { ink: "orange", at: [[1102, 787]] },
+    silver: { ink: "silver", at: [[1078, 848]] },
   },
   stripes: {
-    navy: { ink: "navy", at: [[337, 719]] },
-    orange: { ink: "orange", at: [[320, 809]] },
-    silver: { ink: "silver", at: [[410, 801]] },
+    navy: { ink: "navy", at: [[384, 818]] },
+    orange: { ink: "orange", at: [[365, 921]] },
+    silver: { ink: "silver", at: [[468, 912]] },
   },
 } as const satisfies Record<
   Exclude<Layer, "letters">,
   Record<string, { ink: Ink; at: readonly Pt[] }>
 >
 
-/** Ink-box bands for the three lines of type (y range of the navy blobs). */
+/**
+ * Ink-box bands for the three lines of type. EXPO's X and the 27's 7 are
+ * orange; KARİYER is navy only.
+ */
+type Band = { y0: number; y1: number; x0?: number; x1?: number; inks: Ink[] }
 const LINES = {
-  kariyer: { y0: 285, y1: 390 },
-  expo: { y0: 415, y1: 610 },
-  edition: { y0: 640, y1: 755, x0: 570 },
-} as const
+  kariyer: { y0: 330, y1: 440, inks: ["navy"] },
+  expo: { y0: 470, y1: 725, inks: ["navy", "orange"] },
+  edition: { y0: 735, y1: 865, x0: 600, x1: 1000, inks: ["navy", "orange"] },
+} as const satisfies Record<string, Band>
 
 function claim(blobs: Blob[], ink: Ink, at: readonly Pt[]): Blob[] {
   return at.map(([x, y]) => {
@@ -265,23 +268,25 @@ function claim(blobs: Blob[], ink: Ink, at: readonly Pt[]): Blob[] {
 type Box = { x: number; y: number; w: number; h: number }
 
 function letterBlobs(blobs: Blob[]) {
-  const inBand = (b: Blob, band: { y0: number; y1: number; x0?: number }) =>
-    b.ink === "navy" &&
+  const inBand = (b: Blob, band: Band) =>
+    band.inks.includes(b.ink) &&
     b.y0 >= band.y0 &&
     b.y1 <= band.y1 &&
-    b.x0 >= (band.x0 ?? 0)
-  const line = (band: { y0: number; y1: number; x0?: number }) => {
+    b.x0 >= (band.x0 ?? 0) &&
+    b.x1 <= (band.x1 ?? Infinity)
+  const line = (band: Band) => {
     const found = blobs.filter((b) => inBand(b, band))
-    // A blob sitting wholly above another one's x range is a dot (the İ's):
-    // fold it into the letter below.
-    const letters = found.filter(
-      (b) => !found.some((o) => o !== b && o.y0 > b.y1 && overlapsX(o, b))
-    )
+    // A smaller blob of the same ink inside another's x range is part of it:
+    // the İ's dot, the X's second stroke. Fold it into the larger one.
+    const within = (b: Blob, o: Blob) =>
+      o !== b &&
+      o.ink === b.ink &&
+      o.area > b.area &&
+      b.x0 >= o.x0 &&
+      b.x1 <= o.x1
+    const letters = found.filter((b) => !found.some((o) => within(b, o)))
     return letters
-      .map((l) => [
-        l,
-        ...found.filter((d) => d !== l && d.y1 < l.y0 && overlapsX(l, d)),
-      ])
+      .map((l) => [l, ...found.filter((d) => within(d, l))])
       .sort((a, b) => a[0].x0 - b[0].x0)
   }
   return {
@@ -289,10 +294,6 @@ function letterBlobs(blobs: Blob[]) {
     expo: line(LINES.expo),
     edition: line(LINES.edition),
   }
-}
-
-function overlapsX(a: Blob, b: Blob) {
-  return a.x0 <= b.x1 && b.x0 <= a.x1
 }
 
 function boxOf(parts: Blob[]): Box {
@@ -437,7 +438,11 @@ function edgesOf(img: Img, parts: Blob[]): Edge[] {
       }
       const len = Math.hypot(nx, ny)
       if (len) {
-        edges.push({ pt: [x + 0.5, y + 0.5], normal: [nx / len, ny / len], part })
+        edges.push({
+          pt: [x + 0.5, y + 0.5],
+          normal: [nx / len, ny / len],
+          part,
+        })
       }
     }
   })
@@ -452,7 +457,8 @@ function fitLine(edges: Edge[]): Line & { rms: number } {
   let line: Line = { m: [0, 0], d: [1, 0], n: [0, 1] }
   for (const tolerance of [Infinity, 3, 2, 1.5]) {
     pts = pts.filter(
-      (p) => Math.abs(dot([p[0] - line.m[0], p[1] - line.m[1]], line.n)) < tolerance
+      (p) =>
+        Math.abs(dot([p[0] - line.m[0], p[1] - line.m[1]], line.n)) < tolerance
     )
     const { centre, u } = axisOf(pts)
     let n: Pt = [-u[1], u[0]]
@@ -616,14 +622,14 @@ function axisOf(points: Pt[]) {
 }
 
 /** Degrees above the horizontal of a direction (screen y runs down). */
-const rise = (d: Pt) => -deg(Math.atan2(d[1], Math.abs(d[0]) * Math.sign(d[0] || 1)))
+const rise = (d: Pt) =>
+  -deg(Math.atan2(d[1], Math.abs(d[0]) * Math.sign(d[0] || 1)))
 
 /**
  * Each stripe is four lines. The long sides are fitted to the edge pixels
  * that face across the stripe. The navy stripe's ends are fitted the same
  * way; the orange and silver stripes end on level cuts at their first and
- * last rows. The silver stripe's top is under the haze, so it is given the
- * navy stripe's length, measured up its centre line from its level foot.
+ * last rows.
  */
 function measureStripes(img: Img, blobs: Blob[]) {
   const take = (ink: Ink, at: readonly Pt[]) => claim(blobs, ink, at)[0]
@@ -655,40 +661,18 @@ function measureStripes(img: Img, blobs: Blob[]) {
   const navyTop = fitLine(navy.top)
   const navyFoot = fitLine(navy.foot)
   const navyQuad = quad(navy.upperLeft, navy.lowerRight, navyTop, navyFoot)
-  const mid = (a: Pt, b: Pt): Pt => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2]
-  const length = Math.hypot(
-    mid(navyQuad[1], navyQuad[2])[0] - mid(navyQuad[0], navyQuad[3])[0],
-    mid(navyQuad[1], navyQuad[2])[1] - mid(navyQuad[0], navyQuad[3])[1]
-  )
 
-  const orangeBlob = take("orange", PARTS.stripes.orange.at)
-  const orange = sides(orangeBlob)
-  const orangeQuad = quad(
-    orange.upperLeft,
-    orange.lowerRight,
-    level(orangeBlob.y0),
-    level(orangeBlob.y1 + 1)
-  )
-
-  const silverBlob = take("silver", PARTS.stripes.silver.at)
-  const silver = sides(silverBlob)
-  const foot = silverBlob.y1 + 1
-  const footMid = mid(
-    lineLine(silver.upperLeft, level(foot)),
-    lineLine(silver.lowerRight, level(foot))
-  )
+  const levelled = (ink: Ink) => {
+    const blob = take(ink, PARTS.stripes[ink].at)
+    const s = sides(blob)
+    return {
+      s,
+      quad: quad(s.upperLeft, s.lowerRight, level(blob.y0), level(blob.y1 + 1)),
+    }
+  }
+  const orange = levelled("orange")
+  const silver = levelled("silver")
   const dir = (l: Line): Pt => (l.d[1] < 0 ? l.d : [-l.d[0], -l.d[1]])
-  const a = dir(silver.upperLeft)
-  const b = dir(silver.lowerRight)
-  const centre: Pt = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2]
-  const unit = Math.hypot(centre[0], centre[1])
-  const silverTop = footMid[1] + (length * centre[1]) / unit
-  const silverQuad = quad(
-    silver.upperLeft,
-    silver.lowerRight,
-    level(silverTop),
-    level(foot)
-  )
 
   const sideAngles = (s: { upperLeft: Line; lowerRight: Line }) =>
     [rise(dir(s.upperLeft)), rise(dir(s.lowerRight))] as const
@@ -696,14 +680,14 @@ function measureStripes(img: Img, blobs: Blob[]) {
     angle: rise(up),
     sides: {
       navy: sideAngles(navy),
-      orange: sideAngles(orange),
-      silver: sideAngles(silver),
+      orange: sideAngles(orange.s),
+      silver: sideAngles(silver.s),
     },
-    rms: [navy, orange, silver].map((s) => [s.upperLeft.rms, s.lowerRight.rms]),
-    length,
-    silverTop,
-    silverVisibleTop: silverBlob.y0,
-    polygons: { navy: navyQuad, orange: orangeQuad, silver: silverQuad },
+    rms: [navy, orange.s, silver.s].map((s) => [
+      s.upperLeft.rms,
+      s.lowerRight.rms,
+    ]),
+    polygons: { navy: navyQuad, orange: orange.quad, silver: silver.quad },
   }
 }
 
@@ -732,6 +716,85 @@ function measureStem(img: Img, e: Blob) {
   }
   runs.sort((a, b) => a - b)
   return { stem: runs[runs.length >> 1], rows: runs.length }
+}
+
+/**
+ * EXPO's slant, as the tangent of its lean: a line fitted to the E's left
+ * edge (the leftmost ink on every row), clear of the rounded corners.
+ */
+function measureSlant(img: Img, e: Blob) {
+  const left = new Map<number, number>()
+  for (const p of e.pixels) {
+    const x = p % img.w
+    const y = (p - x) / img.w
+    left.set(y, Math.min(left.get(y) ?? Infinity, x))
+  }
+  const trim = (e.y1 - e.y0) * 0.1
+  const pts = [...left].filter(([y]) => y > e.y0 + trim && y < e.y1 - trim)
+  const my = pts.reduce((s, [y]) => s + y, 0) / pts.length
+  const mx = pts.reduce((s, [, x]) => s + x, 0) / pts.length
+  const slope =
+    pts.reduce((s, [y, x]) => s + (y - my) * (x - mx), 0) /
+    pts.reduce((s, [y]) => s + (y - my) ** 2, 0)
+  // x falls as y rises down the page, so the lean is the negated slope.
+  return -slope
+}
+
+/**
+ * The X is not a font glyph: it is two straight-edged strokes, one of them
+ * bevelled. Each blob's outline is traced along pixel edges (so a corner of
+ * the outline is a corner of a pixel) and simplified with Ramer-Douglas-
+ * Peucker, which returns the handful of vertices a straight-edged shape has.
+ */
+function tracePolygon(img: Img, b: Blob, tolerance = 1.5): Pt[] {
+  const inside = new Set(b.pixels)
+  const has = (x: number, y: number) =>
+    x >= 0 && y >= 0 && x < img.w && y < img.h && inside.has(y * img.w + x)
+  // Directed pixel edges, ink on the right (clockwise, y down).
+  const next = new Map<string, Pt>()
+  const key = ([x, y]: Pt) => `${x},${y}`
+  for (const p of b.pixels) {
+    const x = p % img.w
+    const y = (p - x) / img.w
+    if (!has(x, y - 1)) next.set(key([x, y]), [x + 1, y])
+    if (!has(x + 1, y)) next.set(key([x + 1, y]), [x + 1, y + 1])
+    if (!has(x, y + 1)) next.set(key([x + 1, y + 1]), [x, y + 1])
+    if (!has(x - 1, y)) next.set(key([x, y + 1]), [x, y])
+  }
+  // The outer loop starts at the top-left pixel's top-left corner.
+  const top = Math.min(...b.pixels)
+  const start: Pt = [top % img.w, (top - (top % img.w)) / img.w]
+  const loop: Pt[] = [start]
+  for (let at = next.get(key(start))!; key(at) !== key(start);) {
+    loop.push(at)
+    at = next.get(key(at))!
+  }
+  const rdp = (pts: Pt[]): Pt[] => {
+    const [a, z] = [pts[0], pts[pts.length - 1]]
+    const len = Math.hypot(z[0] - a[0], z[1] - a[1]) || 1
+    let far = 0
+    let at = 0
+    pts.forEach(([x, y], i) => {
+      const d =
+        Math.abs((z[0] - a[0]) * (a[1] - y) - (a[0] - x) * (z[1] - a[1])) / len
+      if (d > far) [far, at] = [d, i]
+    })
+    if (far <= tolerance) return [a, z]
+    return [...rdp(pts.slice(0, at + 1)).slice(0, -1), ...rdp(pts.slice(at))]
+  }
+  // Split the closed loop at its farthest point so both halves are open.
+  const far = loop.reduce(
+    (best, p, i) =>
+      Math.hypot(p[0] - start[0], p[1] - start[1]) >
+      Math.hypot(loop[best][0] - start[0], loop[best][1] - start[1])
+        ? i
+        : best,
+    0
+  )
+  return [
+    ...rdp(loop.slice(0, far + 1)).slice(0, -1),
+    ...rdp([...loop.slice(far), start]).slice(0, -1),
+  ]
 }
 
 // --- measure ----------------------------------------------------------------
@@ -767,12 +830,14 @@ function measure(img: Img) {
     edition: lines.edition.map(boxOf),
   }
   const stem = measureStem(img, lines.expo[0][0])
-  return { blobs, arcs, dots, stripes, letters, stem, lines }
+  const slant = measureSlant(img, lines.expo[0][0])
+  const x = lines.expo[1].map((b) => tracePolygon(img, b))
+  return { blobs, arcs, dots, stripes, letters, stem, slant, x, lines }
 }
 
 function printMeasurement() {
   return loadPng().then((img) => {
-    const { arcs, dots, stripes, letters, stem } = measure(img)
+    const { arcs, dots, stripes, letters, stem, slant, x } = measure(img)
     const circle = (c: Circle) => ({ cx: r1(c.cx), cy: r1(c.cy), r: r1(c.r) })
 
     console.log("ARCS (angles clockwise from 3 o'clock, degrees)")
@@ -797,10 +862,6 @@ function printMeasurement() {
     console.log(
       `  side fit rms ${stripes.rms.map((p) => p.map((v) => v.toFixed(2)).join("/")).join(", ")}`
     )
-    console.log(
-      `  navy length ${r1(stripes.length)}; silver top y ${r1(stripes.silverTop)}` +
-        ` (visible to y ${stripes.silverVisibleTop}, the haze's lower edge)`
-    )
     console.log("LETTERS")
     for (const [name, boxes] of Object.entries(letters)) {
       console.log(
@@ -809,6 +870,12 @@ function printMeasurement() {
       )
     }
     console.log(`  E stem ${stem.stem}px (median of ${stem.rows} rows)`)
+    console.log(
+      `  EXPO slant ${slant.toFixed(3)} (${deg(Math.atan(slant)).toFixed(1)}°)`
+    )
+    console.log(
+      `  X strokes: ${x.map((p) => `${p.length} vertices`).join(", ")}`
+    )
 
     const ts = {
       arcs: Object.entries(arcs).map(([id, a]) => ({
@@ -835,7 +902,12 @@ function printMeasurement() {
           points: pts.map(([x, y]) => [r1(x), r1(y)]),
         })),
       },
-      letters: { ...letters, expoStem: stem.stem },
+      letters: {
+        ...letters,
+        expoStem: stem.stem,
+        expoSlant: Math.round(slant * 1000) / 1000,
+        expoX: x,
+      },
     }
     console.log("\nGEOMETRY (paste into components/brand/mark-geometry.ts)")
     console.log(JSON.stringify(ts))
@@ -853,13 +925,16 @@ const hex = (rgb: Rgb) =>
  * every other part. Inks are painted with the PNG's own measured colours, so
  * edges blend with white exactly as the logo's do and classify alike.
  */
-async function renderMark(only?: Layer, paint: Record<Ink, string> = {
-  navy: hex(REFS.navy),
-  orange: hex(REFS.orange),
-  silver: hex(REFS.silver),
-}) {
+async function renderMark(
+  only?: Layer,
+  paint: Record<Ink, string> = {
+    navy: hex(REFS.navy),
+    orange: hex(REFS.orange),
+    silver: hex(REFS.silver),
+  }
+) {
   const { Mark } = await import("@/components/brand/mark")
-  const size = 1097
+  const { width: size } = await sharp(SRC).metadata()
   let svg = renderToStaticMarkup(
     createElement(Mark, {
       decorative: true,
@@ -895,9 +970,11 @@ async function verify(sideBySide?: string) {
   }
   for (const line of Object.values(lines)) mark("letters", line.flat())
 
-  console.log("IoU vs public/kariyer-expo.png, haze box excluded")
+  console.log("IoU vs public/kariyer-expo.png")
   for (const layer of LAYERS) {
-    const { data, info } = await (await renderMark(layer))
+    const { data, info } = await (
+      await renderMark(layer)
+    )
       .ensureAlpha()
       .raw()
       .toBuffer({ resolveWithObject: true })
@@ -905,8 +982,6 @@ async function verify(sideBySide?: string) {
     const k = LAYERS.indexOf(layer)
     const tally = { all: [0, 0], navy: [0, 0], orange: [0, 0], silver: [0, 0] }
     for (let p = 0; p < w * h; p++) {
-      const x = p % w
-      if (inHaze(x, (p - x) / w)) continue
       const t = layerOf[p] === k ? truth.cls[p] : NONE
       const d = drawn.cls[p]
       if (t === NONE && d === NONE) continue
@@ -924,10 +999,18 @@ async function verify(sideBySide?: string) {
 
   if (sideBySide) {
     const drawn = await (await renderMark()).png().toBuffer()
-    const source = await sharp(SRC).flatten({ background: "#ffffff" }).png().toBuffer()
+    const source = await sharp(SRC)
+      .flatten({ background: "#ffffff" })
+      .png()
+      .toBuffer()
     // Composite first: sharp would otherwise resize before compositing.
     const pair = await sharp({
-      create: { width: w * 2 + 24, height: h, channels: 3, background: "#ffffff" },
+      create: {
+        width: w * 2 + 24,
+        height: h,
+        channels: 3,
+        background: "#ffffff",
+      },
     })
       .composite([
         { input: source, left: 0, top: 0 },

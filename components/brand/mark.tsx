@@ -15,15 +15,35 @@ const markPaint: Record<Ink, string> = {
   silver: "var(--mark-silver)",
 }
 
+type Line = keyof typeof markGlyphs
+
+/** One line of type as two paths: its navy glyphs and its orange accents. */
+const linePaths = (line: Line) => {
+  const accents: readonly number[] = markGeometry.letters.accents[line]
+  const pick = (orange: boolean) =>
+    markGlyphs[line].filter((_, i) => accents.includes(i) === orange).join("")
+  return { navy: pick(false), orange: pick(true) }
+}
+
 /** Path data built once per module, not per render. */
 const markPaths = {
   arcs: markGeometry.arcs.map((a) => ({ ...a, d: crescentPaths(a) })),
   bars: markGeometry.stripes.bars.map((b) => ({ ...b, d: barPath(b) })),
   lines: {
-    kariyer: markGlyphs.kariyer.join(""),
-    expo: markGlyphs.expo.join(""),
-    edition: markGlyphs.edition.join(""),
+    kariyer: linePaths("kariyer"),
+    expo: linePaths("expo"),
+    edition: linePaths("edition"),
   },
+}
+
+/** A line of type, each ink in its own paint. */
+function LinePaths({ line }: { line: { navy: string; orange: string } }) {
+  return (
+    <>
+      <path d={line.navy} fill={markPaint.navy} />
+      {line.orange && <path d={line.orange} fill={markPaint.orange} />}
+    </>
+  )
 }
 
 /**
@@ -38,8 +58,8 @@ const markPaths = {
  * Drawn from measured geometry (mark-geometry.ts) and outlined Archivo
  * (mark-glyphs.ts), in public/kariyer-expo.png's own pixel space, cropped by
  * the viewBox. What the PNG has and this does not: the white disc behind it,
- * the haze over the stripes' tops, the dot's drop shadow and the sheen beside
- * the navy stripe. The mark sits on whatever ground it is placed on.
+ * the X's bevel, the letters' dark drop edge and the navy stripe's extruded
+ * side. The mark is flat and sits on whatever ground it is placed on.
  *
  * Every colour is a --mark-* var. Each part is its own <g data-part>.
  */
@@ -81,13 +101,13 @@ function Mark({
           />
         ))}
       </g>
-      <g data-part="letters" fill={markPaint.navy}>
-        <path d={markPaths.lines.kariyer} />
-        <path d={markPaths.lines.expo} />
-        <path d={markPaths.lines.edition} />
+      <g data-part="letters">
+        <LinePaths line={markPaths.lines.kariyer} />
+        <LinePaths line={markPaths.lines.expo} />
+        <LinePaths line={markPaths.lines.edition} />
       </g>
     </svg>
   )
 }
 
-export { Mark, markPaint, markPaths }
+export { LinePaths, Mark, markPaint, markPaths }

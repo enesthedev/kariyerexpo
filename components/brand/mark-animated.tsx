@@ -1,13 +1,13 @@
 "use client"
 
 import { useId } from "react"
-import { cn } from "cn"
 import { useReducedMotion } from "motion/react"
 import * as m from "motion/react-m"
 
-import { markPaint, markPaths } from "@/components/brand/mark"
+import { LinePaths, markPaint, markPaths } from "@/components/brand/mark"
 import {
   crescentSweep,
+  MARK_VIEWBOX,
   markGeometry,
   markViewBox,
 } from "@/components/brand/mark-geometry"
@@ -56,7 +56,8 @@ function MarkAnimated({ className }: { className?: string }) {
   return (
     <div
       data-slot="mark-animated"
-      className={cn("aspect-[922/876]", className)}
+      className={className}
+      style={{ aspectRatio: `${MARK_VIEWBOX.w} / ${MARK_VIEWBOX.h}` }}
     >
       <svg
         data-slot="mark"
@@ -132,11 +133,10 @@ function MarkAnimated({ className }: { className?: string }) {
           ))}
         </g>
 
-        <g data-part="letters" fill={markPaint.navy}>
-          {Object.values(markPaths.lines).map((d, i) => (
-            <m.path
+        <g data-part="letters">
+          {Object.values(markPaths.lines).map((line, i) => (
+            <m.g
               key={i}
-              d={d}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{
@@ -144,7 +144,9 @@ function MarkAnimated({ className }: { className?: string }) {
                 delay: time(0.2 + 0.15 * i),
                 ease: EASE,
               }}
-            />
+            >
+              <LinePaths line={line} />
+            </m.g>
           ))}
         </g>
       </svg>

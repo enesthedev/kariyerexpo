@@ -1,15 +1,15 @@
-import { markPaint, markPaths } from "@/components/brand/mark"
+import { LinePaths, markPaint, markPaths } from "@/components/brand/mark"
 import { markGeometry } from "@/components/brand/mark-geometry"
 import { site } from "@/lib/content"
 
 // The ring's own bounds (arcs, dots, stripes) with a small margin, squared.
-const VIEWBOX = "115 90 900 900"
+const VIEWBOX = "132 101 1030 1030"
 
 // "27" moved into the ring's empty middle, where KARİYER and EXPO sit on the
-// full mark, and scaled 2.4x: between the upper orange arc's cut end
-// (y 299) and the navy stripe's top (y 598), centred on the ring.
-const SCALE = 2.4
-const CENTRE = { x: 560, y: 447 }
+// full mark, and scaled 2.2x: between the upper orange arc's cut end
+// (y 341) and the navy stripe's top (y 679), centred on the ring.
+const SCALE = 2.2
+const CENTRE = { x: 647, y: 500 }
 const editionTransform = (() => {
   const boxes = markGeometry.letters.edition
   const x0 = Math.min(...boxes.map((b) => b.x))
@@ -67,12 +67,8 @@ function MarkSymbol({
           />
         ))}
       </g>
-      <g
-        data-part="letters"
-        fill={markPaint.navy}
-        transform={editionTransform}
-      >
-        <path d={markPaths.lines.edition} />
+      <g data-part="letters" transform={editionTransform}>
+        <LinePaths line={markPaths.lines.edition} />
       </g>
     </svg>
   )

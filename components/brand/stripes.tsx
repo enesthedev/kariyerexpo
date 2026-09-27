@@ -1,41 +1,39 @@
 import { cn } from "cn"
 
+import { markPaint, markPaths } from "@/components/brand/mark"
+
+// The three bars' own ink box in the logo's pixel space.
+const points = markPaths.bars.flatMap((b): (readonly [number, number])[] => [
+  ...b.points,
+])
+const x0 = Math.min(...points.map(([x]) => x))
+const y0 = Math.min(...points.map(([, y]) => y))
+const x1 = Math.max(...points.map(([x]) => x))
+const y1 = Math.max(...points.map(([, y]) => y))
+
 /**
- * The logo's three diagonal stripes: the direction mark, for hero and banner
- * corners. (In buttons, direction is IconArrowUpRight.)
+ * The logo's three stripes, lifted out of the mark at their true angle
+ * (40.5° above horizontal, fanning a few degrees, navy cut square, orange and
+ * silver on level cuts): the same measured bars <Mark> draws.
  *
- * Quoted from public/kariyer-expo.png, where the stripes rise up-right at
- * 41.6deg. Each bar's length, thickness and offset along the diagonal were
- * read off the PNG by projecting its pixels onto the stripe axis and its
- * normal, then shifted to start at 0: navy on the upper left, orange staggered
- * down-left of it, silver on the lower right, as in the logo. The ends are
- * square, and the bars are drawn level and turned as one group, so the angle
- * lives in one place.
+ * The page's direction mark, for band and hero corners. The angle is never
+ * redrawn by hand anywhere else; band edges take the shallow --cut instead.
  *
  * Decorative only. The colours come from the --mark-* vars, which
- * [data-surface="navy"] remaps, so it works on paper and on navy. There is no
- * intrinsic size: `className` sets a width or a height and the viewBox keeps
- * the aspect.
+ * [data-surface="navy"] remaps, so it works on paper and on navy. No
+ * intrinsic size: `className` sets a width or a height.
  */
 function Stripes({ className }: { className?: string }) {
   return (
     <svg
       data-slot="stripes"
-      viewBox="0 0 362 335"
+      viewBox={`${x0} ${y0} ${x1 - x0} ${y1 - y0}`}
       aria-hidden
       className={cn("pointer-events-none", className)}
     >
-      <g transform="translate(-41.2 260.3) rotate(-41.6)">
-        <rect x="80" y="0" width="312" height="46" fill="var(--mark-navy)" />
-        <rect x="0" y="62" width="338" height="38" fill="var(--mark-orange)" />
-        <rect
-          x="69"
-          y="112"
-          width="328"
-          height="48"
-          fill="var(--mark-silver)"
-        />
-      </g>
+      {markPaths.bars.map((b) => (
+        <path key={b.ink} d={b.d} fill={markPaint[b.ink]} />
+      ))}
     </svg>
   )
 }

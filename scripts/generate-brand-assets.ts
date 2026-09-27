@@ -17,7 +17,8 @@
  * assets cannot drift from what the page draws. librsvg (inside sharp)
  * cannot resolve var(), so each --mark-* var is swapped for its light-theme
  * token as hex. The tagline is outlined from the same pinned Archivo as the
- * mark's letters, because librsvg has no web fonts.
+ * mark's letters, because librsvg has no web fonts, and leans by the mark's
+ * measured EXPO slant, as the page's display voice does.
  */
 import { statSync, writeFileSync } from "node:fs"
 
@@ -26,7 +27,11 @@ import { renderToStaticMarkup } from "react-dom/server"
 import sharp from "sharp"
 
 import { Mark } from "@/components/brand/mark"
-import { MARK_VIEWBOX, type Ink } from "@/components/brand/mark-geometry"
+import {
+  MARK_VIEWBOX,
+  markGeometry,
+  type Ink,
+} from "@/components/brand/mark-geometry"
 import { MarkSymbol } from "@/components/brand/mark-symbol"
 import { site } from "@/lib/content"
 
@@ -34,9 +39,9 @@ import { loadArchivo, svgPath } from "./outline-mark-glyphs"
 
 // app/globals.css, light theme, oklch -> sRGB.
 const TOKENS: Record<Ink, string> = {
-  navy: "#00234E", // --foreground, which --mark-navy follows
-  orange: "#FF5717", // --accent
-  silver: "#A0ABBA", // --silver
+  navy: "#03214F", // --foreground, which --mark-navy follows
+  orange: "#FF6837", // --accent
+  silver: "#A6AFBD", // --silver
 }
 const BAND = "#F4F6F9" // --band
 
@@ -46,10 +51,7 @@ type SvgProps = React.ComponentProps<"svg"> & { decorative?: boolean }
 function markup(component: ComponentType<SvgProps>, props: SvgProps) {
   return renderToStaticMarkup(
     createElement(component, { decorative: true, ...props })
-  ).replace(
-    /var\(--mark-(navy|orange|silver)\)/g,
-    (_, ink: Ink) => TOKENS[ink]
-  )
+  ).replace(/var\(--mark-(navy|orange|silver)\)/g, (_, ink: Ink) => TOKENS[ink])
 }
 
 const svgDoc = (w: number, h: number, body: string) =>
@@ -63,7 +65,7 @@ async function png(svg: string, out: string) {
   console.log(`${out} ${width}x${height} ${kb} KB`)
 }
 
-/** The tagline, set in Archivo and outlined, wrapped to `maxWidth`. */
+/** The tagline, set in Archivo, leaning, outlined, wrapped to `maxWidth`. */
 async function tagline(opts: {
   x: number
   y: number
@@ -95,7 +97,7 @@ async function tagline(opts: {
         const left = pen + pos.xOffset * scale
         pen += pos.xAdvance * scale
         return svgPath(glyph.path.commands, (x, y) => [
-          left + x * scale,
+          left + (x + y * markGeometry.letters.expoSlant) * scale,
           baseline - (y + pos.yOffset) * scale,
         ])
       })

@@ -70,9 +70,9 @@ export const header = {
 } as const
 
 export const hero = {
-  headline: "Yeteneğin ve fırsatın",
+  headline: "Geleceğini Keşfet,",
   /** The heading's one orange phrase (the logo's X-and-7 rule). */
-  headlineAccent: "buluştuğu yer.",
+  headlineAccent: "Kariyerine Yön Ver.",
   lede:
     "İstanbul'un en büyük kariyer fuarı, 2027'de üçüncü kez kapılarını " +
     "açıyor. Öğrenciler, yeni mezunlar ve Türkiye'nin önde gelen işverenleri " +

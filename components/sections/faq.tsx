@@ -9,7 +9,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-import { Eyebrow } from "@/components/section-heading"
 
 /**
  * The heading holds the left column, the questions run as ruled rows on the
@@ -25,7 +24,6 @@ function Faq() {
     <section id="sss" className="scroll-mt-20 py-[clamp(4rem,10vw,8rem)]">
       <div className="mx-auto grid max-w-6xl gap-10 px-5 md:grid-cols-12 md:gap-8">
         <div className="md:col-span-5 lg:col-span-4">
-          <Eyebrow>{faq.eyebrow}</Eyebrow>
           <h2 className="text-[clamp(2rem,1.2rem+3vw,3.75rem)] leading-[1]">
             {faq.headline}
           </h2>

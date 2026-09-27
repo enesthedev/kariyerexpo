@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils"
 // cover both, so the whole site comes out of a single design.
 //
 // A variable Google font takes one `style` per call, so the italic is a
-// second call exposed as --font-display. Only h1, h2, eyebrows and numerals
+// second call exposed as --font-display. Only h1, h2 and numerals
 // read it (see globals.css); body text never downloads it on its own.
 //
 // Turkish needs latin-ext: İ ı Ğ ğ Ş ş live in Latin Extended-A, outside the

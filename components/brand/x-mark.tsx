@@ -16,9 +16,8 @@ const d = markGeometry.letters.expoX
  * The logo's X, exactly: the two strokes traced off public/kariyer-expo.png
  * (letters.expoX in mark-geometry.ts), in the mark's orange.
  *
- * The eyebrow bullet and the list bullet, nothing else. It is the logo's
- * one orange letter, so on the page it marks "a new thing starts here"; used
- * as decoration it would stop meaning that.
+ * The audience cards' list bullet, nothing else. It is the logo's one
+ * orange letter; scattered as decoration it would stop meaning anything.
  *
  * Decorative only. Orange as a fill, which the colour bans allow on every
  * ground. Sized in em by default so it follows the text it sits beside;

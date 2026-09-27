@@ -15,7 +15,6 @@ function About() {
     <section id="fuar" className="scroll-mt-20 py-[clamp(4rem,10vw,8rem)]">
       <div className="mx-auto max-w-6xl px-5">
         <SectionHeading
-          eyebrow={about.eyebrow}
           title={about.headline}
           accent={about.headlineAccent}
           description={about.body.map((p) => (

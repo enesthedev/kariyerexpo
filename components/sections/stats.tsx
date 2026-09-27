@@ -2,7 +2,6 @@ import { cn } from "cn"
 
 import { stats, type Stat } from "@/lib/content"
 import { Stripes } from "@/components/brand/stripes"
-import { Eyebrow } from "@/components/section-heading"
 import { StatCounter } from "@/components/stat-counter"
 
 /**
@@ -29,7 +28,6 @@ function Stats() {
       <Stripes className="absolute top-[calc(var(--cut)*0.4)] right-[4%] -z-10 h-24 opacity-90 sm:h-32 lg:h-44" />
 
       <div className="mx-auto max-w-6xl px-5">
-        <Eyebrow>{stats.eyebrow}</Eyebrow>
         <h2 className="max-w-[16ch] text-[clamp(2rem,1.2rem+3vw,3.75rem)] leading-[1]">
           {stats.headline}
         </h2>

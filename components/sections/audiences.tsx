@@ -17,7 +17,6 @@ function Audiences() {
     <section id="kimler" className="scroll-mt-20 py-[clamp(4rem,10vw,8rem)]">
       <div className="mx-auto max-w-6xl px-5">
         <SectionHeading
-          eyebrow={audiences.eyebrow}
           title={audiences.headline}
           accent={audiences.headlineAccent}
         />

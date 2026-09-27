@@ -1,7 +1,6 @@
-import { hero, site } from "@/lib/content"
+import { hero } from "@/lib/content"
 import { MarkAnimated } from "@/components/brand/mark-animated"
 import { DatePill } from "@/components/date-pill"
-import { Eyebrow } from "@/components/section-heading"
 import { SubscribeForm } from "@/components/subscribe-form"
 
 /**
@@ -26,7 +25,6 @@ function Hero() {
             with. */}
         <div className="mx-auto grid max-w-6xl gap-12 px-5 pt-10 pb-[calc(var(--cut)+6rem)] md:pt-16 md:pb-[calc(var(--cut)+8rem)] lg:grid-cols-12 lg:items-center lg:gap-8">
           <div className="lg:col-span-7">
-            <Eyebrow>{site.taglineCaps}</Eyebrow>
             <h1 className="text-[clamp(2.5rem,1.1rem+5.8vw,6rem)] leading-[0.95]">
               {hero.headline}{" "}
               <span className="text-line">{hero.headlineAccent}</span>

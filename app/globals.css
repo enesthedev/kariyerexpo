@@ -26,16 +26,15 @@
 
    THE LANGUAGE, READ OFF THE NEW LOGO
      slant   EXPO leans 11°. The display voice is Archivo italic at wdth 125,
-             weight 800: h1, h2, numerals and eyebrows. Body text and h3 stay
-             roman. A real italic face (loaded as --font-display), never a
-             skewX on text.
+             weight 800: h1, h2 and numerals. Body text and h3 stay roman.
+             A real italic face (loaded as --font-display), never a skewX
+             on text.
      the orange character
              The logo gives exactly two glyphs to orange: the X and the 7.
              So each heading may give ONE word or short phrase to orange
              (`text-line`), the accent field in lib/content.ts. Never two.
-     X       The logo's X, traced (components/brand/x-mark.tsx): the eyebrow
-             bullet and the list bullet. A fill, so it is allowed on light
-             grounds.
+     X       The logo's X, traced (components/brand/x-mark.tsx): the list
+             bullet, nothing else. A fill, so it is allowed on light grounds.
      cut     The stripes rise at 40.5°. Navy bands (stats, CTA, footer) end
              in a shallow diagonal (.cut-*), rising left to right like the
              stripes; the stripes themselves appear only at their true angle,
@@ -242,20 +241,6 @@
 }
 
 @layer components {
-  /* The label voice, quoting the logo's letterspaced KARİYER, leaning like
-     EXPO. Capitals are typed as literal characters in lib/content.ts, never
-     transformed, because Turkish casing is locale-dependent and
-     `text-transform` silently produces "BILGI" for "bilgi". */
-  .eyebrow {
-    font-family: var(--font-display);
-    font-style: italic;
-    font-variation-settings: "wdth" 125;
-    font-weight: 700;
-    letter-spacing: 0.18em;
-    font-size: 0.75rem;
-    line-height: 1;
-  }
-
   /* Numerals match the logo's heavy extended 27, leaning with the headings. */
   .numeral {
     font-family: var(--font-display);

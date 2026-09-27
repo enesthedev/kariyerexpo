@@ -30,33 +30,41 @@ Those docs also carry inline `{/* AI agent hint: ... */}` notes; heed them and a
 
 ## Architecture
 
-A one-page Turkish landing site for the Kariyer Expo 27 career fair. `app/page.tsx` composes eleven sections behind anchor navigation; there are no sub-routes.
+A one-page Turkish landing site for the Kariyer Expo 27 career fair. `app/page.tsx` composes nine sections between the header and footer, behind anchor navigation; there are no sub-routes. Light only.
 
-- `app/layout.tsx` — `lang="tr"`, metadata and viewport exports, and one Google font: **Archivo** variable (`axes: ["wdth"]`, `subsets: ["latin","latin-ext"]`) exposed as `--font-sans`. `--font-heading` aliases it in `globals.css`; the display and label voices are width-axis settings, not separate families. Wraps children in `ThemeProvider` > `MotionProvider`. `suppressHydrationWarning` on `<html>` is required by next-themes.
-- `components/theme-provider.tsx` — `"use client"`. Wraps `next-themes` with `attribute="class"` + `defaultTheme="system"`, and mounts `ThemeHotkey`, which toggles light/dark on the bare `d` key (ignored while typing in an input/textarea/select/contenteditable, or with a modifier held).
-- `components/brand/` — the design language. `badge-mark.tsx` (rings redrawn from measurements), `full-mark.tsx` + `full-mark-animated.tsx` (the logo as three CSS-masked layers), `arc.tsx` (the heading rule), `knockout.tsx` (the pending state), `wordmark.tsx`. Each file documents why it exists; read those before changing brand visuals.
-- `components/sections/` — one file per section, all RSC except `faq.tsx`. `components/layout/` holds the header, footer and theme toggle.
+- `app/layout.tsx` — `lang="tr"`, metadata and viewport exports, and **Archivo** variable (`axes: ["wdth"]`, `subsets: ["latin","latin-ext"]`) loaded twice: roman as `--font-sans`, italic as `--font-display` (a variable Google font takes one `style` per call). Wraps children in `MotionProvider`.
+- `components/brand/` — the design language, all drawn from `public/kariyer-expo.png`:
+  - `mark.tsx` (inline SVG), `mark-animated.tsx` (hero entrance), `mark-symbol.tsx` (icons) — painted from `mark-geometry.ts` (measured data + path builders) and `mark-glyphs.ts` (generated outlines; do not edit).
+  - `x-mark.tsx` (the logo's traced X: eyebrow and list bullet), `stripes.tsx` (the measured bars: band corners), `pending-dots.tsx` (the "yakında" signal).
+  - Each file documents why it exists; read those before changing brand visuals.
+- `components/section-heading.tsx` — `SectionHeading` (eyebrow, leaning title, one orange `accent`) and `Eyebrow`.
+- `components/sections/` — one file per section, RSC except `faq.tsx` and `audience-card.tsx`. `components/layout/` holds the header and footer.
 - `lib/content.ts` — every string on the page, plus `site.date` (`null` until announced) and `speakers` (empty until announced). Both drive real design states, so prefer changing content over changing components.
-- `lib/utils.ts` — re-exports `cn` from the `cn` npm package (not the usual local `clsx`+`tailwind-merge` helper).
+- `lib/utils.ts` — re-exports `cn` from the `cn` npm package (not the usual local `clsx`+`tailwind-merge` helper). It does **not** merge conflicting Tailwind classes, so never rely on a later class overriding an earlier one.
+- `scripts/` — run with `bun`, outputs committed:
+  - `measure-mark.ts` prints the mark's geometry from the PNG (paste into `mark-geometry.ts`); `--verify [out.png]` scores the drawn mark per layer (IoU).
+  - `outline-mark-glyphs.ts` regenerates `mark-glyphs.ts`.
+  - `generate-brand-assets.ts` renders `app/icon.png`, `app/apple-icon.png`, `app/opengraph-image.png` and `public/logo.png` from the SVG mark.
+  - `check-contrast.ts` gates the token contrast pairs against a hand-kept copy of the tokens.
 
 ### Styling
 
 Tailwind v4, CSS-first: **there is no `tailwind.config`**. Everything lives in `app/globals.css`:
 
 - imports `tailwindcss`, `tw-animate-css`, and `shadcn/tailwind.css`
-- `@custom-variant dark (&:is(.dark *))` — dark mode is class-driven, matching next-themes
-- design tokens as oklch CSS variables under `:root` / `.dark`, surfaced to Tailwind through `@theme inline` (`--color-*`, `--radius-*` scale derived from `--radius`). The palette is measured from the logo and sits on two hues: blue 260 and orange 36. `components.json` still says `baseColor: "mauve"`; that is only what the scaffold was generated from and no mauve remains.
-- brand tokens beyond shadcn's set: `--band` (the alternating section ground), `--silver` (keyline only, never a surface), `--line` (orange that is safe to read on a light ground), `--mark-*` and `--knockout-*`
-- `[data-surface="navy"]` remaps rings, borders, `--line`, `--mark-*` and `--knockout-*` for the sections that stay navy in both themes
-- `@layer base` sets border/ring defaults, body colors, `font-sans` on `html`, and pointer cursors on enabled buttons
+- design tokens as oklch CSS variables under `:root`, surfaced to Tailwind through `@theme inline` (`--color-*`, `--radius-*` scale derived from `--radius`). The palette is measured from the logo and sits on two hues: blue 259 and orange 37.8. `components.json` still says `baseColor: "mauve"`; that is only what the scaffold was generated from and no mauve remains.
+- brand tokens beyond shadcn's set: `--band` (the alternating section ground), `--silver` (keyline only, never a surface), `--line` (orange that is safe to read on a light ground), `--mark-*`, `--cut` (the one diagonal slope) and `--corner`
+- `[data-surface="navy"]` remaps rings, borders, `--line`, `--muted-foreground` and `--mark-*` for the navy grounds (drawer, stats, speakers, CTA, footer)
+- `@layer base`: h1/h2 in the italic display face; `@layer components`: `.eyebrow`, `.numeral`, `.cut-top` / `.cut-bottom` / `.cut-y` (diagonal band edges that overlap their neighbour) and `.corner-cut`
 
-Style with the semantic tokens (`bg-background`, `text-muted-foreground`, `border-border`, `bg-primary`…) rather than raw colors, so both themes stay correct.
+Style with the semantic tokens (`bg-background`, `text-muted-foreground`, `border-border`, `bg-primary`…) rather than raw colors.
 
-**The header comment in `app/globals.css` is the design's contract — read it first.** Three rules it records are easy to break by accident:
+**The header comment in `app/globals.css` is the design's contract — read it first.** Rules it records that are easy to break by accident:
 
-- **`--accent` is fill-only in light mode** (2.80:1 on the page ground). Never orange text, never an orange stroke there. Anything orange that must be read uses `--line` (4.16:1, large text and UI strokes only).
+- **`--accent` is fill-only on light grounds** (2.84:1 on the page ground). Never orange text, never an orange stroke there. Anything orange that must be read uses `--line` (4.83:1).
+- **One orange phrase per heading** — the logo gives orange to exactly two glyphs, the X and the 7.
 - **`text-transform: uppercase` is banned sitewide.** Turkish casing is locale-dependent, so `i` becomes `I` instead of `İ` wherever `lang` is not inherited. Capitals are typed as literal characters in `lib/content.ts`.
-- **Ink is confirmed, knockout is pending.** There are no dashed strokes anywhere. The knockout appears in exactly three places (the hero date pill, the Konuşmacılar heading, the speaker cards); a fourth use kills the rule.
+- **The pending dots appear in exactly three places** (the hero date pill, the Konuşmacılar heading, the speaker cards); a fourth use kills the rule. No dashed strokes anywhere.
 
 ### Adding components
 

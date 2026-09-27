@@ -45,6 +45,12 @@
              uses: the hero date pill, the Konuşmacılar heading, the speaker
              placeholder cards. A fourth use kills the rule. Static, because
              moving dots read as "loading".
+     motion  components/reveal.tsx. Every block arrives once: headings word
+             by word out of a mask, everything else a short rise, expo-out,
+             0.8-1s. The hero plays on load, the rest on scroll; the band
+             stripes and the hero mark drift with the scroll. Nothing loops
+             and the dots never move. Reduced motion lands everything in
+             place.
    No dashed strokes anywhere: no border-dashed, no dash arrays.
 
    COLOUR BANS

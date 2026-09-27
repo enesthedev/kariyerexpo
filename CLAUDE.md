@@ -35,9 +35,10 @@ A one-page Turkish landing site for the Kariyer Expo 27 career fair. `app/page.t
 - `app/layout.tsx` — `lang="tr"`, metadata and viewport exports, and **Archivo** variable (`axes: ["wdth"]`, `subsets: ["latin","latin-ext"]`) loaded twice: roman as `--font-sans`, italic as `--font-display` (a variable Google font takes one `style` per call). Wraps children in `MotionProvider`.
 - `components/brand/` — the design language, all drawn from `public/kariyer-expo.png`:
   - `mark.tsx` (inline SVG), `mark-animated.tsx` (hero entrance), `mark-symbol.tsx` (icons) — painted from `mark-geometry.ts` (measured data + path builders) and `mark-glyphs.ts` (generated outlines; do not edit).
-  - `x-mark.tsx` (the logo's traced X: eyebrow and list bullet), `stripes.tsx` (the measured bars: band corners), `pending-dots.tsx` (the "yakında" signal).
+  - `x-mark.tsx` (the logo's traced X: the audience-card list bullet), `stripes.tsx` (the measured bars: band corners), `pending-dots.tsx` (the "yakında" signal).
   - Each file documents why it exists; read those before changing brand visuals.
-- `components/section-heading.tsx` — `SectionHeading` (eyebrow, leaning title, one orange `accent`) and `Eyebrow`.
+- `components/section-heading.tsx` — `SectionHeading` (leaning title with one orange `accent`, optional `trailing`, description). Sections have no eyebrow labels.
+- `components/reveal.tsx` — the motion layer, all `m.*` under `MotionProvider`'s `LazyMotion strict`: `Reveal`, `RevealGroup`/`RevealItem` (stagger; `variant="rule"` draws a rule on), `RevealText` (heading words rise out of a mask; sr-only full text), `Parallax` (scroll drift) and `ScrollProgress`. `on="load"` for the hero, `on="view"` (default, once) elsewhere. They take children as props, so sections stay RSC.
 - `components/sections/` — one file per section, RSC except `faq.tsx` and `audience-card.tsx`. `components/layout/` holds the header and footer.
 - `lib/content.ts` — every string on the page, plus `site.date` (`null` until announced) and `speakers` (empty until announced). Both drive real design states, so prefer changing content over changing components.
 - `lib/utils.ts` — re-exports `cn` from the `cn` npm package (not the usual local `clsx`+`tailwind-merge` helper). It does **not** merge conflicting Tailwind classes, so never rely on a later class overriding an earlier one.
@@ -55,7 +56,7 @@ Tailwind v4, CSS-first: **there is no `tailwind.config`**. Everything lives in `
 - design tokens as oklch CSS variables under `:root`, surfaced to Tailwind through `@theme inline` (`--color-*`, `--radius-*` scale derived from `--radius`). The palette is measured from the logo and sits on two hues: blue 259 and orange 37.8. `components.json` still says `baseColor: "mauve"`; that is only what the scaffold was generated from and no mauve remains.
 - brand tokens beyond shadcn's set: `--band` (the alternating section ground), `--silver` (keyline only, never a surface), `--line` (orange that is safe to read on a light ground), `--mark-*`, `--cut` (the one diagonal slope) and `--corner`
 - `[data-surface="navy"]` remaps rings, borders, `--line`, `--muted-foreground` and `--mark-*` for the navy grounds (drawer, stats, speakers, CTA, footer)
-- `@layer base`: h1/h2 in the italic display face; `@layer components`: `.eyebrow`, `.numeral`, `.cut-top` / `.cut-bottom` / `.cut-y` (diagonal band edges that overlap their neighbour) and `.corner-cut`
+- `@layer base`: h1/h2 in the italic display face; `@layer components`: `.numeral`, `.cut-top` / `.cut-bottom` / `.cut-y` (diagonal band edges that overlap their neighbour) and `.corner-cut`
 
 Style with the semantic tokens (`bg-background`, `text-muted-foreground`, `border-border`, `bg-primary`…) rather than raw colors.
 

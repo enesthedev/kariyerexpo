@@ -11,8 +11,8 @@ import { LazyMotion, MotionConfig, domAnimation } from "motion/react"
  * quietly doubling later.
  *
  * `reducedMotion="user"` is one of two required layers; the other is the
- * global media query in globals.css, which also covers the CSS-only devices
- * (the arc draw-on and the partner marquee).
+ * global media query in globals.css, which covers CSS transitions (the
+ * audience card overlay, the accordion) and anything CSS-only added later.
  */
 function MotionProvider({ children }: { children: React.ReactNode }) {
   return (

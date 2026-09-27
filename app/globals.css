@@ -266,15 +266,28 @@
   }
 
   /* Diagonal band edges. The left end is lower, so the edge rises left to
-     right with the stripes. A band keeps its content clear of the cut with
-     its own padding: at least var(--cut) extra on the cut side. */
+     right with the stripes. A cut edge overlaps its neighbour by var(--cut)
+     (negative margin, painted above it), so the triangle the cut uncovers
+     shows the neighbour's own ground, band or paper, never a third colour.
+     A band keeps its content clear of the cut with its own padding: at least
+     var(--cut) extra on the cut side. The neighbour loses var(--cut) of its
+     padding under the overlap, which every section's padding absorbs. */
+  .cut-top,
+  .cut-bottom,
+  .cut-y {
+    position: relative;
+    z-index: 1;
+  }
   .cut-top {
+    margin-top: calc(var(--cut) * -1);
     clip-path: polygon(0 var(--cut), 100% 0, 100% 100%, 0 100%);
   }
   .cut-bottom {
+    margin-bottom: calc(var(--cut) * -1);
     clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--cut)), 0 100%);
   }
   .cut-y {
+    margin-block: calc(var(--cut) * -1);
     clip-path: polygon(
       0 var(--cut),
       100% 0,

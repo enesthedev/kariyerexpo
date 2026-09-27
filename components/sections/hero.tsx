@@ -12,9 +12,10 @@ import { SubscribeForm } from "@/components/subscribe-form"
  *
  * The overlap is a negative top margin on the bar, not absolute positioning,
  * so the bar stays in flow: when it stacks to three rows on a phone it pushes
- * the next section down instead of covering it. The band's bottom padding is
- * the overlap plus the cut, so no band content sits under the bar or is
- * clipped by the diagonal.
+ * the next section down instead of covering it. The band's own negative
+ * bottom margin (.cut-bottom) already lifts the bar by the cut; its bottom
+ * padding is the overlap plus the cut, so no band content sits under the bar
+ * or is clipped by the diagonal.
  */
 function Hero() {
   return (
@@ -41,7 +42,7 @@ function Hero() {
         </div>
       </div>
 
-      <div className="relative z-10 mx-auto -mt-[calc(var(--cut)+3.5rem)] max-w-5xl px-4 sm:px-6 md:-mt-[calc(var(--cut)+5rem)]">
+      <div className="relative z-10 mx-auto -mt-14 max-w-5xl px-4 sm:px-6 md:-mt-20">
         <SubscribeForm layout="bar" showRoles />
       </div>
     </section>

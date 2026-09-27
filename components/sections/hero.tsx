@@ -19,7 +19,7 @@ import { SubscribeForm } from "@/components/subscribe-form"
  */
 function Hero() {
   return (
-    <section id="anasayfa" className="relative -mt-(--header-h) scroll-mt-20">
+    <section id="anasayfa" className="relative scroll-mt-20">
       <div className="cut-bottom bg-band pt-(--header-h)">
         {/* Text first in the DOM: the mark is the logo, not the message,
             and must not be what a screen reader or a 360px phone leads

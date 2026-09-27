@@ -37,7 +37,7 @@
              bullet, nothing else. A fill, so it is allowed on light grounds.
      cut     The stripes rise at 40.5°. Navy bands (stats, CTA, footer) end
              in a shallow diagonal (.cut-*), rising left to right like the
-             stripes (the sticky navy header at half depth, .cut-header);
+             stripes (the floating header capsule takes one .corner-cut instead);
              the stripes themselves appear only at their true angle,
              as corner graphics (components/brand/stripes.tsx). Cards lose
              one corner on the same diagonal (.corner-cut) instead of being
@@ -131,18 +131,9 @@
      parallel. */
   --cut: clamp(1.75rem, 4.5vw, 4rem);
   --corner: 1.75rem;
-  /* The header: a 5rem bar plus a half-depth cut under it. The hero pulls
-     itself up by --header-h so its band fills the uncovered triangle. */
-  --header-bar: 4.25rem;
-  --header-h: calc(var(--header-bar) + var(--cut) / 2);
-  /* The cut's angle, for the header links that walk down it. */
-  --header-slope: atan2(var(--cut) / 2, 100vw);
-}
-/* A 5rem bar is a slab on a phone; desktop keeps it for the bigger disc. */
-@media (width >= 64rem) {
-  :root {
-    --header-bar: 5rem;
-  }
+  /* The fixed header's footprint: a 12px inset plus the 72px capsule. The
+     hero pads its top by it so the capsule never covers content. */
+  --header-h: 5.25rem;
 }
 
 /* Grounds that stay navy: the mobile drawer, stats, speakers, the CTA band
@@ -232,7 +223,7 @@
     /* Next skips sticky/fixed elements when resolving a hash target, so the
        sticky header would otherwise cover the top of every section. */
     scroll-behavior: smooth;
-    scroll-padding-top: 5rem;
+    scroll-padding-top: var(--header-h);
   }
   /* Turkish uppercase is locale-dependent (i -> İ) and breaks wherever `lang`
      is not inherited, so headings are authored cased in lib/content.ts and
@@ -298,13 +289,6 @@
       100% calc(100% - var(--cut)),
       0 100%
     );
-  }
-
-  /* The header's edge: the same rise, half the depth, because a full cut
-     would make a sticky bar 9rem tall at the left. No overlap margin: the
-     hero is what slides under it (-mt-(--header-h)). */
-  .cut-header {
-    clip-path: polygon(0 0, 100% 0, 100% var(--header-bar), 0 100%);
   }
 
   /* The top-right corner cut at 45°, the stripes' square end at card

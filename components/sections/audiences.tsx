@@ -1,5 +1,4 @@
 import { audiences } from "@/lib/content"
-import { Swoosh } from "@/components/brand/swoosh"
 import { SectionHeading } from "@/components/section-heading"
 import { RevealGroup, RevealItem } from "@/components/reveal"
 import { AudienceCard } from "@/components/sections/audience-card"
@@ -9,10 +8,9 @@ import { AudienceCard } from "@/components/sections/audience-card"
  * contact anchor and only preselects a segment on the shared form, so the
  * employer is served without a second flow.
  *
- * Follows the reference site's visa-type cards: a tall face that always
- * carries the sign-up path, plus a "+" that opens an overlay for the detail
- * that would otherwise crowd it. See audience-card.tsx for the overlay
- * mechanics and the non-highlighted treatment's rationale.
+ * Tall cut-corner cards: a face that always carries the sign-up path, plus
+ * a "+" that opens an overlay for the detail that would otherwise crowd it.
+ * See audience-card.tsx for the overlay mechanics.
  */
 function Audiences() {
   return (
@@ -20,11 +18,8 @@ function Audiences() {
       <div className="mx-auto max-w-6xl px-5">
         <SectionHeading
           eyebrow={audiences.eyebrow}
-          title={
-            <>
-              {audiences.headline} <Swoosh>{audiences.headlineAccent}</Swoosh>
-            </>
-          }
+          title={audiences.headline}
+          accent={audiences.headlineAccent}
         />
 
         <RevealGroup className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

@@ -5,23 +5,26 @@ import { IconArrowUpRight, IconPlus, IconX } from "@tabler/icons-react"
 import { cn } from "cn"
 
 import { audiences } from "@/lib/content"
+import { XMark } from "@/components/brand/x-mark"
 import { buttonVariants } from "@/components/ui/button"
 
 /**
- * The reference site's visa-type card: a tall face that always carries the
- * sign-up path, plus a round "+" that opens an overlay for the detail that
- * would otherwise crowd it. The overlay is a sibling of the toggle, not a
- * child of the face, so the two can be shown and hidden independently.
+ * A tall face that always carries the sign-up path, plus a "+" that opens an
+ * overlay for the detail that would otherwise crowd it. The overlay is a
+ * sibling of the toggle, not a child of the face, so the two can be shown
+ * and hidden independently.
+ *
+ * The card's top-right corner is cut on the diagonal (.corner-cut), the
+ * stripes' square end at card scale; the toggle sits just inside the cut.
  *
  * Closed and open are mutually exclusive interactive surfaces: whichever one
  * isn't showing gets `inert`, so a covered CTA (while open) or covered detail
  * text (while closed) never stays reachable by keyboard or a screen reader --
  * only visually hiding it would leave a trap.
  *
- * `bg-card` plus a hairline border is the non-highlighted treatment. The
- * design contract's navy grounds are an enumerated list (drawer, speakers,
- * CTA banner, footer); these cards aren't on it, so `bg-sidebar` here would
- * add a fifth navy surface the contract never sanctioned.
+ * `bg-band` is the non-highlighted treatment: the cut would clip a border,
+ * so the card is told from the page by its ground alone. Navy is kept for
+ * the bands the contract lists; a navy card would be one more.
  */
 function AudienceCard({
   index,
@@ -60,24 +63,22 @@ function AudienceCard({
         }
       }}
       className={cn(
-        "relative flex min-h-[26rem] flex-col overflow-hidden rounded-[2rem] p-7",
-        highlighted
-          ? "bg-accent text-accent-foreground"
-          : "border border-border bg-card"
+        "corner-cut relative flex min-h-[26rem] flex-col overflow-hidden p-7",
+        highlighted ? "bg-accent text-accent-foreground" : "bg-band"
       )}
     >
       <div inert={open} className="flex flex-1 flex-col">
         <span
           aria-hidden="true"
           className={cn(
-            "numeral text-[1.75rem] leading-none",
+            "numeral text-[2.5rem] leading-none",
             highlighted ? "text-accent-foreground" : "text-line"
           )}
         >
           {String(index + 1).padStart(2, "0")}
         </span>
 
-        <h3 className="mt-6 text-[clamp(1.25rem,1.05rem+0.9vw,1.625rem)] leading-[1.2] font-semibold tracking-[-0.015em]">
+        <h3 className="mt-8 text-[clamp(1.375rem,1.1rem+1vw,1.75rem)] leading-[1.15] font-bold tracking-[-0.02em]">
           {title}
         </h3>
         <p className={cn("mt-2", !highlighted && "text-muted-foreground")}>
@@ -106,7 +107,7 @@ function AudienceCard({
         aria-controls={panelId}
         aria-label={open ? audiences.detailsClose : audiences.detailsOpen}
         onClick={() => setOpen((value) => !value)}
-        className="absolute top-6 right-6 z-10 inline-flex size-11 items-center justify-center rounded-full bg-primary text-primary-foreground transition-colors hover:bg-primary/80 focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none"
+        className="absolute top-9 right-9 z-10 inline-flex size-11 items-center justify-center rounded-md bg-primary text-primary-foreground transition-colors hover:bg-primary/80 focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none"
       >
         {open ? <IconX aria-hidden="true" /> : <IconPlus aria-hidden="true" />}
       </button>
@@ -115,8 +116,8 @@ function AudienceCard({
         id={panelId}
         inert={!open}
         className={cn(
-          "absolute inset-0 z-0 flex flex-col rounded-[2rem] p-7 pt-20 transition-[opacity,transform] duration-200 motion-reduce:transition-none",
-          highlighted ? "bg-accent text-accent-foreground" : "bg-card",
+          "absolute inset-0 z-0 flex flex-col p-7 pt-24 transition-[opacity,transform] duration-200 motion-reduce:transition-none",
+          highlighted ? "bg-accent text-accent-foreground" : "bg-band",
           open
             ? "translate-y-0 opacity-100"
             : "translate-y-2 opacity-0 motion-reduce:translate-y-0"
@@ -125,13 +126,14 @@ function AudienceCard({
         <ul className="space-y-2.5">
           {points.map((point) => (
             <li key={point} className="flex items-start gap-2.5 text-sm">
-              <span
-                aria-hidden="true"
-                className={cn(
-                  "mt-[0.45rem] size-1.5 shrink-0 rounded-full",
-                  highlighted ? "bg-accent-foreground" : "bg-line"
-                )}
-              />
+              {highlighted ? (
+                <span
+                  aria-hidden="true"
+                  className="mt-[0.4rem] h-1 w-3 shrink-0 -skew-x-[40deg] bg-accent-foreground"
+                />
+              ) : (
+                <XMark className="mt-[0.2rem] h-[0.9em]" />
+              )}
               {point}
             </li>
           ))}

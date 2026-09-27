@@ -25,7 +25,7 @@ import { Input } from "@/components/ui/input"
  *
  * Two layouts share this logic. `stacked` is the existing column form (used
  * inside cards and the navy CTA band). `bar` is Vize Keyfi's `.get-info`
- * shape -- a single rounded card, horizontal from md up -- for the hero.
+ * shape -- a single card, horizontal from md up -- for the hero.
  * `listenForRoleTargets` is separate from `showRoles`: the audience cards'
  * `[data-role-target]` links must be able to preselect a segment on a form
  * that renders elsewhere on the page, whether or not that form shows its own
@@ -105,7 +105,7 @@ function SubscribeForm({
       <form
         action={formAction}
         className={cn(
-          "w-full rounded-[1.5rem] border border-border bg-card p-4 shadow-lg shadow-black/5 sm:p-5",
+          "w-full rounded-lg border border-border bg-card p-4 shadow-xl shadow-primary/10 sm:p-5",
           className
         )}
       >
@@ -206,7 +206,7 @@ function SubscribeForm({
             <label
               key={r.id}
               className={cn(
-                "cursor-pointer rounded-full border px-4 py-1.5 text-sm transition-colors",
+                "cursor-pointer rounded-md border px-4 py-1.5 text-sm transition-colors",
                 "has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring/50",
                 role === r.id
                   ? "border-transparent bg-accent text-accent-foreground"

@@ -16,7 +16,7 @@ import { PendingDots } from "@/components/brand/pending-dots"
  */
 function DatePill({ className }: { className?: string }) {
   const shape =
-    "inline-flex w-fit items-center gap-2.5 rounded-full px-5 py-2.5 text-sm"
+    "inline-flex w-fit items-center gap-2.5 rounded-md px-5 py-2.5 text-sm"
 
   return (
     <div className={cn("flex flex-col gap-2", className)}>

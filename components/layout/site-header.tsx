@@ -18,22 +18,21 @@ import {
 } from "@/components/ui/sheet"
 
 /**
- * Logo left, plain links dead-centre, CTA right. `left-1/2 -translate-x-1/2`
+ * Logo left, plain links dead-centre, the drawer's trigger right (below lg). `left-1/2 -translate-x-1/2`
  * on the nav (rather than a 1fr grid track) is what actually centres it on
- * the header -- the logo and the CTA/menu cluster are different widths, so a
+ * the header -- the logo and the menu cluster are different widths, so a
  * three-track grid would centre the nav inside its track, not on the bar.
  *
  * A navy band from the first paint, its bottom edge cut on the page's
  * diagonal at half depth (.cut-header). data-surface="navy" turns the mark,
  * the muted links and the focus rings light, so nothing here picks colours
- * per element. The CTA is the orange fill (navy on orange, 5.46:1); the
- * default navy button would vanish on this ground.
+ * per element.
  *
- * Every control in the bar stands on the same parallelogram, leaning at the
- * stripes' angle and painted by ::before so labels stay upright (skew on
- * shapes, never on text): the orange CTA, the navy-tint Menü, and the active
- * link's lighter ground (a fainter one on hover). The CTA is the bar's one
- * orange thing.
+ * The links walk down the cut: the list is skewed on Y by the cut's own
+ * slope (--header-slope) and each item skewed back, so every link sits on
+ * the diagonal while its text stays upright (skew on shapes, never on text).
+ * The active link is marked by a stripe tick: a short orange parallelogram
+ * leaning at the stripes' angle, the bar's one orange thing.
  *
  * It gets out of the way going down and comes back on any move up. It never
  * hides while the drawer is open, and focus landing inside it (a Tab from
@@ -100,22 +99,29 @@ function SiteHeader() {
           </a>
 
           <nav className="absolute left-1/2 hidden -translate-x-1/2 lg:block">
-            <ul className="flex items-center gap-1">
+            <ul className="flex -skew-y-(--header-slope) items-center gap-1">
               {nav.map((item) => {
                 const isActive = active === item.href.slice(1)
                 return (
-                  <li key={item.href}>
+                  <li key={item.href} className="skew-y-(--header-slope)">
                     <a
                       href={item.href}
                       aria-current={isActive ? "true" : undefined}
                       className={cn(
-                        "relative isolate inline-flex items-center px-4 py-2 text-[0.8125rem] font-semibold tracking-[0.08em] outline-none before:absolute before:inset-x-0 before:inset-y-1 before:-z-10 before:-skew-x-[40deg] focus-visible:before:ring-2 focus-visible:before:ring-ring/50 motion-safe:transition-colors motion-safe:before:transition-colors",
+                        "relative inline-flex items-center rounded-md px-4 py-2 text-base font-semibold tracking-[0.06em] transition-colors hover:text-sidebar-foreground focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none",
                         isActive
-                          ? "text-sidebar-foreground before:bg-sidebar-border"
-                          : "text-muted-foreground before:bg-transparent hover:text-sidebar-foreground hover:before:bg-sidebar-accent"
+                          ? "text-sidebar-foreground"
+                          : "text-muted-foreground"
                       )}
                     >
                       {item.caps}
+                      <span
+                        aria-hidden="true"
+                        className={cn(
+                          "absolute bottom-0.5 left-1/2 h-1 w-5 -translate-x-1/2 -skew-x-[40deg] bg-(--mark-orange) transition-opacity",
+                          isActive ? "opacity-100" : "opacity-0"
+                        )}
+                      />
                     </a>
                   </li>
                 )
@@ -123,30 +129,14 @@ function SiteHeader() {
             </ul>
           </nav>
 
-          <div className="ml-auto flex items-center gap-3">
-            {/* Base UI's Button enforces button semantics (role="button",
-                Enter/Space handling) and its docs say not to render links
-                through it -- nativeButton={false} would silence the warning by
-                making a link announce itself as a button. Every CTA here
-                navigates, so the anchor carries its own classes.
-                The orange ground is a parallelogram leaning at the stripe
-                tick's angle, painted by ::before so the label stays upright
-                (skew on shapes, never on text). */}
-            <a
-              href="#iletisim"
-              className="group/cta relative isolate hidden h-9 items-center gap-1 px-7 text-[0.8125rem] font-semibold tracking-[0.02em] whitespace-nowrap text-accent-foreground outline-none before:absolute before:inset-0 before:-z-10 before:-skew-x-[40deg] before:bg-accent before:transition-colors hover:before:bg-accent/90 focus-visible:before:ring-2 focus-visible:before:ring-ring sm:inline-flex lg:h-10 [&_svg]:size-3.5 motion-safe:[&_svg]:transition-transform motion-safe:hover:[&_svg]:translate-x-0.5 motion-safe:hover:[&_svg]:-translate-y-0.5"
-            >
-              {header.cta}
-              <IconArrowUpRight data-icon="inline-end" />
-            </a>
-
+          <div className="ml-auto flex items-center">
             {/* Controlled so the drawer's links can stay real anchors: they
                 close the sheet on click instead of being wrapped in
                 SheetClose, which is a Dialog.Close and has the same rule. */}
             <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
-              {/* Not the outline Button: that one is a white card. The same
-                  parallelogram as the CTA, in the navy tint, and 12px from
-                  it so the two read as a pair of stripes. */}
+              {/* Not the outline Button: that one is a white card. A
+                  parallelogram in the navy tint, painted by ::before so the
+                  label stays upright. */}
               <SheetTrigger className="relative isolate mr-1 inline-flex h-9 items-center gap-1.5 px-6 text-[0.8125rem] font-semibold text-sidebar-accent-foreground outline-none before:absolute before:inset-0 before:-z-10 before:-skew-x-[40deg] before:bg-sidebar-accent hover:before:bg-sidebar-border focus-visible:before:ring-2 focus-visible:before:ring-ring motion-safe:before:transition-colors lg:hidden [&_svg]:size-4">
                 <IconMenu2 data-icon="inline-start" />
                 {ui.menu}

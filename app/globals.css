@@ -135,6 +135,8 @@
      itself up by --header-h so its band fills the uncovered triangle. */
   --header-bar: 4.25rem;
   --header-h: calc(var(--header-bar) + var(--cut) / 2);
+  /* The cut's angle, for the header links that walk down it. */
+  --header-slope: atan2(var(--cut) / 2, 100vw);
 }
 /* A 5rem bar is a slab on a phone; desktop keeps it for the bigger disc. */
 @media (width >= 64rem) {

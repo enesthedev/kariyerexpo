@@ -3,9 +3,11 @@
 import * as React from "react"
 import { IconArrowUpRight, IconMenu2 } from "@tabler/icons-react"
 import { cn } from "cn"
+import * as m from "motion/react-m"
 
 import { header, nav, ui } from "@/lib/content"
 import { Mark } from "@/components/brand/mark"
+import { ScrollProgress } from "@/components/reveal"
 import { Button, buttonVariants } from "@/components/ui/button"
 import {
   Sheet,
@@ -72,7 +74,11 @@ function SiteHeader() {
         aria-hidden="true"
         className="absolute top-0 left-0 h-20 w-px"
       />
-      <header
+      <ScrollProgress />
+      <m.header
+        initial={{ opacity: 0, y: -12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         className={cn(
           "sticky top-0 z-50 transition-[background-color,border-color] duration-300",
           "border-b",
@@ -188,7 +194,7 @@ function SiteHeader() {
             </Sheet>
           </div>
         </div>
-      </header>
+      </m.header>
     </>
   )
 }

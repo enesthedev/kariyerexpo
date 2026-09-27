@@ -47,12 +47,14 @@ export const site = {
   ],
 } as const
 
+/** `caps` is the header bar's spelling, typed out because CSS uppercase is
+    banned (Turkish i -> İ). The drawer and footer use `label`. */
 export const nav = [
-  { href: "#fuar", label: "Fuar" },
-  { href: "#kimler", label: "Kimler katılmalı" },
-  { href: "#program", label: "Program" },
-  { href: "#konusmacilar", label: "Konuşmacılar" },
-  { href: "#sss", label: "SSS" },
+  { href: "#fuar", label: "Fuar", caps: "FUAR" },
+  { href: "#kimler", label: "Kimler katılmalı", caps: "KİMLER KATILMALI" },
+  { href: "#program", label: "Program", caps: "PROGRAM" },
+  { href: "#konusmacilar", label: "Konuşmacılar", caps: "KONUŞMACILAR" },
+  { href: "#sss", label: "SSS", caps: "SSS" },
 ] as const
 
 /** Small, reusable UI chrome -- controls and labels no single section owns. */

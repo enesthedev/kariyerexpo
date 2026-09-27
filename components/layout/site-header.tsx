@@ -85,12 +85,11 @@ function SiteHeader() {
           {/* The mark's own role="img" label ("Kariyer Expo 27") is the
               link's accessible name -- no aria-label here, so there is
               exactly one name, not zero and not two.
-              On the logo's own white disc, hanging from the bar into the
-              cut, so the mark keeps its real navy and silver: the --mark-*
+              On the logo's own white disc, so the mark keeps its real navy and silver: the --mark-*
               vars are set back from the navy remap. */}
           <a
             href="#anasayfa"
-            className="mt-2 grid size-[calc(var(--header-h)-1rem)] shrink-0 place-items-center self-start rounded-full bg-card [--mark-navy:var(--foreground)] [--mark-silver:var(--silver)] focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none"
+            className="grid size-16 shrink-0 place-items-center rounded-full bg-card [--mark-navy:var(--foreground)] [--mark-silver:var(--silver)] focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none"
           >
             <Mark className="size-[82%]" />
           </a>
@@ -105,13 +104,13 @@ function SiteHeader() {
                       href={item.href}
                       aria-current={isActive ? "true" : undefined}
                       className={cn(
-                        "relative inline-flex items-center rounded-md px-4 py-2 text-sm font-medium transition-colors hover:text-sidebar-foreground focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none",
+                        "relative inline-flex items-center rounded-md px-4 py-2 text-sm font-semibold tracking-[0.06em] transition-colors hover:text-sidebar-foreground focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none",
                         isActive
                           ? "text-sidebar-foreground"
                           : "text-muted-foreground"
                       )}
                     >
-                      {item.label}
+                      {item.caps}
                       <span
                         aria-hidden="true"
                         className={cn(

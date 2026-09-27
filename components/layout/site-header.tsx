@@ -20,13 +20,13 @@ import {
 const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1]
 
 /**
- * A white capsule floating over the page, inset from the viewport edges, its
+ * A navy capsule floating over the page, inset from the viewport edges, its
  * top-right corner cut on the brand diagonal (.corner-cut) instead of
- * rounded. On the light ground the logo needs no disc, so it stands at full
- * size at the left; the links run in literal capitals at the far right, in
- * flow and whitespace-nowrap, so they never break onto a second line.
- * clip-path would clip a box-shadow, so the float shadow is a drop-shadow on
- * the wrapper.
+ * rounded. No shadow: the navy against the light hero is edge enough.
+ * data-surface="navy" turns the logo, the muted links and the focus rings
+ * light, so the mark stands at full size with no disc behind it. The links
+ * run in literal capitals at the far right, in flow and whitespace-nowrap,
+ * so they never break onto a second line.
  *
  * It slides fully away going down and returns on any move up; never while
  * the drawer is open, and focus inside it brings it back, so a keyboard user
@@ -74,9 +74,12 @@ function SiteHeader() {
         animate={{ opacity: 1, y: hidden && !menuOpen ? "-110%" : 0 }}
         transition={{ duration: 0.7, ease: EASE }}
         onFocusCapture={() => setHidden(false)}
-        className="fixed inset-x-0 top-0 z-50 px-3 pt-3 drop-shadow-[0_12px_24px_oklch(0.2589_0.092_258.9/0.28)]"
+        className="fixed inset-x-0 top-0 z-50 px-3 pt-3"
       >
-        <div className="corner-cut mx-auto flex h-18 max-w-6xl items-center gap-8 bg-card px-4 lg:h-20 lg:px-5">
+        <div
+          data-surface="navy"
+          className="corner-cut mx-auto flex h-18 max-w-6xl items-center gap-8 bg-sidebar px-4 text-sidebar-foreground lg:h-20 lg:px-5"
+        >
           {/* The mark's own role="img" label ("Kariyer Expo 27") is the
               link's accessible name -- one name, not zero and not two. */}
           <a
@@ -96,8 +99,10 @@ function SiteHeader() {
                       href={item.href}
                       aria-current={isActive ? "true" : undefined}
                       className={cn(
-                        "relative inline-flex items-center rounded-md px-3.5 py-2 text-[0.9375rem] font-semibold tracking-[0.06em] whitespace-nowrap transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none",
-                        isActive ? "text-foreground" : "text-muted-foreground"
+                        "relative inline-flex items-center rounded-md px-3.5 py-2 text-[0.9375rem] font-semibold tracking-[0.06em] whitespace-nowrap transition-colors hover:text-sidebar-foreground focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none",
+                        isActive
+                          ? "text-sidebar-foreground"
+                          : "text-muted-foreground"
                       )}
                     >
                       {item.caps}
@@ -120,10 +125,10 @@ function SiteHeader() {
               must not render a link). */}
           <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
             {/* Not the outline Button, which is a white card: a
-                parallelogram in navy, painted by ::before so the
+                parallelogram in the navy tint, painted by ::before so the
                 label stays upright. mr-1 keeps its leaning corner off the
                 gutter. */}
-            <SheetTrigger className="relative isolate mr-1 ml-auto inline-flex h-9 items-center gap-1.5 px-6 text-[0.8125rem] font-semibold whitespace-nowrap text-primary-foreground outline-none before:absolute before:inset-0 before:-z-10 before:-skew-x-[40deg] before:bg-primary hover:before:bg-primary/85 focus-visible:before:ring-2 focus-visible:before:ring-ring motion-safe:before:transition-colors lg:hidden [&_svg]:size-4">
+            <SheetTrigger className="relative isolate mr-1 ml-auto inline-flex h-9 items-center gap-1.5 px-6 text-[0.8125rem] font-semibold whitespace-nowrap text-sidebar-accent-foreground outline-none before:absolute before:inset-0 before:-z-10 before:-skew-x-[40deg] before:bg-sidebar-accent hover:before:bg-sidebar-border focus-visible:before:ring-2 focus-visible:before:ring-ring motion-safe:before:transition-colors lg:hidden [&_svg]:size-4">
               <IconMenu2 data-icon="inline-start" />
               {ui.menu}
             </SheetTrigger>

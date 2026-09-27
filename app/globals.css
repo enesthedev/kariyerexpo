@@ -37,7 +37,8 @@
              bullet, nothing else. A fill, so it is allowed on light grounds.
      cut     The stripes rise at 40.5°. Navy bands (stats, CTA, footer) end
              in a shallow diagonal (.cut-*), rising left to right like the
-             stripes; the stripes themselves appear only at their true angle,
+             stripes (the sticky navy header at half depth, .cut-header);
+             the stripes themselves appear only at their true angle,
              as corner graphics (components/brand/stripes.tsx). Cards lose
              one corner on the same diagonal (.corner-cut) instead of being
              rounded.

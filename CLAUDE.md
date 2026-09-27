@@ -38,7 +38,6 @@ A one-page Turkish landing site for the Kariyer Expo 27 career fair. `app/page.t
 - `components/sections/` — one file per section, all RSC except `faq.tsx`. `components/layout/` holds the header, footer and theme toggle.
 - `lib/content.ts` — every string on the page, plus `site.date` (`null` until announced) and `speakers` (empty until announced). Both drive real design states, so prefer changing content over changing components.
 - `lib/utils.ts` — re-exports `cn` from the `cn` npm package (not the usual local `clsx`+`tailwind-merge` helper).
-- `scripts/generate-brand-assets.mjs` — regenerates the mask layers, social card and icons from `public/kariyer-expo-2027.png`. Run manually; outputs are committed.
 
 ### Styling
 

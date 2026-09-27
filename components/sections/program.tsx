@@ -1,13 +1,11 @@
 import { program, ui } from "@/lib/content"
-import { Swoosh } from "@/components/brand/swoosh"
-import { Stripes } from "@/components/brand/stripes"
 import { SectionHeading } from "@/components/section-heading"
 import { Carousel } from "@/components/carousel"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 
 /**
- * Follows the reference site's blog-tabs: one tab per theme group, each
- * panel a carousel of session cards. Every panel is `keepMounted` so the
+ * One tab per theme group, each panel a carousel of cut-corner session
+ * cards, numbered in the leaning numeral voice. Every panel is `keepMounted` so the
  * Atölyeler items are in the server HTML even while the Paneller tab shows.
  *
  * base-ui hides the inactive panel with the `hidden` attribute rather than a
@@ -26,11 +24,8 @@ function Program() {
       <div className="mx-auto max-w-6xl px-5">
         <SectionHeading
           eyebrow={program.eyebrow}
-          title={
-            <>
-              {program.headline} <Swoosh>{program.headlineAccent}</Swoosh>
-            </>
-          }
+          title={program.headline}
+          accent={program.headlineAccent}
         />
 
         <Tabs defaultValue={program.groups[0].title} className="mt-14">
@@ -52,12 +47,11 @@ function Program() {
                 {group.items.map((item, index) => (
                   <div
                     key={item}
-                    className="relative flex h-full min-h-[13rem] w-[78vw] max-w-[22rem] flex-col justify-between overflow-hidden rounded-[1.5rem] border border-border bg-card p-6 sm:w-[20rem]"
+                    className="corner-cut flex h-full min-h-[14rem] w-[78vw] max-w-[22rem] flex-col justify-between bg-card p-6 sm:w-[20rem]"
                   >
-                    <Stripes className="absolute top-5 right-5 h-7 opacity-70" />
                     <span
                       aria-hidden="true"
-                      className="numeral text-2xl leading-none text-line"
+                      className="numeral text-[2.5rem] leading-none text-line"
                     >
                       {String(index + 1).padStart(2, "0")}
                     </span>

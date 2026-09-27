@@ -92,7 +92,7 @@ function Carousel({
           type="button"
           variant="outline"
           size="icon-lg"
-          className="size-12 rounded-full"
+          className="size-12 rounded-md"
           onClick={() => scrollByItem(-1)}
           disabled={atStart}
           aria-label={prevLabel}
@@ -103,7 +103,7 @@ function Carousel({
           type="button"
           variant="outline"
           size="icon-lg"
-          className="size-12 rounded-full"
+          className="size-12 rounded-md"
           onClick={() => scrollByItem(1)}
           disabled={atEnd}
           aria-label={nextLabel}

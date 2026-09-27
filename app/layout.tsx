@@ -6,12 +6,13 @@ import { site } from "@/lib/content"
 import { MotionProvider } from "@/components/motion-provider"
 import { cn } from "@/lib/utils"
 
-// One family for the whole site. The mark speaks in two voices -- condensed
-// heavy grotesque in the arc-set KARİYER, wide heavy geometric in EXPO -- and
-// Archivo's wdth axis spans 62-125, so both come out of a single design.
-// wdth 70 is the label voice, wdth ~110 the display voice; see globals.css.
-// Pairing two neo-grotesques (Inter + Archivo) would have been the worst of
-// both: too alike to contrast, too unalike to unify.
+// One family, two faces. The mark sets KARİYER upright and letterspaced and
+// EXPO extended and leaning; Archivo's wdth axis (62-125) and its italic
+// cover both, so the whole site comes out of a single design.
+//
+// A variable Google font takes one `style` per call, so the italic is a
+// second call exposed as --font-display. Only h1, h2, eyebrows and numerals
+// read it (see globals.css); body text never downloads it on its own.
 //
 // Turkish needs latin-ext: İ ı Ğ ğ Ş ş live in Latin Extended-A, outside the
 // `latin` subset. Without it those glyphs silently fall back mid-word.
@@ -22,6 +23,14 @@ const archivo = Archivo({
   axes: ["wdth"],
   display: "swap",
   variable: "--font-sans",
+})
+
+const archivoItalic = Archivo({
+  subsets: ["latin", "latin-ext"],
+  axes: ["wdth"],
+  style: "italic",
+  display: "swap",
+  variable: "--font-display",
 })
 
 const title = `${site.name} ${site.edition} — ${site.tagline}`
@@ -50,7 +59,7 @@ export const metadata: Metadata = {
 // themeColor, colorScheme and viewport were deprecated inside `metadata` in
 // Next 14 and must live here instead.
 export const viewport: Viewport = {
-  themeColor: "#FFFFFF",
+  themeColor: "#FDFDFF",
   colorScheme: "light",
 }
 
@@ -60,7 +69,14 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="tr" className={cn("font-sans antialiased", archivo.variable)}>
+    <html
+      lang="tr"
+      className={cn(
+        "font-sans antialiased",
+        archivo.variable,
+        archivoItalic.variable
+      )}
+    >
       <body>
         <MotionProvider>{children}</MotionProvider>
       </body>

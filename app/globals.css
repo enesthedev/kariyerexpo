@@ -8,98 +8,110 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ---------------------------------------------------------------------------
-   Kariyer Expo 27 brand theme. Light only.
+   Kariyer Expo 27 brand theme: "kinetik italik". Light only.
 
-   Measured from public/kariyer-expo.png, sRGB -> OKLab -> OKLCH:
-     navy    oklch(0.2619 0.0887 255.8)
-     orange  oklch(0.6787 0.2142 37.8)
-     silver  sRGB(160,171,186) = oklch(0.7373 0.025 256), the darker of the
-             logo's two silvers, so a thin keyline still registers
-   Two hues carry everything: blue 256 (navy, silver and every neutral) and
-   orange 38. The ground is never warmed, so orange stays the only warm thing.
+   Measured from public/kariyer-expo.png (the mean of the pixels near each
+   ink, iterated to rest), sRGB -> OKLab -> OKLCH:
+     navy    sRGB(3,33,79)     oklch(0.2589 0.092 258.9)    #03214F
+     orange  sRGB(255,104,55)  oklch(0.7008 0.1947 37.8)   #FF6837
+     silver  sRGB(166,175,189) oklch(0.7513 0.0225 259)    #A6AFBD, the dot's
+             silver, the darker of the logo's two, so a keyline still
+             registers
+   Two hues carry everything: blue 259 (navy, silver and every neutral) and
+   orange 37.8. The ground is never warmed, so orange stays the only warm
+   thing.
 
    Ratios are printed by `bun scripts/check-contrast.ts`, which keeps a copy
    of these tokens. Change a colour here, change it there, rerun.
 
-   FOUR LOGO MOTIFS, FOUR UI ROLES
-     swoosh   An orange crescent BEHIND the lower ~35% of one accent phrase
-              per heading, never a single word. Orange as a fill, so it is
-              allowed on light grounds. Wipes in on scroll; arrives fully
-              drawn where animation-timeline is unsupported or motion is
-              reduced.
-     dots     Navy, orange, silver: the ONE "yakında" signal. Exactly three
-              uses: the hero date pill, the Konuşmacılar heading accent, the
-              speaker placeholder cards. A fourth use kills the rule. Static,
-              because moving dots read as "loading".
-     stripes  Direction: the CTA arrow and the stripes graphic in hero and
-              banner corners.
-     orbit    Solid silver arcs: partners laid out on them; decoration.
+   THE LANGUAGE, READ OFF THE NEW LOGO
+     slant   EXPO leans 11°. The display voice is Archivo italic at wdth 125,
+             weight 800: h1, h2, numerals and eyebrows. Body text and h3 stay
+             roman. A real italic face (loaded as --font-display), never a
+             skewX on text.
+     the orange character
+             The logo gives exactly two glyphs to orange: the X and the 7.
+             So each heading may give ONE word or short phrase to orange
+             (`text-line`), the accent field in lib/content.ts. Never two.
+     X       The logo's X, traced (components/brand/x-mark.tsx): the eyebrow
+             bullet and the list bullet. A fill, so it is allowed on light
+             grounds.
+     cut     The stripes rise at 40.5°. Navy bands (stats, CTA, footer) end
+             in a shallow diagonal (.cut-*), rising left to right like the
+             stripes; the stripes themselves appear only at their true angle,
+             as corner graphics (components/brand/stripes.tsx). Cards lose
+             one corner on the same diagonal (.corner-cut) instead of being
+             rounded.
+     dots    Navy, orange, silver: the ONE "yakında" signal. Exactly three
+             uses: the hero date pill, the Konuşmacılar heading, the speaker
+             placeholder cards. A fourth use kills the rule. Static, because
+             moving dots read as "loading".
    No dashed strokes anywhere: no border-dashed, no dash arrays.
 
    COLOUR BANS
      - --accent is a FILL ONLY on light grounds, never text or a stroke
-       (3.11:1 on --background). Readable orange is --line, #CC3E10: 4.84:1
-       on --background and 4.55:1 on --band, so it holds even at body size.
-     - No white text on orange (3.17:1). Text on an orange fill is navy
-       (4.91:1).
-     - --silver is never a surface: 2.29:1 on --background, 2.15:1 on
+       (2.84:1 on --background). Readable orange is --line, #CC3F01: 4.83:1
+       on --background and 4.53:1 on --band, so it holds even at body size.
+     - No white text on orange (2.88:1). Text on an orange fill is navy
+       (5.46:1).
+     - --silver is never a surface: 2.18:1 on --background, 2.04:1 on
        --band. Keyline and decoration only.
      - --border is a decorative hairline (1.28:1). A boundary that is the
-       only sign of a control uses --input (3.30:1 on --background, 3.11:1
+       only sign of a control uses --input (3.31:1 on --background, 3.11:1
        on --band) or --line.
      - text-transform: uppercase is banned. Turkish casing is locale-bound
        (i -> İ), so capitals are typed as literals in lib/content.ts.
 
-   Text: --foreground 15.28:1 on --background, 14.36:1 on --band, 15.55:1 on
-   --card; --muted-foreground 5.76:1 / 5.41:1 / 5.86:1. --band sits 1.06:1
+   Text: --foreground 15.49:1 on --background, 14.54:1 on --band, 15.74:1 on
+   --card; --muted-foreground 5.75:1 / 5.40:1 / 5.84:1. --band sits 1.07:1
    off --background: enough to read as a band, no more.
 --------------------------------------------------------------------------- */
 
 :root {
   color-scheme: light;
-  --background: oklch(0.995 0.002 256);
-  --foreground: oklch(0.2619 0.0887 255.8);
+  --background: oklch(0.995 0.002 259);
+  --foreground: oklch(0.2589 0.092 258.9);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.2619 0.0887 255.8);
+  --card-foreground: oklch(0.2589 0.092 258.9);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.2619 0.0887 255.8);
-  --primary: oklch(0.2619 0.0887 255.8);
+  --popover-foreground: oklch(0.2589 0.092 258.9);
+  --primary: oklch(0.2589 0.092 258.9);
   --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.94 0.012 256);
-  --secondary-foreground: oklch(0.2619 0.0887 255.8);
-  --muted: oklch(0.96 0.007 256);
-  --muted-foreground: oklch(0.505 0.045 256);
-  --accent: oklch(0.6787 0.2142 37.8);
-  --accent-foreground: oklch(0.2619 0.0887 255.8);
+  --secondary: oklch(0.94 0.012 259);
+  --secondary-foreground: oklch(0.2589 0.092 258.9);
+  --muted: oklch(0.96 0.007 259);
+  --muted-foreground: oklch(0.505 0.045 259);
+  --accent: oklch(0.7008 0.1947 37.8);
+  --accent-foreground: oklch(0.2589 0.092 258.9);
   --destructive: oklch(0.545 0.19 26);
   --destructive-foreground: oklch(1 0 0);
-  --border: oklch(0.91 0.01 256);
-  --input: oklch(0.64 0.03 256);
+  --border: oklch(0.91 0.01 259);
+  --input: oklch(0.64 0.03 259);
   --ring: var(--line);
-  --chart-1: oklch(0.6787 0.2142 37.8);
-  --chart-2: oklch(0.2619 0.0887 255.8);
-  --chart-3: oklch(0.567 0.186 36);
-  --chart-4: oklch(0.6 0.04 256);
-  --chart-5: oklch(0.7373 0.025 256);
-  --radius: 1rem;
-  --sidebar: oklch(0.2619 0.0887 255.8);
-  --sidebar-foreground: oklch(0.975 0.005 256);
-  --sidebar-primary: oklch(0.6787 0.2142 37.8);
-  --sidebar-primary-foreground: oklch(0.2619 0.0887 255.8);
-  --sidebar-accent: oklch(0.34 0.08 256);
-  --sidebar-accent-foreground: oklch(0.975 0.005 256);
-  --sidebar-border: oklch(0.45 0.07 256);
-  --sidebar-ring: oklch(0.6787 0.2142 37.8);
+  --chart-1: oklch(0.7008 0.1947 37.8);
+  --chart-2: oklch(0.2589 0.092 258.9);
+  --chart-3: oklch(0.567 0.186 37.8);
+  --chart-4: oklch(0.6 0.04 259);
+  --chart-5: oklch(0.7513 0.0225 259);
+  /* Small: the language is cut, not rounded. Corners that matter are cut on
+     the diagonal (.corner-cut); the rest are barely softened. */
+  --radius: 0.5rem;
+  --sidebar: oklch(0.2589 0.092 258.9);
+  --sidebar-foreground: oklch(0.975 0.005 259);
+  --sidebar-primary: oklch(0.7008 0.1947 37.8);
+  --sidebar-primary-foreground: oklch(0.2589 0.092 258.9);
+  --sidebar-accent: oklch(0.34 0.08 259);
+  --sidebar-accent-foreground: oklch(0.975 0.005 259);
+  --sidebar-border: oklch(0.45 0.07 259);
+  --sidebar-ring: oklch(0.7008 0.1947 37.8);
 
   /* brand-only */
-  --silver: oklch(0.7373 0.025 256);
-  --band: oklch(0.972 0.005 256);
-  --surface-hover: oklch(0.955 0.01 256);
-  --line: oklch(0.567 0.186 36);
+  --silver: oklch(0.7513 0.0225 259);
+  --band: oklch(0.972 0.005 259);
+  --surface-hover: oklch(0.955 0.01 259);
+  --line: oklch(0.567 0.186 37.8);
 
-  /* One family. The logo sets KARİYER, EXPO and 27 extended, so headings,
-     numerals and eyebrows quote it on Archivo's wdth axis; body text stays
-     at the default width. */
+  /* Body in the roman face; headings that lean read --font-display. */
   --font-heading: var(--font-sans);
   --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
 
@@ -108,19 +120,29 @@
   --mark-navy: var(--foreground);
   --mark-orange: var(--accent);
   --mark-silver: var(--silver);
+
+  /* The diagonal. One slope for every cut, so cuts on stacked bands stay
+     parallel. */
+  --cut: clamp(1.75rem, 4.5vw, 4rem);
+  --corner: 1.75rem;
 }
 
-/* Grounds that stay navy: the mobile drawer, speakers, the CTA banner and the
-   footer. The ring and --line move to the full orange, which is 4.91:1 on
-   navy, so there --line is readable at body size. Borders move to the lighter
-   navy. The mark's interior is transparent, so its navy parts must turn light
-   or they vanish; its silver drops to --sidebar-border, which sits 2.10:1 off
-   navy the way silver sits 2.29:1 off white (silver itself would be 6.69:1
-   and outshout the orange). */
+/* Grounds that stay navy: the mobile drawer, stats, speakers, the CTA band
+   and the footer. The ring and --line move to the full orange, which is
+   5.46:1 on navy, so there --line is readable at body size. Borders move to
+   the lighter navy. The mark's interior is transparent, so its navy parts
+   must turn light or they vanish; its silver drops to --sidebar-border,
+   which sits 2.11:1 off navy the way silver sits 2.18:1 off white (silver
+   itself would be 7.11:1 and outshout the orange). */
 [data-surface="navy"] {
   --ring: var(--sidebar-ring);
   --border: var(--sidebar-border);
   --line: var(--sidebar-primary);
+  --muted-foreground: color-mix(
+    in oklch,
+    var(--sidebar-foreground) 78%,
+    transparent
+  );
   --mark-navy: var(--sidebar-foreground);
   --mark-silver: var(--sidebar-border);
 }
@@ -128,6 +150,7 @@
 @theme inline {
   --font-sans: var(--font-sans);
   --font-heading: var(--font-heading);
+  --font-display: var(--font-display);
   --font-mono: var(--font-mono);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -180,7 +203,7 @@
   }
   body {
     @apply bg-background text-foreground;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
   }
   button:not(:disabled),
   [role="button"]:not(:disabled) {
@@ -197,104 +220,80 @@
      is not inherited, so headings are authored cased in lib/content.ts and
      nothing is transformed at render time. */
   h1,
-  h2,
-  h3 {
-    @apply font-heading;
+  h2 {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 800;
+    letter-spacing: -0.025em;
   }
-  /* The display voice, quoting the logo's extended EXPO. */
+  /* The display voice, quoting the logo's extended, leaning EXPO. */
   h1 {
     font-variation-settings: "wdth" 125;
   }
-  /* A step narrower: a 32px bold h2 at wdth 125 overflows a 360px phone. */
-  h2,
-  h3 {
+  /* A step narrower: a 32px h2 at wdth 125 overflows a 360px phone. */
+  h2 {
     font-variation-settings: "wdth" 112;
+  }
+  /* Card titles stay upright: the lean is for the page's big voice. */
+  h3 {
+    @apply font-heading;
+    font-variation-settings: "wdth" 108;
   }
 }
 
-/* The label voice, quoting the logo's letterspaced KARİYER. Set in capitals,
-   and those capitals are typed as literal characters in lib/content.ts, never
-   transformed, because Turkish casing is locale-dependent and
-   `text-transform` silently produces "BILGI" for "bilgi". */
 @layer components {
+  /* The label voice, quoting the logo's letterspaced KARİYER, leaning like
+     EXPO. Capitals are typed as literal characters in lib/content.ts, never
+     transformed, because Turkish casing is locale-dependent and
+     `text-transform` silently produces "BILGI" for "bilgi". */
   .eyebrow {
+    font-family: var(--font-display);
+    font-style: italic;
     font-variation-settings: "wdth" 125;
     font-weight: 700;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.18em;
     font-size: 0.75rem;
     line-height: 1;
   }
-}
 
-/* Numerals match the logo's heavy extended 27. */
-@layer components {
+  /* Numerals match the logo's heavy extended 27, leaning with the headings. */
   .numeral {
+    font-family: var(--font-display);
+    font-style: italic;
     font-variation-settings: "wdth" 125;
     font-weight: 800;
     font-variant-numeric: tabular-nums;
   }
-}
 
-/* ---------------------------------------------------------------------------
-   The swoosh: the logo's inner orange crescent, drawn BEHIND the lower part
-   of one accent phrase per heading. See components/brand/swoosh.tsx.
-
-   It is a background on the inline span, not a child element, because a
-   phrase wraps: an absolutely positioned child is laid out against the union
-   of the span's line boxes and trails off past the last word, whereas
-   box-decoration-break: clone gives every line fragment its own crescent,
-   measured to that fragment. Being a background also keeps it under the
-   glyphs, so the text colour never changes and the phrase stays legible.
-
-   The crescent is two cubic edges meeting in pointed tips, the upper edge
-   shallow and the lower deep, so it is thickest mid-phrase and tapers out
-   like the logo's crescents. preserveAspectRatio="none" stretches it to any
-   phrase width; the tips stay pointed at every stretch.
-
-   A background image cannot read a custom property, so the fill is --accent
-   baked as hex: oklch(0.6787 0.2142 37.8) is #FF5717, as printed by
-   `bun scripts/check-contrast.ts`. It must track the token: change --accent,
-   change this. Orange is a fill here, which the colour bans allow on every
-   ground, navy included, so one rule serves every surface.
-
-   The draw-on is scroll-driven and pure CSS, the arc-wipe idea with its own
-   keyframes. Where animation-timeline is unsupported, or motion is reduced,
-   the swoosh simply arrives fully drawn.
---------------------------------------------------------------------------- */
-
-@layer components {
-  .swoosh {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 20' preserveAspectRatio='none'%3E%3Cpath d='M0 3C50 6 130 6 200 0C135 24 60 25 0 3Z' fill='%23FF5717'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: 0 100%;
-    background-size: 100% 0.42em;
-    padding-bottom: 0.06em;
-    -webkit-box-decoration-break: clone;
-    box-decoration-break: clone;
-    animation: swoosh-wipe linear both;
-    animation-timeline: view();
-    animation-range: entry 25% cover 45%;
+  /* Diagonal band edges. The left end is lower, so the edge rises left to
+     right with the stripes. A band keeps its content clear of the cut with
+     its own padding: at least var(--cut) extra on the cut side. */
+  .cut-top {
+    clip-path: polygon(0 var(--cut), 100% 0, 100% 100%, 0 100%);
   }
-}
-
-@keyframes swoosh-wipe {
-  from {
-    background-size: 0% 0.42em;
+  .cut-bottom {
+    clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--cut)), 0 100%);
   }
-  to {
-    background-size: 100% 0.42em;
+  .cut-y {
+    clip-path: polygon(
+      0 var(--cut),
+      100% 0,
+      100% calc(100% - var(--cut)),
+      0 100%
+    );
   }
-}
 
-@supports not (animation-timeline: view()) {
-  .swoosh {
-    animation: none;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .swoosh {
-    animation: none;
+  /* The top-right corner cut at 45°, the stripes' square end at card
+     scale. clip-path, so a border would be clipped with it: a cut card
+     carries its edge as a ring-inset or not at all. */
+  .corner-cut {
+    clip-path: polygon(
+      0 0,
+      calc(100% - var(--corner)) 0,
+      100% var(--corner),
+      100% 100%,
+      0 100%
+    );
   }
 }
 

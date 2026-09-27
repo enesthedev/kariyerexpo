@@ -15,35 +15,35 @@
 
 type Oklch = readonly [l: number, c: number, h: number]
 
-const NAVY: Oklch = [0.2619, 0.0887, 255.8]
-const ORANGE: Oklch = [0.6787, 0.2142, 37.8]
+const NAVY: Oklch = [0.2589, 0.092, 258.9]
+const ORANGE: Oklch = [0.7008, 0.1947, 37.8]
 const WHITE: Oklch = [1, 0, 0]
 
 const TOKENS = {
-  background: [0.995, 0.002, 256],
+  background: [0.995, 0.002, 259],
   foreground: NAVY,
   card: WHITE,
-  band: [0.972, 0.005, 256],
-  "muted-foreground": [0.505, 0.045, 256],
+  band: [0.972, 0.005, 259],
+  "muted-foreground": [0.505, 0.045, 259],
   primary: NAVY,
   "primary-foreground": WHITE,
-  secondary: [0.94, 0.012, 256],
+  secondary: [0.94, 0.012, 259],
   "secondary-foreground": NAVY,
-  muted: [0.96, 0.007, 256],
-  "surface-hover": [0.955, 0.01, 256],
+  muted: [0.96, 0.007, 259],
+  "surface-hover": [0.955, 0.01, 259],
   accent: ORANGE,
   "accent-foreground": NAVY,
   destructive: [0.545, 0.19, 26],
   "destructive-foreground": WHITE,
-  border: [0.91, 0.01, 256],
-  input: [0.64, 0.03, 256],
-  line: [0.567, 0.186, 36],
+  border: [0.91, 0.01, 259],
+  input: [0.64, 0.03, 259],
+  line: [0.567, 0.186, 37.8],
   sidebar: NAVY,
-  "sidebar-foreground": [0.975, 0.005, 256],
+  "sidebar-foreground": [0.975, 0.005, 259],
   "sidebar-primary": ORANGE,
-  "sidebar-accent": [0.34, 0.08, 256],
-  "sidebar-border": [0.45, 0.07, 256],
-  silver: [0.7373, 0.025, 256],
+  "sidebar-accent": [0.34, 0.08, 259],
+  "sidebar-border": [0.45, 0.07, 259],
+  silver: [0.7513, 0.0225, 259],
 } as const satisfies Record<string, Oklch>
 
 type Token = keyof typeof TOKENS

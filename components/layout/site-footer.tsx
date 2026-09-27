@@ -16,27 +16,24 @@ const SOCIAL_ICONS = {
 } as const
 
 /**
- * Navy, closed off with a large top radius rather than a keyline -- the
- * footer reads as its own rounded block sitting under the page, the way
- * Vize Keyfi's does, instead of a straight seam. `data-surface="navy"` is
- * what lets `Mark` and the contact icons invert to the light remap without
- * any per-element theme logic.
+ * Navy, continuing the CTA band above it: the band's cut is the page's last
+ * edge, and the footer is only separated from it by a hairline, so the two
+ * read as one ground. `data-surface="navy"` is what lets `Mark` and the
+ * contact icons invert to the light remap without any per-element theme
+ * logic.
  *
  * The new `Mark` already carries the KARİYER / EXPO / 27 lettering inside
  * the SVG, so it stands alone here -- no separate wordmark or tagline line
  * next to it, unlike the old badge + wordmark pairing.
  *
  * Contact icons are `text-accent` (orange fill) rather than `text-line`:
- * on this navy ground orange reads at 4.9:1, so the fill-only rule that
+ * on this navy ground orange reads at 5.46:1, so the fill-only rule that
  * bans `text-accent` on light grounds does not apply here.
  */
 function SiteFooter() {
   return (
-    <footer
-      data-surface="navy"
-      className="rounded-t-[2.5rem] bg-sidebar text-sidebar-foreground"
-    >
-      <div className="mx-auto max-w-6xl px-5 py-16">
+    <footer data-surface="navy" className="bg-sidebar text-sidebar-foreground">
+      <div className="mx-auto max-w-6xl border-t border-sidebar-border px-5 py-16">
         <div className="grid gap-12 md:grid-cols-3">
           <div>
             <Mark className="h-16 w-auto" />

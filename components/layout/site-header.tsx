@@ -15,20 +15,17 @@ import {
 } from "@/components/ui/sheet"
 
 /**
- * Vize Keyfi's header shape: a fixed logo left, a floating white pill nav
- * dead-centre, a CTA right. `left-1/2 -translate-x-1/2` on the pill (rather
- * than a 1fr grid track) is what actually centres it on the header -- the
- * logo and the CTA/menu cluster are different widths, so a three-track grid
- * would centre the pill inside its track, not on the bar.
+ * Logo left, plain links dead-centre, CTA right. `left-1/2 -translate-x-1/2`
+ * on the nav (rather than a 1fr grid track) is what actually centres it on
+ * the header -- the logo and the CTA/menu cluster are different widths, so a
+ * three-track grid would centre the nav inside its track, not on the bar.
  *
- * The active-link mark is a small filled crescent, not `.swoosh`: `.swoosh`
- * drives its draw-on off `animation-timeline: view()`, which free-runs against
- * page scroll and would never resolve to "fully drawn" inside a header that
- * is sticky (and so barely moves through the viewport). A static filled
- * shape -- the same tapered-crescent silhouette baked into `.swoosh`'s
- * background image, at chip scale -- reads as the same mark without needing
- * a scroll position. Orange as a fill stays inside the colour bans (fill is
- * allowed on light grounds; a stroke or text colour would not be).
+ * The active link is marked by a stripe tick: a short orange parallelogram
+ * leaning at the stripes' angle. The skew is on a shape, never on text, and
+ * orange is a fill, which the colour bans allow on light grounds.
+ *
+ * Transparent over the hero; once scrolled, the page ground with a hairline
+ * under it rather than a shadow, so the header reads as ruled, not floating.
  */
 function SiteHeader() {
   const [scrolled, setScrolled] = React.useState(false)
@@ -77,10 +74,11 @@ function SiteHeader() {
       />
       <header
         className={cn(
-          "sticky top-0 z-50 transition-[background-color,box-shadow] duration-300",
+          "sticky top-0 z-50 transition-[background-color,border-color] duration-300",
+          "border-b",
           scrolled
-            ? "bg-background/85 shadow-md backdrop-blur-md"
-            : "bg-transparent shadow-none"
+            ? "border-border bg-background/90 backdrop-blur-md"
+            : "border-transparent bg-transparent"
         )}
       >
         <div className="relative mx-auto flex h-20 max-w-6xl items-center px-5">
@@ -95,7 +93,7 @@ function SiteHeader() {
           </a>
 
           <nav className="absolute left-1/2 hidden -translate-x-1/2 lg:block">
-            <ul className="flex items-center gap-1 rounded-full border border-border bg-card px-2 py-1.5 shadow-sm">
+            <ul className="flex items-center gap-1">
               {nav.map((item) => {
                 const isActive = active === item.href.slice(1)
                 return (
@@ -103,23 +101,19 @@ function SiteHeader() {
                     <a
                       href={item.href}
                       aria-current={isActive ? "true" : undefined}
-                      className="relative inline-flex items-center rounded-full px-4 py-2 text-sm transition-opacity hover:opacity-70 focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none"
+                      className={cn(
+                        "relative inline-flex items-center rounded-md px-4 py-2 text-sm font-medium transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none",
+                        isActive ? "text-foreground" : "text-muted-foreground"
+                      )}
                     >
                       {item.label}
-                      <svg
-                        viewBox="0 0 200 20"
-                        preserveAspectRatio="none"
+                      <span
                         aria-hidden="true"
                         className={cn(
-                          "absolute -bottom-0.5 left-1/2 h-1.5 w-6 -translate-x-1/2 transition-opacity",
+                          "absolute bottom-0.5 left-1/2 h-1 w-5 -translate-x-1/2 -skew-x-[40deg] bg-(--mark-orange) transition-opacity",
                           isActive ? "opacity-100" : "opacity-0"
                         )}
-                      >
-                        <path
-                          d="M0 3C50 6 130 6 200 0C135 24 60 25 0 3Z"
-                          fill="var(--mark-orange)"
-                        />
-                      </svg>
+                      />
                     </a>
                   </li>
                 )

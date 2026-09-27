@@ -74,7 +74,7 @@ export const header = {
 
 export const hero = {
   headline: "Yeteneğin ve fırsatın",
-  /** The arc sits under this phrase. Never under a single word. */
+  /** The heading's one orange phrase (the logo's X-and-7 rule). */
   headlineAccent: "buluştuğu yer.",
   lede:
     "İstanbul'un en büyük kariyer fuarı, 2027'de üçüncü kez kapılarını " +
@@ -303,7 +303,7 @@ export const faq = {
 
 export const cta = {
   headline: "Tarihi",
-  /** The swoosh sits under this phrase. Never under a single word. */
+  /** The heading's one orange phrase (the logo's X-and-7 rule). */
   headlineAccent: "ilk öğrenenlerden ol.",
   lede:
     "Tek yapman gereken bir e-posta adresi bırakmak. " +

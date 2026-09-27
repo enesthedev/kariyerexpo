@@ -3,6 +3,7 @@
 import * as React from "react"
 import { IconArrowUpRight, IconMenu2 } from "@tabler/icons-react"
 import { cn } from "cn"
+import { useMotionValueEvent, useScroll } from "motion/react"
 import * as m from "motion/react-m"
 
 import { header, nav, ui } from "@/lib/content"
@@ -30,10 +31,25 @@ import {
  *
  * The active link is marked by a stripe tick: a short orange parallelogram
  * leaning at the stripes' angle. The skew is on a shape, never on text.
+ *
+ * It gets out of the way going down and comes back on any move up. It never
+ * hides while the drawer is open, and focus landing inside it (a Tab from
+ * the skip link, say) brings it back, so a keyboard user never tabs through
+ * links they cannot see.
  */
 function SiteHeader() {
   const [active, setActive] = React.useState<string>("")
   const [menuOpen, setMenuOpen] = React.useState(false)
+  const [hidden, setHidden] = React.useState(false)
+  const { scrollY } = useScroll()
+
+  useMotionValueEvent(scrollY, "change", (y) => {
+    const delta = y - (scrollY.getPrevious() ?? y)
+    // Past the header's own height, so the hero never loses it; a few
+    // pixels of dead band so a trackpad's jitter does not flicker it.
+    if (delta > 4 && y > 120) setHidden(true)
+    else if (delta < -4) setHidden(false)
+  })
 
   React.useEffect(() => {
     const ids = nav.map((n) => n.href.slice(1))
@@ -59,8 +75,9 @@ function SiteHeader() {
       <ScrollProgress />
       <m.header
         initial={{ opacity: 0, y: -12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        animate={{ opacity: 1, y: hidden && !menuOpen ? "-100%" : 0 }}
+        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+        onFocusCapture={() => setHidden(false)}
         data-surface="navy"
         className="cut-header sticky top-0 z-50 h-(--header-h) bg-sidebar text-sidebar-foreground"
       >

@@ -9,33 +9,31 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
+import { Eyebrow } from "@/components/section-heading"
 
 /**
- * The reference site's announcements list: the heading holds the left column,
- * the questions run as ruled rows on the right. Absorbs the questions the
+ * The heading holds the left column, the questions run as ruled rows on the
+ * right, under a heavy navy top rule. Absorbs the questions the
  * missing date creates so they do not arrive as email; the first item is open
  * by default because it is the question everyone has.
  *
  * The primitive's own +/− icons are hidden and replaced by one + that turns
- * 45° into ×, in a round well that fills navy when open.
+ * 45° into ×, in a square well that fills navy when open.
  */
 function Faq() {
   return (
-    <section
-      id="sss"
-      className="scroll-mt-20 bg-band py-[clamp(4rem,10vw,8rem)]"
-    >
+    <section id="sss" className="scroll-mt-20 py-[clamp(4rem,10vw,8rem)]">
       <div className="mx-auto grid max-w-6xl gap-10 px-5 md:grid-cols-12 md:gap-8">
         <div className="md:col-span-5 lg:col-span-4">
-          <p className="eyebrow mb-5 text-line">{faq.eyebrow}</p>
-          <h2 className="text-[clamp(2rem,1.2rem+3vw,3.5rem)] leading-[1.02] font-extrabold tracking-[-0.02em]">
+          <Eyebrow>{faq.eyebrow}</Eyebrow>
+          <h2 className="text-[clamp(2rem,1.2rem+3vw,3.75rem)] leading-[1]">
             {faq.headline}
           </h2>
         </div>
 
         <Accordion
           defaultValue={["q0"]}
-          className="border-t border-border md:col-span-7 lg:col-span-8"
+          className="border-t-4 border-foreground md:col-span-7 lg:col-span-8"
         >
           {faq.items.map((item, i) => (
             <AccordionItem
@@ -47,7 +45,7 @@ function Faq() {
                 {item.q}
                 <span
                   aria-hidden="true"
-                  className="grid size-10 shrink-0 place-items-center rounded-full border border-input text-foreground transition-colors group-aria-expanded/accordion-trigger:border-primary group-aria-expanded/accordion-trigger:bg-primary group-aria-expanded/accordion-trigger:text-primary-foreground"
+                  className="grid size-10 shrink-0 place-items-center rounded-md border border-input text-foreground transition-colors group-aria-expanded/accordion-trigger:border-primary group-aria-expanded/accordion-trigger:bg-primary group-aria-expanded/accordion-trigger:text-primary-foreground"
                 >
                   <IconPlus className="size-4 group-aria-expanded/accordion-trigger:rotate-45 motion-safe:transition-transform motion-safe:duration-200" />
                 </span>

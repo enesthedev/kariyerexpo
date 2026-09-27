@@ -131,9 +131,9 @@
      parallel. */
   --cut: clamp(1.75rem, 4.5vw, 4rem);
   --corner: 1.75rem;
-  /* The fixed header's footprint: a 12px inset plus the 72px capsule. The
+  /* The fixed header's footprint: a 12px inset plus the 80px capsule. The
      hero pads its top by it so the capsule never covers content. */
-  --header-h: 5.25rem;
+  --header-h: 5.75rem;
 }
 
 /* Grounds that stay navy: the mobile drawer, stats, speakers, the CTA band

@@ -20,28 +20,33 @@ import {
 const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1]
 
 /**
- * A navy capsule floating over the page, inset from the viewport edges, its
+ * A white capsule floating over the page, inset from the viewport edges, its
  * top-right corner cut on the brand diagonal (.corner-cut) instead of
- * rounded. The logo sits on its white disc at the left, the links run in
- * literal capitals at the far right, in flow and whitespace-nowrap, so they
- * never break onto a second line.
+ * rounded. On the light ground the logo needs no disc, so it stands at full
+ * size at the left; the links run in literal capitals at the far right, in
+ * flow and whitespace-nowrap, so they never break onto a second line.
+ * clip-path would clip a box-shadow, so the float shadow is a drop-shadow on
+ * the wrapper.
  *
- * data-surface="navy" turns the muted links and focus rings light; the disc
- * sets --mark-* back to the logo's own navy and silver. clip-path would clip
- * a box-shadow, so the float shadow is a drop-shadow on the wrapper.
- *
- * Past the first few pixels of scroll the capsule thins and the disc shrinks
- * (data-scrolled); it never hides, so focus is never taken off screen. The
- * active link carries the stripe tick, the bar's one orange thing. Below lg
- * the links move into the navy drawer.
+ * It slides fully away going down and returns on any move up; never while
+ * the drawer is open, and focus inside it brings it back, so a keyboard user
+ * never tabs through links they cannot see. The active link carries the
+ * stripe tick, the bar's one orange thing. Below lg the links move into the
+ * navy drawer.
  */
 function SiteHeader() {
   const [active, setActive] = React.useState("")
   const [menuOpen, setMenuOpen] = React.useState(false)
-  const [scrolled, setScrolled] = React.useState(false)
+  const [hidden, setHidden] = React.useState(false)
   const { scrollY } = useScroll()
 
-  useMotionValueEvent(scrollY, "change", (y) => setScrolled(y > 24))
+  useMotionValueEvent(scrollY, "change", (y) => {
+    const delta = y - (scrollY.getPrevious() ?? y)
+    // Past the header's own height, and with a few pixels of dead band so a
+    // trackpad's jitter does not flicker it.
+    if (delta > 4 && y > 120) setHidden(true)
+    else if (delta < -4) setHidden(false)
+  })
 
   React.useEffect(() => {
     const sections = nav
@@ -66,22 +71,19 @@ function SiteHeader() {
       <ScrollProgress />
       <m.header
         initial={{ opacity: 0, y: -12 }}
-        animate={{ opacity: 1, y: 0 }}
+        animate={{ opacity: 1, y: hidden && !menuOpen ? "-110%" : 0 }}
         transition={{ duration: 0.7, ease: EASE }}
-        data-scrolled={scrolled || undefined}
-        className="group fixed inset-x-0 top-0 z-50 px-3 pt-3 drop-shadow-[0_12px_24px_oklch(0.2589_0.092_258.9/0.28)]"
+        onFocusCapture={() => setHidden(false)}
+        className="fixed inset-x-0 top-0 z-50 px-3 pt-3 drop-shadow-[0_12px_24px_oklch(0.2589_0.092_258.9/0.28)]"
       >
-        <div
-          data-surface="navy"
-          className="corner-cut mx-auto flex h-18 max-w-6xl items-center gap-8 bg-sidebar px-3 text-sidebar-foreground transition-[height] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-data-scrolled:h-14 lg:px-4"
-        >
+        <div className="corner-cut mx-auto flex h-18 max-w-6xl items-center gap-8 bg-card px-4 lg:h-20 lg:px-5">
           {/* The mark's own role="img" label ("Kariyer Expo 27") is the
               link's accessible name -- one name, not zero and not two. */}
           <a
             href="#anasayfa"
-            className="grid size-14 shrink-0 place-items-center rounded-full bg-card transition-[width,height] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] [--mark-navy:var(--foreground)] [--mark-silver:var(--silver)] group-data-scrolled:size-10 focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none"
+            className="shrink-0 rounded-full focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none"
           >
-            <Mark className="size-[82%]" />
+            <Mark className="size-14 lg:size-16" />
           </a>
 
           <nav className="ml-auto hidden shrink-0 lg:block">
@@ -94,10 +96,8 @@ function SiteHeader() {
                       href={item.href}
                       aria-current={isActive ? "true" : undefined}
                       className={cn(
-                        "relative inline-flex items-center rounded-md px-3.5 py-2 text-[0.9375rem] font-semibold tracking-[0.06em] whitespace-nowrap transition-colors hover:text-sidebar-foreground focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none",
-                        isActive
-                          ? "text-sidebar-foreground"
-                          : "text-muted-foreground"
+                        "relative inline-flex items-center rounded-md px-3.5 py-2 text-[0.9375rem] font-semibold tracking-[0.06em] whitespace-nowrap transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none",
+                        isActive ? "text-foreground" : "text-muted-foreground"
                       )}
                     >
                       {item.caps}
@@ -120,10 +120,10 @@ function SiteHeader() {
               must not render a link). */}
           <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
             {/* Not the outline Button, which is a white card: a
-                parallelogram in the navy tint, painted by ::before so the
+                parallelogram in navy, painted by ::before so the
                 label stays upright. mr-1 keeps its leaning corner off the
                 gutter. */}
-            <SheetTrigger className="relative isolate mr-1 ml-auto inline-flex h-9 items-center gap-1.5 px-6 text-[0.8125rem] font-semibold whitespace-nowrap text-sidebar-accent-foreground outline-none before:absolute before:inset-0 before:-z-10 before:-skew-x-[40deg] before:bg-sidebar-accent hover:before:bg-sidebar-border focus-visible:before:ring-2 focus-visible:before:ring-ring motion-safe:before:transition-colors lg:hidden [&_svg]:size-4">
+            <SheetTrigger className="relative isolate mr-1 ml-auto inline-flex h-9 items-center gap-1.5 px-6 text-[0.8125rem] font-semibold whitespace-nowrap text-primary-foreground outline-none before:absolute before:inset-0 before:-z-10 before:-skew-x-[40deg] before:bg-primary hover:before:bg-primary/85 focus-visible:before:ring-2 focus-visible:before:ring-ring motion-safe:before:transition-colors lg:hidden [&_svg]:size-4">
               <IconMenu2 data-icon="inline-start" />
               {ui.menu}
             </SheetTrigger>

@@ -55,7 +55,7 @@ Tailwind v4, CSS-first: **there is no `tailwind.config`**. Everything lives in `
 - imports `tailwindcss`, `tw-animate-css`, and `shadcn/tailwind.css`
 - design tokens as oklch CSS variables under `:root`, surfaced to Tailwind through `@theme inline` (`--color-*`, `--radius-*` scale derived from `--radius`). The palette is measured from the logo and sits on two hues: blue 259 and orange 37.8. `components.json` still says `baseColor: "mauve"`; that is only what the scaffold was generated from and no mauve remains.
 - brand tokens beyond shadcn's set: `--band` (the alternating section ground), `--silver` (keyline only, never a surface), `--line` (orange that is safe to read on a light ground), `--mark-*`, `--cut` (the one diagonal slope) and `--corner`
-- `[data-surface="navy"]` remaps rings, borders, `--line`, `--muted-foreground` and `--mark-*` for the navy grounds (header, drawer, stats, speakers, CTA, footer)
+- `[data-surface="navy"]` remaps rings, borders, `--line`, `--muted-foreground` and `--mark-*` for the navy grounds (drawer, stats, speakers, CTA, footer)
 - `@layer base`: h1/h2 in the italic display face; `@layer components`: `.numeral`, `.cut-top` / `.cut-bottom` / `.cut-y` (diagonal band edges that overlap their neighbour) and `.corner-cut`
 
 Style with the semantic tokens (`bg-background`, `text-muted-foreground`, `border-border`, `bg-primary`…) rather than raw colors.

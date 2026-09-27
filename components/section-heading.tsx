@@ -67,12 +67,7 @@ function Eyebrow({
   className?: string
 }) {
   return (
-    <p
-      className={cn(
-        "eyebrow mb-5 flex items-center gap-2.5 text-foreground",
-        className
-      )}
-    >
+    <p className={cn("eyebrow mb-5 flex items-center gap-2.5", className)}>
       <XMark className="h-[1.1em]" />
       {children}
     </p>

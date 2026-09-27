@@ -84,12 +84,15 @@ function SiteHeader() {
         <div className="relative mx-auto flex h-(--header-bar) max-w-6xl items-center px-5">
           {/* The mark's own role="img" label ("Kariyer Expo 27") is the
               link's accessible name -- no aria-label here, so there is
-              exactly one name, not zero and not two. */}
+              exactly one name, not zero and not two.
+              On the logo's own white disc, hanging from the bar into the
+              cut, so the mark keeps its real navy and silver: the --mark-*
+              vars are set back from the navy remap. */}
           <a
             href="#anasayfa"
-            className="flex items-center rounded-md focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none"
+            className="mt-2 grid size-[calc(var(--header-h)-1rem)] shrink-0 place-items-center self-start rounded-full bg-card [--mark-navy:var(--foreground)] [--mark-silver:var(--silver)] focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none"
           >
-            <Mark className="h-14 w-auto" />
+            <Mark className="size-[82%]" />
           </a>
 
           <nav className="absolute left-1/2 hidden -translate-x-1/2 lg:block">
@@ -123,18 +126,18 @@ function SiteHeader() {
             </ul>
           </nav>
 
-          <div className="ml-auto flex items-center gap-2">
+          <div className="ml-auto flex items-center gap-6">
             {/* Base UI's Button enforces button semantics (role="button",
                 Enter/Space handling) and its docs say not to render links
                 through it -- nativeButton={false} would silence the warning by
                 making a link announce itself as a button. Every CTA here
-                navigates, so the anchor carries buttonVariants directly. */}
+                navigates, so the anchor carries its own classes.
+                The orange ground is a parallelogram leaning at the stripe
+                tick's angle, painted by ::before so the label stays upright
+                (skew on shapes, never on text). */}
             <a
               href="#iletisim"
-              className={cn(
-                buttonVariants({ variant: "accent", size: "sm" }),
-                "hidden sm:inline-flex"
-              )}
+              className="group/cta relative isolate hidden h-9 items-center gap-1 px-7 text-sm font-semibold whitespace-nowrap text-accent-foreground outline-none before:absolute before:inset-0 before:-z-10 before:-skew-x-[40deg] before:bg-accent before:transition-colors hover:before:bg-accent/90 focus-visible:before:ring-2 focus-visible:before:ring-ring sm:inline-flex [&_svg]:size-3.5 motion-safe:[&_svg]:transition-transform motion-safe:hover:[&_svg]:translate-x-0.5 motion-safe:hover:[&_svg]:-translate-y-0.5"
             >
               {header.cta}
               <IconArrowUpRight data-icon="inline-end" />

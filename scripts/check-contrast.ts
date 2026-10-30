@@ -15,35 +15,27 @@
 
 type Oklch = readonly [l: number, c: number, h: number]
 
-const NAVY: Oklch = [0.2589, 0.092, 258.9]
-const ORANGE: Oklch = [0.7008, 0.1947, 37.8]
+const NAVY: Oklch = [0.2764, 0.0915, 261.1]
+const ORANGE: Oklch = [0.6847, 0.1781, 38.4]
 const WHITE: Oklch = [1, 0, 0]
 
 const TOKENS = {
-  background: [0.995, 0.002, 259],
+  background: [0.995, 0, 0],
   foreground: NAVY,
-  card: WHITE,
-  band: [0.972, 0.005, 259],
-  "muted-foreground": [0.505, 0.045, 259],
+  card: [0.995, 0, 0],
+  "muted-foreground": [0.47, 0.03, 261],
   primary: NAVY,
   "primary-foreground": WHITE,
-  secondary: [0.94, 0.012, 259],
-  "secondary-foreground": NAVY,
-  muted: [0.96, 0.007, 259],
-  "surface-hover": [0.955, 0.01, 259],
+  muted: [0.965, 0.002, 90],
+  "surface-hover": [0.92, 0.004, 261],
   accent: ORANGE,
   "accent-foreground": NAVY,
-  destructive: [0.545, 0.19, 26],
+  destructive: [0.52, 0.19, 26],
   "destructive-foreground": WHITE,
-  border: [0.91, 0.01, 259],
-  input: [0.64, 0.03, 259],
-  line: [0.567, 0.186, 37.8],
-  sidebar: NAVY,
-  "sidebar-foreground": [0.975, 0.005, 259],
-  "sidebar-primary": ORANGE,
-  "sidebar-accent": [0.34, 0.08, 259],
-  "sidebar-border": [0.45, 0.07, 259],
-  silver: [0.7513, 0.0225, 259],
+  border: [0.92, 0.004, 261],
+  input: [0.55, 0.04, 260],
+  line: [0.53, 0.17, 38.4],
+  silver: [0.8585, 0.02, 260.2],
 } as const satisfies Record<string, Oklch>
 
 type Token = keyof typeof TOKENS
@@ -54,34 +46,26 @@ const LARGE = 3
 // [text/stroke, ground, threshold]. A null threshold is reported, not gated.
 const PAIRS: ReadonlyArray<readonly [Token, Token, number | null]> = [
   ["foreground", "background", BODY],
-  ["foreground", "band", BODY],
-  ["foreground", "card", BODY],
-  ["muted-foreground", "background", BODY],
-  ["muted-foreground", "band", BODY],
-  ["muted-foreground", "card", BODY],
-  ["secondary-foreground", "secondary", BODY],
   ["foreground", "muted", BODY],
   ["foreground", "surface-hover", BODY],
+  ["muted-foreground", "background", BODY],
+  // Leads and meta on the info bar and the FAQ rows.
+  ["muted-foreground", "muted", BODY],
   ["line", "background", BODY],
-  ["line", "band", BODY],
+  // The open FAQ chevron: an icon, so the graphics threshold.
+  ["line", "muted", LARGE],
   ["accent-foreground", "accent", BODY],
   ["primary-foreground", "primary", BODY],
   ["destructive-foreground", "destructive", BODY],
-  ["sidebar-foreground", "sidebar", BODY],
-  ["sidebar-foreground", "sidebar-accent", BODY],
-  // Inside [data-surface="navy"], --line is this orange, so it is gated as text.
-  ["accent", "sidebar", BODY],
+  ["destructive", "background", BODY],
   ["input", "background", LARGE],
-  ["input", "band", LARGE],
-  // Reported only: decoration, bans, and band rhythm.
+  ["input", "muted", LARGE],
+  // Reported only: decoration and bans.
   ["primary-foreground", "accent", null],
   ["accent", "background", null],
   ["silver", "background", null],
-  ["silver", "band", null],
   ["border", "background", null],
-  ["silver", "sidebar", null],
-  ["sidebar-border", "sidebar", null],
-  ["background", "band", null],
+  ["muted", "background", null],
 ]
 
 function toSrgb([l, c, h]: Oklch): [number, number, number] {

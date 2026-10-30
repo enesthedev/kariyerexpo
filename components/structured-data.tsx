@@ -43,11 +43,10 @@ function StructuredData() {
           organizer: { "@id": `${site.url}/#organization` },
           location: {
             "@type": "Place",
-            name: site.venue.name,
+            name: site.venue.name ?? site.venue.city,
             address: {
               "@type": "PostalAddress",
-              addressLocality: site.venue.district,
-              addressRegion: site.venue.city,
+              addressLocality: site.venue.city,
               addressCountry: "TR",
             },
           },

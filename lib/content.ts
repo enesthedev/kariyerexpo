@@ -3,11 +3,57 @@
  * else, so the client edits one file.
  *
  * The two "not announced yet" facts are modelled as null, not as prose:
- *   site.date === null      -> the hero pill renders the pending dots ("yakında")
- *   speakers.length === 0   -> speaker cards render pending-dot placeholders
+ *   site.date === null      -> the hero's Tarih label shows the month and
+ *                              a "Gün yakında" badge
+ *   speakers.length === 0   -> speaker cards render muted "yakında" frames
  * Filling either one in flips the UI to its confirmed state with no layout
  * change. That is the whole design system in two fields.
  */
+
+/**
+ * PLACEHOLDERS until the fair's own photographs arrive: replace the files or
+ * the paths here and nothing else changes. `source` is the Unsplash image id
+ * each file was downloaded from (https://images.unsplash.com/<id>).
+ */
+export const images = {
+  hero: {
+    src: "/photos/stock/fuar-alani.jpg",
+    alt: "Stantların arasında dolaşan kalabalık bir fuar alanı",
+    source: "unsplash photo-1560439514-4e9645039924",
+  },
+  about: {
+    src: "/photos/stock/panel.jpg",
+    alt: "Bir panelde söz alan katılımcı ve onu dinleyen grup",
+    source: "unsplash photo-1515187029135-18ee286d815b",
+  },
+  audiences: {
+    ogrenci: {
+      src: "/photos/stock/ogrenciler.jpg",
+      alt: "Dizüstü bilgisayarları başında sohbet eden üç genç",
+      source: "unsplash photo-1522202176988-66273c2fd55f",
+    },
+    "yeni-mezun": {
+      src: "/photos/stock/gorusme.jpg",
+      alt: "Masa üzerinde bir belgeyi birlikte inceleyen iki kişi",
+      source: "unsplash photo-1565688534245-05d6b5be184a",
+    },
+    isveren: {
+      src: "/photos/stock/isveren.jpg",
+      alt: "Ekibine panodaki notları anlatan bir yönetici",
+      source: "unsplash photo-1552664730-d307ca884978",
+    },
+  },
+  faq: {
+    src: "/photos/stock/sohbet.jpg",
+    alt: "Kütüphanede bilgisayar başında gülüşen öğrenciler",
+    source: "unsplash photo-1523240795612-9a054b0db644",
+  },
+  cta: {
+    src: "/photos/stock/salon.jpg",
+    alt: "",
+    source: "unsplash photo-1540575467063-178a50c2df87",
+  },
+} as const
 
 export type Speaker = {
   name: string
@@ -33,13 +79,16 @@ export const site = {
   description:
     "Kariyer Expo, öğrencileri, yeni mezunları ve Türkiye'nin önde gelen " +
     "işverenlerini üç gün boyunca aynı çatı altında buluşturan kariyer fuarı.",
-  /** null while undecided. Set to an ISO date to make the hero pill solid. */
+  /** null while undecided. Set to an ISO date to replace the month label. */
   date: null as string | null,
-  dateFallback: "Tarih yakında açıklanacak",
+  /** What is known while the day is not: the month. */
+  month: "Aralık",
+  dateFallback: "Gün yakında",
   venue: {
-    name: "İstanbul Kongre Merkezi",
-    district: "Harbiye",
-    city: "İstanbul",
+    /** null while undecided; the city is confirmed. */
+    name: null as string | null,
+    city: "Ankara",
+    fallback: "Mekân yakında",
   },
   organizers: [
     "Genç İstihdam Derneği",
@@ -47,38 +96,36 @@ export const site = {
   ],
 } as const
 
-/** `caps` is the header bar's spelling, typed out because CSS uppercase is
-    banned (Turkish i -> İ). The drawer and footer use `label`. */
 export const nav = [
-  { href: "#fuar", label: "Fuar", caps: "FUAR" },
-  { href: "#kimler", label: "Kimler katılmalı", caps: "KİMLER KATILMALI" },
-  { href: "#program", label: "Program", caps: "PROGRAM" },
-  { href: "#konusmacilar", label: "Konuşmacılar", caps: "KONUŞMACILAR" },
-  { href: "#sss", label: "SSS", caps: "SSS" },
+  { href: "#fuar", label: "Fuar" },
+  { href: "#kimler", label: "Kimler katılmalı" },
+  { href: "#program", label: "Program" },
+  { href: "#konusmacilar", label: "Konuşmacılar" },
+  { href: "#sss", label: "SSS" },
 ] as const
 
 /** Small, reusable UI chrome -- controls and labels no single section owns. */
 export const ui = {
   skipToContent: "İçeriğe geç",
-  prev: "Önceki",
-  next: "Sonraki",
   menu: "Menü",
   close: "Kapat",
 } as const
 
 export const header = {
-  cta: "Haberdar ol",
-  menuOpen: "Menüyü aç",
+  cta: "Haberdar et",
+  homeLabel: "Kariyer Expo 27, ana sayfa",
 } as const
 
 export const hero = {
   headline: "Geleceğini Keşfet,",
-  /** The heading's one orange phrase (the logo's X-and-7 rule). */
+  /** The heading's second, muted tone. */
   headlineAccent: "Kariyerine Yön Ver.",
   lede:
-    "İstanbul'un en büyük kariyer fuarı, 2027'de üçüncü kez kapılarını " +
-    "açıyor. Öğrenciler, yeni mezunlar ve Türkiye'nin önde gelen işverenleri " +
+    "Kariyer Expo, Aralık'ta Ankara'da üçüncü kez kapılarını açıyor. " +
+    "Öğrenciler, yeni mezunlar ve Türkiye'nin önde gelen işverenleri " +
     "üç gün boyunca aynı çatı altında.",
+  dateLabel: "Tarih",
+  venueLabel: "Yer",
   formHelp:
     "Tarih ve program açıklandığında ilk sen öğren. " +
     "Ayda birden fazla e-posta göndermiyoruz.",
@@ -98,13 +145,14 @@ export const about = {
   ],
   facts: [
     { term: "Üç gün", detail: "Cuma, cumartesi, pazar" },
-    { term: "İstanbul Kongre Merkezi", detail: "Harbiye, İstanbul" },
+    { term: "Ankara", detail: "Mekân yakında açıklanacak" },
     { term: "Ücretsiz katılım", detail: "Ziyaretçiler için" },
   ],
 } as const
 
 export const stats = {
-  headline: "2026'da böyleydi.",
+  headline: "Geçen yıl",
+  headlineAccent: "böyleydi.",
   items: [
     { value: 11400, prefix: "", label: "katılımcı" },
     { value: 168, prefix: "", label: "katılımcı firma" },
@@ -120,8 +168,6 @@ export const stats = {
 export const audiences = {
   headline: "Üç farklı yol,",
   headlineAccent: "tek bir salon.",
-  detailsOpen: "Ayrıntıları göster",
-  detailsClose: "Ayrıntıları gizle",
   items: [
     {
       id: "ogrenci",
@@ -130,7 +176,6 @@ export const audiences = {
       points: ["Staj görüşmeleri", "CV kliniği", "Sektör panelleri"],
       note: "Tarih açıklandığında ilk sen öğren.",
       cta: "Beni haberdar et",
-      highlighted: false,
     },
     {
       id: "yeni-mezun",
@@ -143,7 +188,6 @@ export const audiences = {
       ],
       note: "Katılımcı firma listesi yayınlandığında haber verelim.",
       cta: "Beni haberdar et",
-      highlighted: false,
     },
     {
       id: "isveren",
@@ -152,8 +196,6 @@ export const audiences = {
       points: ["Stand alanları", "Panel konuşmacılığı", "Aday veri tabanı"],
       note: "Stand ve sponsorluk bilgilerini e-posta ile gönderelim.",
       cta: "Bilgi almak istiyorum",
-      /** The only orange glyph in the section, so employers are not an aside. */
-      highlighted: true,
     },
   ],
 } as const
@@ -163,8 +205,10 @@ export const program = {
   headlineAccent: "şimdiden belli.",
   /** The quiet variant of "yakında": plain muted text, no dashed pill. */
   note: "Saatler ve salonlar program takvimiyle birlikte açıklanacak.",
-  /** The carousel's accessible region name (WAI-ARIA scrollable-region). */
+  /** The Paneller / Atölyeler toggle's group name. */
   carouselLabel: "Oturumlar",
+  /** The session list's own region name (distinct from the toggle's). */
+  listLabel: "Oturum listesi",
   groups: [
     {
       title: "Paneller",
@@ -190,8 +234,7 @@ export const program = {
 
 export const speakersSection = {
   headline: "Konuşmacılar",
-  /** The pending dots render after this -- the pending state, said in form.
-      No period: the three dots (navy, orange, silver) replace it. */
+  /** Also the label inside each pending speaker frame. */
   headlineAccent: "yakında",
   note:
     "Sekiz konuşmacının ilk dördünü önümüzdeki aylarda duyuracağız. " +
@@ -205,9 +248,11 @@ export const speakersSection = {
 export const speakers: Speaker[] = []
 
 export const partners = {
-  headline: "Geçen yıl bizimleydiler.",
-  note: "2027 katılımcı firma listesi yakında yayımlanacak.",
-  /** Name-only slots; real logos replace them without changing the layout. */
+  headline: "Bu yıl bizimle olanlar.",
+  note: "Katılımcı firma ve sponsor listesi güncellenmeye devam ediyor.",
+  pause: "Kayan isimleri durdur",
+  /** PLACEHOLDERS until the real 2027 exhibitor and sponsor list arrives.
+      Name-only slots; real logos replace them without changing the layout. */
   names: [
     "Anadolu Yazılım",
     "Boğaziçi Enerji",
@@ -216,7 +261,7 @@ export const partners = {
     "Ege Kimya",
     "Fırat Telekom",
     "Gediz Perakende",
-    "Halic Bank",
+    "Haliç Bank",
     "Işık Otomotiv",
     "Kartal Savunma",
     "Levent Danışmanlık",
@@ -236,8 +281,8 @@ export const faq = {
     {
       q: "Fuar ne zaman yapılacak?",
       a:
-        "Tarih henüz kesinleşmedi. 2027'nin ilk yarısında, üç gün sürecek. " +
-        "Kesinleştiği anda e-posta listemizdekilere ilk biz haber vereceğiz.",
+        "Aralık ayında, üç gün sürecek. Gün henüz kesinleşmedi; " +
+        "kesinleştiği anda e-posta listemizdekilere ilk biz haber vereceğiz.",
     },
     {
       q: "Katılım ücretli mi?",
@@ -248,7 +293,7 @@ export const faq = {
     {
       q: "Önceden kayıt olmam gerekiyor mu?",
       a:
-        "Şu an için hayır — kayıt henüz açılmadı. Şimdilik tek yapman " +
+        "Şu an için hayır, kayıt henüz açılmadı. Şimdilik tek yapman " +
         "gereken e-posta adresini bırakmak.",
     },
     {
@@ -260,8 +305,8 @@ export const faq = {
     {
       q: "Fuar nerede yapılacak?",
       a:
-        "İstanbul Kongre Merkezi, Harbiye. Metro ve metrobüs bağlantıları " +
-        "yürüme mesafesinde.",
+        "Ankara'da. Mekânı ulaşım bilgileriyle birlikte yakında " +
+        "duyuracağız.",
     },
     {
       q: "CV'mi yanımda getirmeli miyim?",
@@ -274,7 +319,7 @@ export const faq = {
 
 export const cta = {
   headline: "Tarihi",
-  /** The heading's one orange phrase (the logo's X-and-7 rule). */
+  /** The heading's second, lighter tone. */
   headlineAccent: "ilk öğrenenlerden ol.",
   lede:
     "Tek yapman gereken bir e-posta adresi bırakmak. " +
@@ -307,6 +352,18 @@ export const footer = {
     "Öğrencileri, yeni mezunları ve işverenleri buluşturan bağımsız bir " +
     "kariyer fuarı.",
   linksTitle: "Sayfalar",
+  followTitle: "Bizi takip et",
+  /** The two accounts on the posters: the event's, then the partner's. */
+  instagram: [
+    {
+      handle: "@kariyerexpo_27",
+      href: "https://www.instagram.com/kariyerexpo_27/",
+    },
+    {
+      handle: "@physiocoreedanismanlik",
+      href: "https://www.instagram.com/physiocoreedanismanlik/",
+    },
+  ],
   contactTitle: "İletişim",
   legal: [
     { href: "#", label: "Gizlilik" },
@@ -314,7 +371,11 @@ export const footer = {
   ],
   social: [
     { href: "#", label: "LinkedIn", icon: "linkedin" },
-    { href: "#", label: "Instagram", icon: "instagram" },
+    {
+      href: "https://www.instagram.com/kariyerexpo_27/",
+      label: "Instagram",
+      icon: "instagram",
+    },
     { href: "#", label: "X", icon: "x" },
   ],
   /** Built from site fields so the org names never drift from the header. */
@@ -323,7 +384,7 @@ export const footer = {
 
 export const form = {
   label: "E-posta adresin",
-  placeholder: "e-posta adresin",
+  placeholder: "ornek@eposta.com",
   roleLegend: "Ben bir",
   roleSelectPlaceholder: "Seçiniz",
   submit: "Haberdar et",

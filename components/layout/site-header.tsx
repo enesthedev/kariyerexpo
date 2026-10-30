@@ -1,95 +1,119 @@
 "use client"
 
-import * as React from "react"
-import { IconArrowUpRight, IconMenu2 } from "@tabler/icons-react"
+import {
+  startTransition,
+  useEffect,
+  useRef,
+  useState,
+  ViewTransition,
+} from "react"
+import { IconArrowUpRight, IconMenu2, IconX } from "@tabler/icons-react"
 import { cn } from "cn"
-import { useMotionValueEvent, useScroll } from "motion/react"
+import { LazyMotion, useMotionValueEvent, useScroll } from "motion/react"
 import * as m from "motion/react-m"
 
 import { header, nav, ui } from "@/lib/content"
-import { Mark } from "@/components/brand/mark"
-import { ScrollProgress } from "@/components/reveal"
-import { buttonVariants } from "@/components/ui/button"
-import {
-  Sheet,
-  SheetContent,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet"
+import { Lockup } from "@/components/brand/lockup"
+import { PillLink } from "@/components/pill-link"
 
-const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1]
+const MENU_ID = "mobile-nav"
+
+// The layout features (the sliding nav pill) load after first paint.
+const loadFeatures = () => import("motion/react").then((r) => r.domMax)
 
 /**
- * A navy capsule floating over the page, inset from the viewport edges, its
- * top-right corner cut on the brand diagonal (.corner-cut) instead of
- * rounded. No shadow: the navy against the light hero is edge enough.
- * data-surface="navy" turns the logo, the muted links and the focus rings
- * light, so the mark stands at full size with no disc behind it. The links
- * run in literal capitals at the far right, in flow and whitespace-nowrap,
- * so they never break onto a second line.
+ * A white sticky bar: 72px at the top, 60px with a hairline once the page
+ * moves. The logos, the links and the orange pill. The active link gets a
+ * muted pill that slides between links (Motion `layoutId`, which needs the
+ * layout feature set, so the bar wraps itself in a LazyMotion that loads
+ * `domMax` async; the rest of the page keeps the lighter `domAnimation`). The
+ * active section comes from an IntersectionObserver, never a scroll listener.
  *
- * It slides fully away going down and returns on any move up; never while
- * the drawer is open, and focus inside it brings it back, so a keyboard user
- * never tabs through links they cannot see. The active link carries the
- * stripe tick, the bar's one orange thing. Below lg the links move into the
- * navy drawer.
+ * Below lg the links move into a full-screen sheet under the bar, entering
+ * and leaving with <ViewTransition>, toggled in startTransition. The bar keeps
+ * its full height while the sheet is open so the two stay flush.
  */
 function SiteHeader() {
-  const [active, setActive] = React.useState("")
-  const [menuOpen, setMenuOpen] = React.useState(false)
-  const [hidden, setHidden] = React.useState(false)
+  const [active, setActive] = useState("")
+  const [open, setOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+  const toggleRef = useRef<HTMLButtonElement>(null)
+  const firstLinkRef = useRef<HTMLAnchorElement>(null)
   const { scrollY } = useScroll()
+  const compact = scrolled && !open
 
-  useMotionValueEvent(scrollY, "change", (y) => {
-    const delta = y - (scrollY.getPrevious() ?? y)
-    // Past the header's own height, and with a few pixels of dead band so a
-    // trackpad's jitter does not flicker it.
-    if (delta > 4 && y > 120) setHidden(true)
-    else if (delta < -4) setHidden(false)
-  })
+  const setMenu = (next: boolean) => startTransition(() => setOpen(next))
 
-  React.useEffect(() => {
-    const sections = nav
-      .map((n) => document.getElementById(n.href.slice(1)))
-      .filter((el): el is HTMLElement => Boolean(el))
-    if (!sections.length) return
+  useMotionValueEvent(scrollY, "change", (y) => setScrolled(y > 24))
+
+  useEffect(() => {
+    // Every section is observed, so one that is not in the nav (stats,
+    // partners, the CTA) clears the active pill instead of leaving the last
+    // one lit.
+    const sections =
+      document.querySelectorAll<HTMLElement>("main > section[id]")
     const io = new IntersectionObserver(
       (entries) => {
-        const visible = entries
-          .filter((e) => e.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0]
-        if (visible) setActive(visible.target.id)
+        const hit = entries.find((e) => e.isIntersecting)
+        if (hit) setActive(hit.target.id)
       },
-      { rootMargin: "-45% 0px -50% 0px", threshold: [0, 0.25, 0.5] }
+      { rootMargin: "-45% 0px -50% 0px" }
     )
     sections.forEach((s) => io.observe(s))
     return () => io.disconnect()
   }, [])
 
+  // Sheet open: focus moves in, Escape closes and hands focus back, and the
+  // sheet closes by itself if the viewport grows to the desktop bar.
+  useEffect(() => {
+    if (!open) return
+    firstLinkRef.current?.focus()
+    // Page behind the sheet is not reachable while it is open.
+    const behind = document.querySelectorAll<HTMLElement>("main, footer")
+    behind.forEach((el) => {
+      el.inert = true
+    })
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "Escape") return
+      setMenu(false)
+      toggleRef.current?.focus()
+    }
+    const mq = window.matchMedia("(min-width: 1024px)")
+    const onChange = () => mq.matches && setMenu(false)
+    document.addEventListener("keydown", onKey)
+    mq.addEventListener("change", onChange)
+    return () => {
+      document.removeEventListener("keydown", onKey)
+      mq.removeEventListener("change", onChange)
+      behind.forEach((el) => {
+        el.inert = false
+      })
+    }
+  }, [open])
+
   return (
-    <>
-      <ScrollProgress />
-      <m.header
-        initial={{ opacity: 0, y: -12 }}
-        animate={{ opacity: 1, y: hidden && !menuOpen ? "-110%" : 0 }}
-        transition={{ duration: 0.7, ease: EASE }}
-        onFocusCapture={() => setHidden(false)}
-        className="fixed inset-x-0 top-0 z-50 px-3 pt-3"
+    <LazyMotion features={loadFeatures} strict>
+      <header
+        className={cn(
+          "sticky top-0 z-50 border-b bg-background transition-colors duration-500",
+          compact ? "border-border" : "border-transparent"
+        )}
       >
         <div
-          data-surface="navy"
-          className="corner-cut mx-auto flex h-18 max-w-6xl items-center gap-8 bg-sidebar px-4 text-sidebar-foreground lg:h-20 lg:px-5"
+          className={cn(
+            "container-page flex items-center gap-6 transition-[height] duration-500 ease-(--ease-out-expo)",
+            compact ? "h-15" : "h-(--header-h)"
+          )}
         >
-          {/* The mark's own role="img" label ("Kariyer Expo 27") is the
-              link's accessible name -- one name, not zero and not two. */}
           <a
             href="#anasayfa"
-            className="shrink-0 rounded-full focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none"
+            aria-label={header.homeLabel}
+            className="rounded-md focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
           >
-            <Mark className="size-14 lg:size-16" />
+            <Lockup priority className="[--lockup-box:3rem]" />
           </a>
 
-          <nav className="ml-auto hidden shrink-0 lg:block">
+          <nav aria-label="Ana menü" className="ml-auto hidden lg:block">
             <ul className="flex items-center gap-1">
               {nav.map((item) => {
                 const isActive = active === item.href.slice(1)
@@ -97,22 +121,27 @@ function SiteHeader() {
                   <li key={item.href}>
                     <a
                       href={item.href}
-                      aria-current={isActive ? "true" : undefined}
+                      aria-current={isActive ? "location" : undefined}
                       className={cn(
-                        "relative inline-flex items-center rounded-md px-3.5 py-2 text-[0.9375rem] font-semibold tracking-[0.06em] whitespace-nowrap transition-colors hover:text-sidebar-foreground focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none",
+                        "relative isolate flex h-10 items-center rounded-full px-4 text-sm font-medium whitespace-nowrap transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
                         isActive
-                          ? "text-sidebar-foreground"
-                          : "text-muted-foreground"
+                          ? "text-foreground"
+                          : "text-muted-foreground hover:text-foreground"
                       )}
                     >
-                      {item.caps}
-                      <span
-                        aria-hidden="true"
-                        className={cn(
-                          "absolute bottom-0 left-1/2 h-1 w-5 -translate-x-1/2 -skew-x-[40deg] bg-(--mark-orange) transition-opacity",
-                          isActive ? "opacity-100" : "opacity-0"
-                        )}
-                      />
+                      {isActive ? (
+                        <m.span
+                          layoutId="nav-pill"
+                          aria-hidden
+                          transition={{
+                            type: "spring",
+                            stiffness: 260,
+                            damping: 30,
+                          }}
+                          className="absolute inset-0 -z-10 rounded-full bg-muted"
+                        />
+                      ) : null}
+                      {item.label}
                     </a>
                   </li>
                 )
@@ -120,59 +149,61 @@ function SiteHeader() {
             </ul>
           </nav>
 
-          {/* Controlled so the drawer's links can stay real anchors that
-              close it on click, instead of SheetClose (a Dialog.Close, which
-              must not render a link). */}
-          <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
-            {/* Not the outline Button, which is a white card: a
-                parallelogram in the navy tint, painted by ::before so the
-                label stays upright. mr-1 keeps its leaning corner off the
-                gutter. */}
-            <SheetTrigger className="relative isolate mr-1 ml-auto inline-flex h-9 items-center gap-1.5 px-6 text-[0.8125rem] font-semibold whitespace-nowrap text-sidebar-accent-foreground outline-none before:absolute before:inset-0 before:-z-10 before:-skew-x-[40deg] before:bg-sidebar-accent hover:before:bg-sidebar-border focus-visible:before:ring-2 focus-visible:before:ring-ring motion-safe:before:transition-colors lg:hidden [&_svg]:size-4">
-              <IconMenu2 data-icon="inline-start" />
-              {ui.menu}
-            </SheetTrigger>
-            <SheetContent
-              side="right"
-              data-surface="navy"
-              closeLabel={ui.close}
-              className="w-[86%] border-l-0 bg-sidebar text-sidebar-foreground sm:max-w-sm"
-            >
-              <SheetTitle className="px-6 pt-6 text-sidebar-foreground">
-                <Mark className="h-10 w-auto" />
-              </SheetTitle>
-              <nav className="relative z-10 mt-10 flex flex-col gap-1 px-6">
-                {nav.map((item) => (
-                  <a
-                    key={item.href}
-                    href={item.href}
-                    onClick={() => setMenuOpen(false)}
-                    className="rounded-lg py-3 text-2xl transition-opacity hover:opacity-70 focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none"
-                  >
-                    {item.label}
-                  </a>
-                ))}
-              </nav>
-              <div className="relative z-10 mt-auto p-6">
-                {/* Base UI's Button must not render a link, so the anchor
-                    carries buttonVariants directly. */}
-                <a
-                  href="#iletisim"
-                  onClick={() => setMenuOpen(false)}
-                  className={cn(
-                    buttonVariants({ variant: "accent", size: "lg" }),
-                    "w-full"
-                  )}
-                >
-                  {header.cta}
-                  <IconArrowUpRight data-icon="inline-end" />
-                </a>
-              </div>
-            </SheetContent>
-          </Sheet>
+          <PillLink href="#iletisim" className="hidden lg:inline-flex">
+            {header.cta}
+            <IconArrowUpRight data-icon="inline-end" />
+          </PillLink>
+
+          <button
+            ref={toggleRef}
+            type="button"
+            aria-expanded={open}
+            aria-controls={open ? MENU_ID : undefined}
+            aria-label={open ? ui.close : ui.menu}
+            onClick={() => setMenu(!open)}
+            className="ml-auto grid size-11 place-items-center rounded-full border border-border transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none lg:hidden [&_svg]:size-5"
+          >
+            {open ? (
+              <IconX aria-hidden="true" />
+            ) : (
+              <IconMenu2 aria-hidden="true" />
+            )}
+          </button>
         </div>
-      </m.header>
-    </>
+      </header>
+
+      {open ? (
+        <ViewTransition enter="slide-up" exit="slide-down" default="none">
+          <div
+            id={MENU_ID}
+            className="fixed inset-x-0 top-(--header-h) bottom-0 z-40 flex flex-col overflow-y-auto overscroll-contain bg-background px-4 pt-6 pb-8 sm:px-6 lg:hidden"
+          >
+            <nav aria-label="Ana menü" className="flex flex-col">
+              {nav.map((item, i) => (
+                <a
+                  key={item.href}
+                  ref={i === 0 ? firstLinkRef : undefined}
+                  href={item.href}
+                  onClick={() => setMenu(false)}
+                  className="text-display rounded-card py-3 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+                >
+                  {item.label}
+                </a>
+              ))}
+            </nav>
+            <PillLink
+              href="#iletisim"
+              size="xl"
+              onClick={() => setMenu(false)}
+              className="mt-auto w-full"
+            >
+              {header.cta}
+              <IconArrowUpRight data-icon="inline-end" />
+            </PillLink>
+          </div>
+        </ViewTransition>
+      ) : null}
+    </LazyMotion>
   )
 }
 

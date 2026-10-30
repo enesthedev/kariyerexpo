@@ -1,36 +1,44 @@
 "use client"
 
-import * as React from "react"
+import {
+  startTransition,
+  useActionState,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  ViewTransition,
+} from "react"
 import {
   IconArrowUpRight,
-  IconChevronDown,
   IconCircleCheck,
   IconLoader2,
 } from "@tabler/icons-react"
 import { cn } from "cn"
-import { AnimatePresence } from "motion/react"
-import * as m from "motion/react-m"
 
 import { initialSubscribeState, subscribe } from "@/app/actions"
 import { form, hero, roles, type RoleId } from "@/lib/content"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { buttonVariants } from "@/components/ui/button"
 
 /**
- * The page's only conversion point.
+ * The page's only conversion point. The role is a FIELD, not a route: it
+ * changes the help text and nothing else. One handler, one inbox.
  *
- * The role segment is a FIELD, not a route: choosing "İşveren" changes the
- * helper text and nothing else. One handler, one success state, one inbox --
- * which is how employers get served without a second funnel.
+ * Two layouts share the logic. `stacked` (the CTA panel): pill segmented
+ * control, label above the input, submit under it. `bar` (the hero): one
+ * row from md up, with a select for the role.
  *
- * Two layouts share this logic. `stacked` is the existing column form (used
- * inside cards and the navy CTA band). `bar` is Vize Keyfi's `.get-info`
- * shape -- a single card, horizontal from md up -- for the hero.
- * `listenForRoleTargets` is separate from `showRoles`: the audience cards'
- * `[data-role-target]` links must be able to preselect a segment on a form
- * that renders elsewhere on the page, whether or not that form shows its own
- * picker.
+ * View Transitions (all state changes run inside a transition, React form
+ * actions already do): the role pill is a shared `indicator` that slides
+ * between segments, help text cross-fades per role, the error slides up,
+ * and the entry form hands over to the success note.
+ *
+ * Contrast: labels are --foreground, field borders --input (3:1 on white),
+ * focus is a 2px --ring (orange --line) outline, error is --destructive.
  */
+const field =
+  "h-12 w-full min-w-0 rounded-pill border border-input bg-card px-5 text-base text-foreground outline-hidden placeholder:text-muted-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring aria-invalid:border-destructive"
+
 function SubscribeForm({
   layout = "stacked",
   showRoles = false,
@@ -42,29 +50,42 @@ function SubscribeForm({
   listenForRoleTargets?: boolean
   className?: string
 }) {
-  const [state, formAction, isPending] = React.useActionState(
+  const [state, formAction, isPending] = useActionState(
     subscribe,
     initialSubscribeState
   )
-  const [role, setRole] = React.useState<RoleId | "">(
-    layout === "bar" ? "" : "ogrenci"
-  )
-  const emailId = React.useId()
-  const roleId = React.useId()
-  const helpId = React.useId()
   const isBar = layout === "bar"
+  const [role, setRole] = useState<RoleId | "">(isBar ? "" : "ogrenci")
+  const uid = useId()
+  const emailId = `${uid}-email`
+  const roleId = `${uid}-role`
+  const helpId = `${uid}-help`
+  const errorId = `${uid}-error`
+  const pillName = `role-${uid.replace(/\W/g, "")}`
+
+  const emailRef = useRef<HTMLInputElement>(null)
+  const doneRef = useRef<HTMLDivElement>(null)
+
+  // Move focus to where the result is: the field after an error, the note
+  // after success (the form it was in is gone).
+  useEffect(() => {
+    if (state.status === "error") emailRef.current?.focus()
+    if (state.status === "success") doneRef.current?.focus()
+  }, [state])
+
+  const pick = (next: RoleId | "") => startTransition(() => setRole(next))
 
   // The audience cards link to #iletisim and preselect their segment. Plain
-  // anchors, so without JS the link still scrolls and the segment just stays
-  // on its default.
-  React.useEffect(() => {
+  // anchors, so without JS the link still scrolls.
+  useEffect(() => {
     if (!listenForRoleTargets) return
     function onClick(event: MouseEvent) {
       const target = event.target
       if (!(target instanceof Element)) return
-      const trigger = target.closest("[data-role-target]")
-      const next = trigger?.getAttribute("data-role-target")
-      if (next) setRole(next as RoleId)
+      const next = target
+        .closest("[data-role-target]")
+        ?.getAttribute("data-role-target")
+      if (next) startTransition(() => setRole(next as RoleId))
     }
     document.addEventListener("click", onClick)
     return () => document.removeEventListener("click", onClick)
@@ -73,210 +94,184 @@ function SubscribeForm({
   const help = showRoles
     ? (roles.find((r) => r.id === role)?.help ?? hero.formHelp)
     : hero.formHelp
+  const hasError = state.status === "error"
 
-  const success = (
-    <m.div
-      key="done"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.28 }}
-      className="flex h-14 items-center gap-3 rounded-lg border border-line px-5"
-    >
-      <IconCircleCheck className="size-5 shrink-0 text-line" />
-      <span className="text-sm">{form.success}</span>
-    </m.div>
-  )
-
-  const submitContent = isPending ? (
-    <>
-      <IconLoader2 className="animate-spin" />
-      {form.submitting}
-    </>
-  ) : (
-    <>
-      {form.submit}
-      <IconArrowUpRight data-icon="inline-end" />
-    </>
-  )
-
-  if (isBar) {
-    return (
-      <form
-        action={formAction}
-        className={cn(
-          "w-full rounded-lg border border-border bg-card p-4 shadow-xl shadow-primary/10 sm:p-5",
-          className
-        )}
+  const emailField = (
+    <div className="flex-1">
+      <label
+        htmlFor={emailId}
+        className="mb-2 block text-sm font-medium text-foreground"
       >
-        <AnimatePresence mode="wait" initial={false}>
-          {state.status === "success" ? (
-            success
-          ) : (
-            <m.div
-              key="entry"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.28 }}
-              className="flex flex-col gap-3 md:flex-row md:items-end"
-            >
-              {showRoles ? (
-                <div className="md:w-48">
-                  <label
-                    htmlFor={roleId}
-                    className="mb-1.5 block text-sm font-medium text-muted-foreground"
-                  >
-                    {form.roleLegend}
-                  </label>
-                  <div className="relative">
-                    <select
-                      id={roleId}
-                      name="role"
-                      value={role}
-                      onChange={(e) => setRole(e.target.value as RoleId | "")}
-                      className="h-14 w-full appearance-none rounded-lg border border-input bg-card px-5 pr-11 text-base text-foreground outline-none focus-visible:border-line focus-visible:ring-3 focus-visible:ring-line/20"
-                    >
-                      <option value="">{form.roleSelectPlaceholder}</option>
-                      {roles.map((r) => (
-                        <option key={r.id} value={r.id}>
-                          {r.label}
-                        </option>
-                      ))}
-                    </select>
-                    <IconChevronDown
-                      aria-hidden="true"
-                      className="pointer-events-none absolute top-1/2 right-4 size-4 -translate-y-1/2 text-muted-foreground"
-                    />
-                  </div>
-                </div>
-              ) : null}
+        {form.label}
+      </label>
+      <input
+        ref={emailRef}
+        id={emailId}
+        name="email"
+        type="email"
+        inputMode="email"
+        autoComplete="email"
+        autoCapitalize="none"
+        spellCheck={false}
+        defaultValue={state.email}
+        required
+        readOnly={isPending}
+        aria-invalid={hasError}
+        aria-describedby={hasError ? `${helpId} ${errorId}` : helpId}
+        placeholder={form.placeholder}
+        className={field}
+      />
+    </div>
+  )
 
-              <div className="flex-1">
+  const submit = (
+    <button
+      type="submit"
+      disabled={isPending}
+      className={cn(
+        buttonVariants({ variant: "accent", size: "xl" }),
+        "w-full sm:w-auto"
+      )}
+    >
+      {isPending ? (
+        <>
+          <IconLoader2 className="size-4 animate-spin" />
+          {form.submitting}
+        </>
+      ) : (
+        <>
+          {form.submit}
+          <IconArrowUpRight className="size-4" />
+        </>
+      )}
+    </button>
+  )
+
+  const entry = (
+    <ViewTransition key="entry" exit="fade-out" default="none">
+      <div>
+        {showRoles && !isBar ? (
+          <fieldset className="mb-6">
+            <legend className="mb-2 text-sm font-medium text-foreground">
+              {form.roleLegend}
+            </legend>
+            <div className="flex flex-wrap gap-2">
+              {roles.map((r) => (
                 <label
-                  htmlFor={emailId}
-                  className="mb-1.5 block text-sm font-medium text-muted-foreground"
+                  key={r.id}
+                  className={cn(
+                    "relative cursor-pointer rounded-pill border px-5 py-2.5 text-sm font-medium transition-colors duration-200 has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-ring",
+                    role === r.id
+                      ? "border-transparent text-accent-foreground"
+                      : "border-input text-foreground hover:bg-surface-hover"
+                  )}
                 >
-                  {form.label}
+                  {role === r.id ? (
+                    <ViewTransition
+                      name={pillName}
+                      share="indicator"
+                      default="none"
+                    >
+                      <span
+                        aria-hidden="true"
+                        className="absolute inset-0 rounded-pill bg-accent"
+                      />
+                    </ViewTransition>
+                  ) : null}
+                  <input
+                    type="radio"
+                    name="role"
+                    value={r.id}
+                    checked={role === r.id}
+                    onChange={() => pick(r.id)}
+                    className="sr-only"
+                  />
+                  <span className="relative">{r.label}</span>
                 </label>
-                <Input
-                  id={emailId}
-                  name="email"
-                  type="email"
-                  inputMode="email"
-                  autoComplete="email"
-                  required
-                  readOnly={isPending}
-                  aria-invalid={state.status === "error"}
-                  aria-describedby={helpId}
-                  placeholder={form.placeholder}
-                />
-              </div>
+              ))}
+            </div>
+          </fieldset>
+        ) : null}
 
-              <Button type="submit" size="xl" disabled={isPending}>
-                {submitContent}
-              </Button>
-            </m.div>
-          )}
-        </AnimatePresence>
-
-        <p
-          id={helpId}
-          aria-live="polite"
+        <div
           className={cn(
-            "mt-3 text-sm",
-            state.status === "error" ? "text-destructive" : "opacity-70"
+            "flex flex-col gap-4",
+            isBar && "md:flex-row md:items-end"
           )}
         >
-          {state.status === "error" ? state.message : help}
-        </p>
-      </form>
-    )
-  }
+          {showRoles && isBar ? (
+            <div className="md:w-52">
+              <label
+                htmlFor={roleId}
+                className="mb-2 block text-sm font-medium text-foreground"
+              >
+                {form.roleLegend}
+              </label>
+              <select
+                id={roleId}
+                name="role"
+                value={role}
+                onChange={(e) => pick(e.target.value as RoleId | "")}
+                className={cn(field, "appearance-auto")}
+              >
+                <option value="">{form.roleSelectPlaceholder}</option>
+                {roles.map((r) => (
+                  <option key={r.id} value={r.id}>
+                    {r.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ) : null}
+          {emailField}
+          {submit}
+        </div>
+
+        {hasError ? (
+          <ViewTransition enter="slide-up" exit="fade-out" default="none">
+            <p
+              id={errorId}
+              role="alert"
+              className="mt-4 text-sm font-medium text-destructive"
+            >
+              {state.message}
+            </p>
+          </ViewTransition>
+        ) : null}
+
+        <ViewTransition
+          key={role || "none"}
+          enter="fade-in"
+          exit="fade-out"
+          default="none"
+        >
+          <p id={helpId} className="mt-4 text-sm text-muted-foreground">
+            {help}
+          </p>
+        </ViewTransition>
+      </div>
+    </ViewTransition>
+  )
+
+  const done = (
+    <ViewTransition key="done" enter="slide-up" exit="fade-out" default="none">
+      <div
+        ref={doneRef}
+        role="status"
+        tabIndex={-1}
+        className="flex items-center gap-3 rounded-pill border border-line px-6 py-4 outline-hidden"
+      >
+        <IconCircleCheck className="size-6 shrink-0 text-line" />
+        <span className="text-base font-medium text-foreground">
+          {form.success}
+        </span>
+      </div>
+    </ViewTransition>
+  )
 
   return (
     <form action={formAction} className={cn("w-full", className)}>
-      {showRoles ? (
-        <fieldset className="mb-5 flex flex-wrap items-center gap-x-3 gap-y-2">
-          <legend className="sr-only">{form.roleLegend}</legend>
-          <span aria-hidden="true" className="text-sm opacity-70">
-            {form.roleLegend}
-          </span>
-          {roles.map((r) => (
-            <label
-              key={r.id}
-              className={cn(
-                "cursor-pointer rounded-md border px-4 py-1.5 text-sm transition-colors",
-                "has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring/50",
-                role === r.id
-                  ? "border-transparent bg-accent text-accent-foreground"
-                  : "border-input hover:bg-surface-hover"
-              )}
-            >
-              <input
-                type="radio"
-                name="role"
-                value={r.id}
-                checked={role === r.id}
-                onChange={() => setRole(r.id)}
-                className="sr-only"
-              />
-              {r.label}
-            </label>
-          ))}
-        </fieldset>
-      ) : null}
-
-      <label htmlFor={emailId} className="sr-only">
-        {form.label}
-      </label>
-
-      <AnimatePresence mode="wait" initial={false}>
-        {state.status === "success" ? (
-          success
-        ) : (
-          <m.div
-            key="entry"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.28 }}
-            className="flex flex-col gap-3"
-          >
-            <Input
-              id={emailId}
-              name="email"
-              type="email"
-              inputMode="email"
-              autoComplete="email"
-              required
-              readOnly={isPending}
-              aria-invalid={state.status === "error"}
-              aria-describedby={helpId}
-              placeholder={form.placeholder}
-            />
-            <Button
-              type="submit"
-              size="lg"
-              disabled={isPending}
-              className="self-start"
-            >
-              {submitContent}
-            </Button>
-          </m.div>
-        )}
-      </AnimatePresence>
-
-      <p
-        id={helpId}
-        aria-live="polite"
-        className={cn(
-          "mt-3 text-sm",
-          state.status === "error" ? "text-destructive" : "opacity-70"
-        )}
-      >
-        {state.status === "error" ? state.message : help}
-      </p>
+      {state.status === "success" ? done : entry}
     </form>
   )
 }

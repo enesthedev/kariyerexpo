@@ -1,29 +1,25 @@
 "use client"
 
-import { useRef } from "react"
-import {
-  useReducedMotion,
-  useScroll,
-  useSpring,
-  useTransform,
-  type Variants,
-} from "motion/react"
+import type { Variants } from "motion/react"
 import * as m from "motion/react-m"
-import { cn } from "cn"
+
+import { cn } from "@/lib/utils"
 
 /**
  * The page's motion layer. Everything here takes `children` as a prop, so
  * the sections that use it stay server components and only these wrappers
  * ship to the client.
  *
- * One register everywhere: expo-out, 0.8-1s, short travel. Nothing bounces,
- * nothing spins, nothing replays -- every reveal fires once. `on="load"`
- * plays on mount (the hero), `on="view"` when the block scrolls in.
+ * Register: expo-out, short travel, transform, opacity and clip-path only.
+ * Reveals fire once. `on="load"` plays on mount (the hero), `on="view"` when
+ * the block scrolls in.
+ *
+ *   Reveal / RevealGroup + RevealItem   blocks rise, groups trail each other
+ *   RevealText                          a heading rises as one block
+ *   PhotoReveal                         a photo unmasks in its rounded frame
  *
  * Reduced motion: MotionConfig's reducedMotion="user" (motion-provider.tsx)
- * makes transforms instant, so the word masks and slides land in place and
- * only opacity fades. The scroll-linked pieces read the preference directly,
- * because a scroll-driven value is not an animation MotionConfig can skip.
+ * drops the transforms and keeps the fades; globals.css removes the clip.
  */
 
 // Tuple, not number[] -- motion types the cubic-bezier as a 4-tuple.
@@ -41,15 +37,17 @@ function trigger(on: On) {
     : { initial: "hidden", whileInView: "show", viewport: VIEWPORT }
 }
 
-const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 24 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.9, ease: EASE } },
-}
+const hidden = { opacity: 0, y: 24 }
 
-// The navy rules under the about facts draw on from the left.
-const rule: Variants = {
-  hidden: { scaleX: 0 },
-  show: { scaleX: 1, transition: { duration: 1.1, ease: EASE } },
+function rise(delay = 0): Variants {
+  return {
+    hidden,
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.7, ease: EASE, delay },
+    },
+  }
 }
 
 function Reveal({
@@ -64,18 +62,7 @@ function Reveal({
   on?: On
 }) {
   return (
-    <m.div
-      {...trigger(on)}
-      variants={{
-        hidden: fadeUp.hidden,
-        show: {
-          opacity: 1,
-          y: 0,
-          transition: { duration: 0.9, ease: EASE, delay },
-        },
-      }}
-      className={className}
-    >
+    <m.div {...trigger(on)} variants={rise(delay)} className={className}>
       {children}
     </m.div>
   )
@@ -118,40 +105,22 @@ function RevealGroup({
 function RevealItem({
   children,
   className,
-  variant = "fade",
 }: {
   children: React.ReactNode
   className?: string
-  variant?: "fade" | "rule"
 }) {
   return (
-    <m.div
-      variants={variant === "rule" ? rule : fadeUp}
-      className={cn(variant === "rule" && "origin-left", className)}
-    >
+    <m.div variants={rise()} className={className}>
       {children}
     </m.div>
   )
 }
 
-const word: Variants = {
-  hidden: { y: "110%" },
-  show: { y: 0, transition: { duration: 1, ease: EASE } },
-}
-
 const headingTags = { h1: m.h1, h2: m.h2 }
 
 /**
- * A heading whose words rise out of their own line, one after another.
- *
- * Each word is masked by an inline-block with overflow hidden. The mask is
- * padded and pulled back by the same amount on every side, so the italic's
- * rightward lean, the İ's dot and the descenders of ğ ş ç y are not clipped
- * and the line box does not change.
- *
- * Screen readers get the sentence once, from the sr-only copy; the split
- * words are aria-hidden. `children` goes after the words, unanimated (the
- * speakers' pending dots, which never move).
+ * A heading in two tones: `text` in the foreground, `accent` muted. On a
+ * dark ground pass accentClassName.
  */
 function RevealText({
   text,
@@ -160,7 +129,7 @@ function RevealText({
   on = "view",
   delay = 0,
   className,
-  children,
+  accentClassName = "text-muted-foreground",
 }: {
   text: string
   accent?: string
@@ -168,107 +137,62 @@ function RevealText({
   on?: On
   delay?: number
   className?: string
-  children?: React.ReactNode
+  accentClassName?: string
 }) {
   const Tag = headingTags[as]
-  const words = [
-    ...text.split(/\s+/).map((w) => ({ w, accent: false })),
-    ...(accent ?? "")
-      .split(/\s+/)
-      .filter(Boolean)
-      .map((w) => ({ w, accent: true })),
-  ]
-
   return (
-    <Tag
-      {...trigger(on)}
-      variants={{
-        hidden: {},
-        show: { transition: { staggerChildren: 0.05, delayChildren: delay } },
-      }}
-      className={className}
-    >
-      <span className="sr-only">{accent ? `${text} ${accent}` : text}</span>
-      <span aria-hidden>
-        {words.map(({ w, accent }, i) => (
-          <span key={i}>
-            {i > 0 ? " " : null}
-            <span className="-mx-[0.15em] -my-[0.15em] inline-block overflow-hidden px-[0.15em] py-[0.15em] align-bottom">
-              <m.span
-                variants={word}
-                className={accent ? "inline-block text-line" : "inline-block"}
-              >
-                {w}
-              </m.span>
-            </span>
-          </span>
-        ))}
-      </span>
-      {children}
+    <Tag {...trigger(on)} variants={rise(delay)} className={className}>
+      {text}
+      {accent ? (
+        <>
+          {" "}
+          <span className={accentClassName}>{accent}</span>
+        </>
+      ) : null}
     </Tag>
   )
 }
 
 /**
- * Drifts its children against the scroll. `from="view"` maps the block's
- * whole pass through the viewport to -distance..distance (the band
- * stripes); `from="top"` starts at rest with the page at the top and drifts
- * to `distance` as the block scrolls out (the hero mark), so nothing jumps
- * on load.
+ * A photo frame: opens from a slightly inset rounded mask while the photo
+ * settles from 1.08. The child is a `fill` image; the frame sets the size.
  */
-function Parallax({
+function PhotoReveal({
   children,
   className,
-  distance = 60,
-  from = "view",
+  delay = 0,
+  on = "view",
 }: {
   children: React.ReactNode
   className?: string
-  distance?: number
-  from?: "view" | "top"
+  delay?: number
+  on?: On
 }) {
-  const ref = useRef<HTMLDivElement>(null)
-  const reduceMotion = useReducedMotion()
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset:
-      from === "top"
-        ? ["start start", "end start"]
-        : ["start end", "end start"],
-  })
-  const y = useTransform(
-    scrollYProgress,
-    [0, 1],
-    reduceMotion
-      ? [0, 0]
-      : from === "top"
-        ? [0, distance]
-        : [-distance, distance]
-  )
-
+  const transition = { duration: 1.1, ease: EASE, delay }
   return (
-    <m.div ref={ref} style={{ y }} className={className}>
-      {children}
+    <m.div
+      data-reveal
+      {...trigger(on)}
+      variants={{
+        hidden: { clipPath: "inset(8% round 20px)" },
+        show: { clipPath: "inset(0% round 20px)", transition },
+      }}
+      className={cn(
+        "relative overflow-hidden rounded-media bg-muted",
+        className
+      )}
+    >
+      <m.div
+        variants={{
+          hidden: { scale: 1.08 },
+          show: { scale: 1, transition },
+        }}
+        className="absolute inset-0"
+      >
+        {children}
+      </m.div>
     </m.div>
   )
 }
 
-/** A hairline of orange (a fill) across the top of the viewport. */
-function ScrollProgress() {
-  const { scrollYProgress } = useScroll()
-  const scaleX = useSpring(scrollYProgress, {
-    stiffness: 200,
-    damping: 40,
-    restDelta: 0.001,
-  })
-
-  return (
-    <m.div
-      aria-hidden
-      style={{ scaleX }}
-      className="fixed inset-x-0 top-0 z-[60] h-0.5 origin-left bg-accent"
-    />
-  )
-}
-
-export { Parallax, Reveal, RevealGroup, RevealItem, RevealText, ScrollProgress }
+export { PhotoReveal, Reveal, RevealGroup, RevealItem, RevealText }

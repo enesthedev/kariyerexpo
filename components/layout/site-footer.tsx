@@ -7,8 +7,7 @@ import {
 } from "@tabler/icons-react"
 
 import { footer, nav, site } from "@/lib/content"
-import { Mark } from "@/components/brand/mark"
-import { Reveal } from "@/components/reveal"
+import { Lockup } from "@/components/brand/lockup"
 
 const SOCIAL_ICONS = {
   linkedin: IconBrandLinkedin,
@@ -16,100 +15,93 @@ const SOCIAL_ICONS = {
   x: IconBrandX,
 } as const
 
-/**
- * Navy, continuing the CTA band above it: the band's cut is the page's last
- * edge, and the footer is only separated from it by a hairline, so the two
- * read as one ground. `data-surface="navy"` is what lets `Mark` and the
- * contact icons invert to the light remap without any per-element theme
- * logic.
- *
- * The new `Mark` already carries the KARİYER / EXPO / 27 lettering inside
- * the SVG, so it stands alone here -- no separate wordmark or tagline line
- * next to it, unlike the old badge + wordmark pairing.
- *
- * Contact icons are `text-accent` (orange fill) rather than `text-line`:
- * on this navy ground orange reads at 5.46:1, so the fill-only rule that
- * bans `text-accent` on light grounds does not apply here.
- */
+const heading = "text-sm font-medium"
+const link =
+  "flex min-h-11 w-fit items-center gap-2.5 rounded-sm text-muted-foreground transition-colors duration-300 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+
+/** White ground under a hairline: the logos and the paths off the page. */
 function SiteFooter() {
   return (
-    <footer data-surface="navy" className="bg-sidebar text-sidebar-foreground">
-      <div className="mx-auto max-w-6xl border-t border-sidebar-border px-5 py-16">
-        <Reveal className="grid gap-12 md:grid-cols-3">
-          <div>
-            <Mark className="h-16 w-auto" />
-            <p className="mt-5 max-w-xs text-sm opacity-70">{footer.blurb}</p>
-          </div>
-
-          <nav aria-label={footer.linksTitle}>
-            <h2 className="text-sm font-semibold">{footer.linksTitle}</h2>
-            <ul className="mt-4 space-y-2.5">
-              {nav.map((item) => (
-                <li key={item.href}>
+    <footer className="border-t border-border">
+      <div className="container-page grid gap-x-10 gap-y-12 pt-16 pb-8 md:grid-cols-12 lg:pt-20">
+        <div className="flex flex-col items-start gap-6 md:col-span-5">
+          <Lockup size="md" />
+          <p className="text-lead max-w-xs">{footer.blurb}</p>
+          <ul className="flex gap-2">
+            {footer.social.map((s) => {
+              const Icon = SOCIAL_ICONS[s.icon]
+              return (
+                <li key={s.label}>
                   <a
-                    href={item.href}
-                    className="text-sm opacity-70 transition-opacity hover:opacity-100"
+                    href={s.href}
+                    aria-label={s.label}
+                    className="grid size-11 place-items-center rounded-full bg-muted transition-colors hover:bg-surface-hover focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
                   >
-                    {item.label}
+                    <Icon aria-hidden="true" className="size-5" />
                   </a>
                 </li>
-              ))}
-            </ul>
-          </nav>
+              )
+            })}
+          </ul>
+        </div>
 
-          <div>
-            <h2 className="text-sm font-semibold">{footer.contactTitle}</h2>
-            <ul className="mt-4 space-y-3.5">
-              <li className="flex items-start gap-3">
-                <IconMail
-                  aria-hidden="true"
-                  className="mt-0.5 size-4 shrink-0 text-accent"
-                />
-                <a
-                  href={`mailto:${site.email}`}
-                  className="text-sm opacity-70 transition-opacity hover:opacity-100"
-                >
-                  {site.email}
+        <nav
+          aria-label={footer.linksTitle}
+          className="flex flex-col gap-3 md:col-span-2"
+        >
+          <p className={heading}>{footer.linksTitle}</p>
+          <ul>
+            {nav.map((item) => (
+              <li key={item.href}>
+                <a href={item.href} className={link}>
+                  {item.label}
                 </a>
               </li>
-              <li className="flex items-start gap-3">
-                <IconMapPin
-                  aria-hidden="true"
-                  className="mt-0.5 size-4 shrink-0 text-accent"
-                />
-                <span className="text-sm opacity-70">
-                  {site.venue.name}, {site.venue.district}, {site.venue.city}
-                </span>
+            ))}
+          </ul>
+        </nav>
+
+        <div className="flex flex-col gap-3 md:col-span-3">
+          <p className={heading}>{footer.contactTitle}</p>
+          <ul>
+            <li>
+              <a href={`mailto:${site.email}`} className={link}>
+                <IconMail aria-hidden="true" className="size-4 shrink-0" />
+                {site.email}
+              </a>
+            </li>
+            <li className="flex min-h-11 items-center gap-2.5 text-muted-foreground">
+              <IconMapPin aria-hidden="true" className="size-4 shrink-0" />
+              {site.venue.name
+                ? `${site.venue.name}, ${site.venue.city}`
+                : `${site.venue.city}, ${site.venue.fallback.toLocaleLowerCase("tr")}`}
+            </li>
+          </ul>
+        </div>
+
+        <div className="flex flex-col gap-3 md:col-span-2">
+          <p className={heading}>{footer.followTitle}</p>
+          <ul>
+            {footer.instagram.map((account) => (
+              <li key={account.handle}>
+                <a href={account.href} className={link}>
+                  <span translate="no" className="break-all">
+                    {account.handle}
+                  </span>
+                </a>
               </li>
-            </ul>
+            ))}
+          </ul>
+        </div>
 
-            <ul className="mt-6 flex gap-2">
-              {footer.social.map((s) => {
-                const Icon = SOCIAL_ICONS[s.icon]
-                return (
-                  <li key={s.label}>
-                    <a
-                      href={s.href}
-                      aria-label={s.label}
-                      className="flex size-11 items-center justify-center rounded-lg bg-sidebar-accent text-sidebar-accent-foreground transition-colors hover:bg-sidebar-border focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none"
-                    >
-                      <Icon aria-hidden="true" className="size-5" />
-                    </a>
-                  </li>
-                )
-              })}
-            </ul>
-          </div>
-        </Reveal>
-
-        <div className="mt-14 flex flex-col gap-3 border-t border-sidebar-border pt-6 text-sm opacity-70 sm:flex-row sm:items-center sm:justify-between">
+        <div className="text-meta flex flex-col gap-3 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between md:col-span-12">
           <p>{footer.copyright}</p>
           <ul className="flex gap-5">
             {footer.legal.map((l) => (
               <li key={l.label}>
                 <a
                   href={l.href}
-                  className="transition-opacity hover:opacity-100"
+                  className="rounded-sm transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
                 >
                   {l.label}
                 </a>

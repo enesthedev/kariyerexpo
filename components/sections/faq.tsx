@@ -1,67 +1,97 @@
 "use client"
 
-import { IconPlus } from "@tabler/icons-react"
+import { startTransition, useId, useState, ViewTransition } from "react"
+import Image from "next/image"
+import { IconChevronDown } from "@tabler/icons-react"
 
-import { faq } from "@/lib/content"
-import { RevealGroup, RevealItem, RevealText } from "@/components/reveal"
+import { faq, images } from "@/lib/content"
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion"
+  PhotoReveal,
+  RevealGroup,
+  RevealItem,
+  RevealText,
+} from "@/components/reveal"
+import { cn } from "@/lib/utils"
 
 /**
- * The heading holds the left column, the questions run as ruled rows on the
- * right, under a heavy navy top rule. Absorbs the questions the
- * missing date creates so they do not arrive as email; the first item is open
- * by default because it is the question everyone has.
- *
- * The primitive's own +/− icons are hidden and replaced by one + that turns
- * 45° into ×, in a square well that fills navy when open.
+ * Heading and questions at the start, a photograph at the end (under them on
+ * phones). One answer open at a time, the first by default. Toggling runs
+ * in startTransition so React View Transitions can play: the answer
+ * slides up in / fades out, and every item is a bare `glide` boundary so
+ * the rows below the toggled one glide instead of jumping.
  */
 function Faq() {
-  return (
-    <section id="sss" className="scroll-mt-20 py-[clamp(4rem,10vw,8rem)]">
-      <div className="mx-auto grid max-w-6xl gap-10 px-5 md:grid-cols-12 md:gap-8">
-        <div className="md:col-span-5 lg:col-span-4">
-          <RevealText
-            text={faq.headline}
-            className="text-[clamp(2rem,1.2rem+3vw,3.75rem)] leading-[1]"
-          />
-        </div>
+  const [open, setOpen] = useState<number | null>(0)
+  const uid = useId()
 
-        <Accordion
-          defaultValue={["q0"]}
-          className="border-t-4 border-foreground md:col-span-7 lg:col-span-8"
-        >
-          <RevealGroup stagger={0.07}>
-            {faq.items.map((item, i) => (
-              <RevealItem key={item.q}>
-                <AccordionItem
-                  value={`q${i}`}
-                  className="border-b border-border"
-                >
-                  <AccordionTrigger className="items-center py-6 text-lg font-bold hover:no-underline **:data-[slot=accordion-trigger-icon]:hidden!">
-                    {item.q}
-                    <span
-                      aria-hidden="true"
-                      className="grid size-10 shrink-0 place-items-center rounded-md border border-input text-foreground transition-colors group-aria-expanded/accordion-trigger:border-primary group-aria-expanded/accordion-trigger:bg-primary group-aria-expanded/accordion-trigger:text-primary-foreground"
+  return (
+    <section
+      id="sss"
+      className="container-page grid gap-12 pb-section lg:grid-cols-12 lg:items-start lg:gap-16"
+    >
+      <div className="lg:col-span-7">
+        <RevealText text={faq.headline} className="text-h2" />
+
+        <RevealGroup stagger={0.06} className="mt-10 flex flex-col gap-3">
+          {faq.items.map((item, i) => {
+            const isOpen = open === i
+            const panelId = `${uid}-p${i}`
+            const buttonId = `${uid}-b${i}`
+            return (
+              <ViewTransition key={item.q} update="glide">
+                <RevealItem className="rounded-card bg-muted">
+                  <h3>
+                    <button
+                      id={buttonId}
+                      type="button"
+                      aria-expanded={isOpen}
+                      aria-controls={isOpen ? panelId : undefined}
+                      onClick={() =>
+                        startTransition(() => setOpen(isOpen ? null : i))
+                      }
+                      className="flex min-h-14 w-full items-center justify-between gap-4 rounded-card px-5 py-3 text-left text-base font-medium outline-hidden focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
                     >
-                      <IconPlus className="size-4 group-aria-expanded/accordion-trigger:rotate-45 motion-safe:transition-transform motion-safe:duration-200" />
-                    </span>
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <p className="max-w-[62ch] pb-2 text-base leading-[1.65] text-muted-foreground">
-                      {item.a}
-                    </p>
-                  </AccordionContent>
-                </AccordionItem>
-              </RevealItem>
-            ))}
-          </RevealGroup>
-        </Accordion>
+                      {item.q}
+                      <IconChevronDown
+                        aria-hidden="true"
+                        className={cn(
+                          "size-6 shrink-0 transition-[rotate,color] duration-300 ease-(--ease-out-expo)",
+                          isOpen
+                            ? "rotate-180 text-line"
+                            : "text-muted-foreground"
+                        )}
+                      />
+                    </button>
+                  </h3>
+                  {isOpen ? (
+                    <ViewTransition enter="slide-up" exit="fade-out">
+                      <div
+                        id={panelId}
+                        role="region"
+                        aria-labelledby={buttonId}
+                      >
+                        <p className="text-lead max-w-[60ch] px-5 pb-5">
+                          {item.a}
+                        </p>
+                      </div>
+                    </ViewTransition>
+                  ) : null}
+                </RevealItem>
+              </ViewTransition>
+            )
+          })}
+        </RevealGroup>
       </div>
+
+      <PhotoReveal className="aspect-[4/3] lg:col-span-5 lg:aspect-[4/5]">
+        <Image
+          src={images.faq.src}
+          alt={images.faq.alt}
+          fill
+          sizes="(min-width: 1024px) 480px, 100vw"
+          className="object-cover"
+        />
+      </PhotoReveal>
     </section>
   )
 }

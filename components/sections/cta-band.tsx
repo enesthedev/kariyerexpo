@@ -1,47 +1,48 @@
-import { cta } from "@/lib/content"
-import { Stripes } from "@/components/brand/stripes"
-import { Parallax, Reveal, RevealText } from "@/components/reveal"
+import Image from "next/image"
+
+import { cta, images } from "@/lib/content"
+import { Reveal, RevealText } from "@/components/reveal"
 import { SubscribeForm } from "@/components/subscribe-form"
 
 /**
- * The last navy band: cut on its top edge only, because the footer carries
- * the navy on below it, so band and footer read as one ground. It holds the
- * page's last sign-up form, which is the one that listens for the audience
- * cards' [data-role-target] links, so their CTAs land here with the role
- * preselected.
- *
- * data-surface="navy" repoints --ring, --border, --line and the mark
- * colours, so focus rings, the stripes and the orange phrase stay legible on
- * this ground. The stripes rise out of the lower left, the way they sit in
- * the logo, clipped by the band.
+ * The closing moment: a rounded photo band under a navy scrim, the headline
+ * and lede centred, and the form on a white panel, so the one thing to do is
+ * the one bright thing. Anchor id `iletisim`: the audience and hero CTAs link
+ * here, and [data-role-target] links preselect the role (SubscribeForm
+ * listens). The photo is decoration, so its alt stays empty.
  */
 function CtaBand() {
   return (
-    <section
-      id="iletisim"
-      data-surface="navy"
-      className="cut-top isolate scroll-mt-20 overflow-hidden bg-sidebar text-sidebar-foreground"
-    >
-      <Parallax className="absolute -bottom-8 -left-8 -z-10 hidden lg:block">
-        <Stripes className="h-36" />
-      </Parallax>
+    <section id="iletisim" className="container-page pb-section">
+      <div className="relative isolate overflow-hidden rounded-media bg-primary">
+        <Image
+          src={images.cta.src}
+          alt={images.cta.alt}
+          fill
+          sizes="(min-width: 1320px) 1240px, 100vw"
+          className="-z-10 object-cover"
+        />
+        <div aria-hidden className="absolute inset-0 -z-10 bg-primary/70" />
 
-      <div className="mx-auto grid max-w-6xl gap-10 px-5 pt-[calc(var(--cut)+clamp(3.5rem,8vw,6rem))] pb-[clamp(3.5rem,8vw,6rem)] lg:grid-cols-12 lg:items-center lg:gap-12">
-        <div className="lg:col-span-6">
+        <div className="mx-auto flex max-w-[46rem] flex-col items-center gap-6 px-5 py-section-tight text-center text-primary-foreground sm:px-6">
           <RevealText
             text={cta.headline}
             accent={cta.headlineAccent}
-            className="text-[clamp(2rem,1.2rem+3vw,3.75rem)] leading-[1]"
+            className="text-display"
+            accentClassName="text-primary-foreground/80"
           />
-          <Reveal delay={0.15}>
-            <p className="mt-5 max-w-[48ch] text-lg leading-relaxed text-muted-foreground">
+          <Reveal delay={0.1}>
+            <p className="max-w-[52ch] text-primary-foreground/90">
               {cta.lede}
             </p>
           </Reveal>
+          <Reveal
+            delay={0.2}
+            className="mt-2 w-full rounded-card bg-card p-5 text-left text-card-foreground sm:p-8"
+          >
+            <SubscribeForm showRoles listenForRoleTargets />
+          </Reveal>
         </div>
-        <Reveal delay={0.25} className="lg:col-span-6">
-          <SubscribeForm showRoles listenForRoleTargets />
-        </Reveal>
       </div>
     </section>
   )

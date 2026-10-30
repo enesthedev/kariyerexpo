@@ -1,89 +1,76 @@
 import Image from "next/image"
 
 import { speakers, speakersSection } from "@/lib/content"
-import { PendingDots } from "@/components/brand/pending-dots"
-import { RevealGroup, RevealItem } from "@/components/reveal"
-import { SectionHeading } from "@/components/section-heading"
+import {
+  Reveal,
+  RevealGroup,
+  RevealItem,
+  RevealText,
+} from "@/components/reveal"
 
 /**
- * The second navy band, cut on both edges. The heading says "yakında" in
- * words and the cards say it in form: the second and third of the three
- * pending-dot sites (the heading, then the placeholder cards -- one instance
- * per card is still one use).
- *
- * Every card is a lighter-navy shell, its top-right corner cut, around a
- * photo well in the section's own navy. The well is the ground, not a tint, because the navy surface
- * remaps the dots to light / orange / --sidebar-border and that trio is only
- * tuned against --sidebar itself; on any lighter well the third dot fades.
- *
- * Announced speakers render in the same grid at the same size, so a mixed
- * state is the normal case and costs no layout work. Nothing on a
- * placeholder moves: confirmed things may animate, pending things never do.
+ * Data-driven: real speakers and empty slots share one grid, so a
+ * half-announced list is the normal case. A slot is a muted photo frame with
+ * a small "yakında" label.
  */
+const frame = "relative aspect-[4/5] overflow-hidden rounded-media bg-muted"
+
 function Speakers() {
   const placeholders = Math.max(0, speakersSection.slots - speakers.length)
 
   return (
-    <section
-      id="konusmacilar"
-      data-surface="navy"
-      className="cut-y scroll-mt-20 bg-sidebar py-[calc(var(--cut)+clamp(3.5rem,8vw,6.5rem))] text-sidebar-foreground"
-    >
-      <div className="mx-auto max-w-6xl px-5">
-        <SectionHeading
-          title={`${speakersSection.headline} ${speakersSection.headlineAccent}`}
-          trailing={<PendingDots size="lg" className="ml-[0.18em]" />}
-          description={<p>{speakersSection.note}</p>}
+    <section id="konusmacilar" className="container-page pb-section">
+      <div className="grid gap-6 lg:grid-cols-12 lg:items-end lg:gap-12">
+        <RevealText
+          text={speakersSection.headline}
+          accent={speakersSection.headlineAccent}
+          className="text-h2 lg:col-span-7"
         />
-        {placeholders > 0 ? (
-          <p className="sr-only">{speakersSection.srAnnouncement}</p>
-        ) : null}
-
-        <RevealGroup className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {speakers.map((s) => (
-            <RevealItem key={s.name}>
-              <article className="corner-cut h-full bg-sidebar-accent p-3">
-                <div className="relative aspect-[4/5] overflow-hidden rounded-sm bg-sidebar">
-                  {s.photo ? (
-                    <Image
-                      src={s.photo}
-                      alt=""
-                      fill
-                      sizes="(min-width: 1024px) 16rem, (min-width: 640px) 45vw, 90vw"
-                      className="object-cover"
-                    />
-                  ) : null}
-                </div>
-                <div className="px-2 pt-4 pb-2">
-                  <h3 className="font-heading text-lg leading-snug font-bold">
-                    {s.name}
-                  </h3>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    {s.title}, {s.org}
-                  </p>
-                </div>
-              </article>
-            </RevealItem>
-          ))}
-
-          {Array.from({ length: placeholders }).map((_, i) => (
-            <RevealItem key={`slot-${i}`}>
-              <div
-                aria-hidden="true"
-                className="corner-cut bg-sidebar-accent p-3"
-              >
-                <div className="grid aspect-[4/5] place-items-center rounded-sm bg-sidebar text-4xl">
-                  <PendingDots size="lg" />
-                </div>
-                <div className="px-2 pt-5 pb-3">
-                  <div className="h-3.5 w-3/5 rounded-sm bg-sidebar" />
-                  <div className="mt-2.5 h-2.5 w-2/5 rounded-sm bg-sidebar" />
-                </div>
-              </div>
-            </RevealItem>
-          ))}
-        </RevealGroup>
+        <Reveal delay={0.1} className="lg:col-span-5">
+          <p className="text-lead">{speakersSection.note}</p>
+        </Reveal>
       </div>
+
+      {placeholders > 0 ? (
+        <p className="sr-only">{speakersSection.srAnnouncement}</p>
+      ) : null}
+
+      <RevealGroup className="mt-10 grid grid-cols-2 gap-x-4 gap-y-8 sm:gap-x-6 lg:mt-14 lg:grid-cols-4">
+        {speakers.map((s) => (
+          <RevealItem key={s.name}>
+            <article>
+              <div className={frame}>
+                {s.photo ? (
+                  <Image
+                    src={s.photo}
+                    alt=""
+                    fill
+                    sizes="(min-width: 1024px) 300px, 45vw"
+                    className="object-cover"
+                  />
+                ) : null}
+              </div>
+              <h3 className="text-h3 mt-4">{s.name}</h3>
+              <p className="text-meta mt-1">
+                {s.title}, {s.org}
+              </p>
+            </article>
+          </RevealItem>
+        ))}
+
+        {Array.from({ length: placeholders }).map((_, i) => (
+          <RevealItem key={`slot-${i}`}>
+            <div
+              aria-hidden="true"
+              className={`${frame} grid place-items-center`}
+            >
+              <span className="text-meta">
+                {speakersSection.headlineAccent}
+              </span>
+            </div>
+          </RevealItem>
+        ))}
+      </RevealGroup>
     </section>
   )
 }

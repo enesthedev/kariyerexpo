@@ -17,13 +17,13 @@ export default function Page() {
     <>
       <StructuredData />
       <a
-        href="#fuar"
-        className="sr-only rounded-full bg-primary px-5 py-2 text-primary-foreground focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100]"
+        href="#main"
+        className="sr-only rounded-full bg-primary px-5 py-2 text-primary-foreground focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-hidden"
       >
         {ui.skipToContent}
       </a>
       <SiteHeader />
-      <main>
+      <main id="main" tabIndex={-1} className="outline-hidden">
         <Hero />
         <About />
         <Stats />

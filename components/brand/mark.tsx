@@ -8,7 +8,7 @@ import {
 import { markGlyphs } from "@/components/brand/mark-glyphs"
 import { site } from "@/lib/content"
 
-/** Each ink as a CSS var, so [data-surface="navy"] can turn navy parts light. */
+/** Each ink as a CSS var, so a surface can remap the mark's colours. */
 const markPaint: Record<Ink, string> = {
   navy: "var(--mark-navy)",
   orange: "var(--mark-orange)",
